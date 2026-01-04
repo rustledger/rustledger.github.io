@@ -106,11 +106,11 @@
 <body class="bg-black text-white antialiased">
     <!-- Nav -->
     <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-sm border-b border-white/10 z-50">
-        <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="/" class="text-lg font-semibold tracking-tight">rustledger</a>
-            <div class="flex items-center gap-8 text-sm">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+            <a href="/" class="text-base sm:text-lg font-semibold tracking-tight shrink-0">rustledger</a>
+            <div class="flex items-center gap-3 sm:gap-8 text-xs sm:text-sm">
                 <a href="https://docs.rs/rustledger-core" class="text-white/60 hover:text-white transition">Docs</a>
-                <a href="https://crates.io/crates/rustledger" class="text-white/60 hover:text-white transition">Crates</a>
+                <a href="https://crates.io/crates/rustledger" class="text-white/60 hover:text-white transition hidden sm:block">Crates</a>
                 <a href="https://github.com/rustledger/rustledger" class="text-white/60 hover:text-white transition">GitHub</a>
             </div>
         </div>
@@ -143,10 +143,10 @@
     </section>
 
     <!-- Playground -->
-    <section class="py-16 px-6 border-t border-white/10">
+    <section class="py-8 sm:py-16 px-3 sm:px-6 border-t border-white/10">
         <div class="max-w-6xl mx-auto">
-            <h2 class="text-2xl font-bold mb-2 text-center">Try it in your browser</h2>
-            <p class="text-white/50 text-center mb-8">Powered by WebAssembly</p>
+            <h2 class="text-xl sm:text-2xl font-bold mb-2 text-center">Try it in your browser</h2>
+            <p class="text-white/50 text-center mb-4 sm:mb-8 text-sm sm:text-base">Powered by WebAssembly</p>
 
             <div class="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
                 <!-- Toolbar -->
@@ -183,14 +183,14 @@
                 <!-- Editor & Output -->
                 <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/10">
                     <!-- Editor with syntax highlighting -->
-                    <div class="editor-container h-96 overflow-hidden relative bg-black/30">
+                    <div class="editor-container h-64 sm:h-80 md:h-96 overflow-hidden relative bg-black/30">
                         <div class="line-numbers mono text-xs" id="line-numbers">1</div>
                         <div class="highlight-layer mono text-sm" id="highlight-layer"></div>
                         <textarea id="editor" class="mono text-sm" spellcheck="false" oninput="onEditorInput()" onscroll="syncScroll()"></textarea>
                     </div>
 
                     <!-- Output panel -->
-                    <div class="flex flex-col h-96">
+                    <div class="flex flex-col h-48 sm:h-64 md:h-96">
                         <!-- Output tabs -->
                         <div class="flex items-center gap-1 px-3 py-2 border-b border-white/10 bg-white/5">
                             <button onclick="switchTab('output')" class="tab-btn px-3 py-1 text-xs rounded active" data-tab="output">Output</button>
