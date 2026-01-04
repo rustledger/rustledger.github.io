@@ -310,7 +310,7 @@ option "operating_currency" "USD"
 
         async function initWasm() {
             try {
-                await init();
+                await init('./pkg/rustledger_wasm_bg.wasm?v=1.0.0-rc.2');
                 wasmReady = true;
                 document.getElementById('wasm-status').textContent = `Ready (rustledger v${version()})`;
                 document.getElementById('wasm-status').classList.remove('text-white/30');
