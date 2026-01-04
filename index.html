@@ -12,6 +12,8 @@
         .mono { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace; }
         .fade-in { animation: fadeIn 0.6s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        #editor { resize: none; }
+        #editor:focus { outline: none; }
     </style>
 </head>
 <body class="bg-black text-white antialiased">
@@ -50,6 +52,60 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Playground -->
+    <section class="py-16 px-6 border-t border-white/10">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-2xl font-bold mb-2 text-center">Try it in your browser</h2>
+            <p class="text-white/50 text-center mb-8">Powered by WebAssembly</p>
+
+            <div class="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
+                <!-- Toolbar -->
+                <div class="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-white/5">
+                    <div class="flex gap-2">
+                        <button id="btn-check" onclick="runCheck()" class="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition">Check</button>
+                        <button id="btn-query" onclick="showQueryInput()" class="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition">Query</button>
+                    </div>
+                    <div class="flex gap-2">
+                        <select id="examples" onchange="loadExample()" class="px-2 py-1 text-sm bg-white/10 border border-white/10 rounded text-white/80">
+                            <option value="simple">Simple ledger</option>
+                            <option value="portfolio">Investment portfolio</option>
+                            <option value="error">With errors</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Editor & Output -->
+                <div class="grid md:grid-cols-2 divide-x divide-white/10">
+                    <div class="relative">
+                        <textarea id="editor" class="mono w-full h-72 bg-transparent text-sm text-white/90 p-4 leading-relaxed" spellcheck="false">; Simple beancount example
+option "title" "My Ledger"
+
+2024-01-01 open Assets:Bank:Checking USD
+2024-01-01 open Expenses:Food USD
+2024-01-01 open Equity:Opening USD
+
+2024-01-01 * "Opening balance"
+  Assets:Bank:Checking  1000.00 USD
+  Equity:Opening       -1000.00 USD
+
+2024-01-15 * "Grocery Store" "Weekly groceries"
+  Expenses:Food         85.50 USD
+  Assets:Bank:Checking
+
+2024-01-20 balance Assets:Bank:Checking 914.50 USD</textarea>
+                    </div>
+                    <div class="relative">
+                        <div id="query-input" class="hidden px-4 py-2 border-b border-white/10 bg-white/5">
+                            <input type="text" id="query-text" class="mono w-full bg-transparent text-sm text-white/90 placeholder-white/30" placeholder="SELECT account, SUM(position) GROUP BY account" onkeydown="if(event.key==='Enter')runQuery()">
+                        </div>
+                        <pre id="output" class="mono h-72 overflow-auto text-sm text-white/70 p-4 leading-relaxed"><span class="text-white/30">Click "Check" or "Query" to run...</span></pre>
+                    </div>
+                </div>
+            </div>
+            <p id="wasm-status" class="text-white/30 text-xs text-center mt-3">Loading WebAssembly...</p>
         </div>
     </section>
 
@@ -176,5 +232,165 @@
             </div>
         </div>
     </footer>
+
+    <!-- WASM Module -->
+    <script type="module">
+        import init, { validate_source, query, version } from './pkg/rustledger_wasm.js';
+
+        const examples = {
+            simple: `; Simple beancount example
+option "title" "My Ledger"
+
+2024-01-01 open Assets:Bank:Checking USD
+2024-01-01 open Expenses:Food USD
+2024-01-01 open Equity:Opening USD
+
+2024-01-01 * "Opening balance"
+  Assets:Bank:Checking  1000.00 USD
+  Equity:Opening       -1000.00 USD
+
+2024-01-15 * "Grocery Store" "Weekly groceries"
+  Expenses:Food         85.50 USD
+  Assets:Bank:Checking
+
+2024-01-20 balance Assets:Bank:Checking 914.50 USD`,
+            portfolio: `; Investment portfolio example
+option "operating_currency" "USD"
+
+2024-01-01 open Assets:Brokerage:Cash USD
+2024-01-01 open Assets:Brokerage:AAPL AAPL
+2024-01-01 open Assets:Brokerage:GOOGL GOOGL
+2024-01-01 open Income:Dividends USD
+2024-01-01 open Equity:Opening USD
+
+2024-01-01 * "Initial deposit"
+  Assets:Brokerage:Cash  10000.00 USD
+  Equity:Opening
+
+2024-01-15 * "Buy Apple stock"
+  Assets:Brokerage:AAPL    10 AAPL {185.00 USD}
+  Assets:Brokerage:Cash  -1850.00 USD
+
+2024-02-01 * "Buy Google stock"
+  Assets:Brokerage:GOOGL    5 GOOGL {140.00 USD}
+  Assets:Brokerage:Cash   -700.00 USD
+
+2024-02-15 * "AAPL dividend"
+  Assets:Brokerage:Cash    2.40 USD
+  Income:Dividends
+
+2024-03-01 price AAPL 190.00 USD
+2024-03-01 price GOOGL 145.00 USD`,
+            error: `; Example with intentional errors
+2024-01-01 open Assets:Bank USD
+
+; Error: account not opened
+2024-01-15 * "Coffee"
+  Expenses:Food  5.00 USD
+  Assets:Bank   -5.00 USD
+
+; Error: unbalanced transaction
+2024-01-20 * "Lunch"
+  Expenses:Food  15.00 USD
+  Assets:Bank  -10.00 USD
+
+; Error: wrong balance
+2024-01-25 balance Assets:Bank 100.00 USD`
+        };
+
+        let wasmReady = false;
+
+        async function initWasm() {
+            try {
+                await init();
+                wasmReady = true;
+                document.getElementById('wasm-status').textContent = `Ready (rustledger v${version()})`;
+                document.getElementById('wasm-status').classList.remove('text-white/30');
+                document.getElementById('wasm-status').classList.add('text-green-400/60');
+            } catch (e) {
+                document.getElementById('wasm-status').textContent = `Failed to load: ${e.message}`;
+                document.getElementById('wasm-status').classList.add('text-red-400/60');
+            }
+        }
+
+        window.runCheck = function() {
+            if (!wasmReady) return;
+            const source = document.getElementById('editor').value;
+            const output = document.getElementById('output');
+            document.getElementById('query-input').classList.add('hidden');
+
+            try {
+                const result = validate_source(source);
+                if (result.valid) {
+                    output.innerHTML = '<span class="text-green-400">✓ No errors found</span>';
+                } else {
+                    const errors = result.errors.map(e =>
+                        `<span class="text-red-400">Line ${e.line || '?'}:</span> ${escapeHtml(e.message)}`
+                    ).join('\n');
+                    output.innerHTML = errors;
+                }
+            } catch (e) {
+                output.innerHTML = `<span class="text-red-400">Error:</span> ${escapeHtml(e.message)}`;
+            }
+        };
+
+        window.showQueryInput = function() {
+            document.getElementById('query-input').classList.remove('hidden');
+            document.getElementById('query-text').focus();
+        };
+
+        window.runQuery = function() {
+            if (!wasmReady) return;
+            const source = document.getElementById('editor').value;
+            const queryStr = document.getElementById('query-text').value || 'SELECT account, SUM(position) GROUP BY account';
+            const output = document.getElementById('output');
+
+            try {
+                const result = query(source, queryStr);
+                if (result.errors && result.errors.length > 0) {
+                    const errors = result.errors.map(e =>
+                        `<span class="text-red-400">Error:</span> ${escapeHtml(e.message)}`
+                    ).join('\n');
+                    output.innerHTML = errors;
+                } else {
+                    // Format as table
+                    let html = '<span class="text-white/50">' + result.columns.join('  |  ') + '</span>\n';
+                    html += '<span class="text-white/30">' + '-'.repeat(60) + '</span>\n';
+                    for (const row of result.rows) {
+                        html += row.map(cell => formatCell(cell)).join('  |  ') + '\n';
+                    }
+                    output.innerHTML = html || '<span class="text-white/50">No results</span>';
+                }
+            } catch (e) {
+                output.innerHTML = `<span class="text-red-400">Error:</span> ${escapeHtml(e.message)}`;
+            }
+        };
+
+        window.loadExample = function() {
+            const select = document.getElementById('examples');
+            const editor = document.getElementById('editor');
+            editor.value = examples[select.value];
+            document.getElementById('output').innerHTML = '<span class="text-white/30">Click "Check" or "Query" to run...</span>';
+        };
+
+        function formatCell(cell) {
+            if (cell === null) return '<span class="text-white/30">-</span>';
+            if (typeof cell === 'object') {
+                if (cell.number && cell.currency) {
+                    return `${cell.number} ${cell.currency}`;
+                }
+                return JSON.stringify(cell);
+            }
+            return escapeHtml(String(cell));
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        initWasm();
+    </script>
 </body>
 </html>
