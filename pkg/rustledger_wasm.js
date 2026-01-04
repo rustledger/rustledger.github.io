@@ -116,6 +116,57 @@ if (!('encodeInto' in cachedTextEncoder)) {
 let WASM_VECTOR_LEN = 0;
 
 /**
+ * Calculate account balances.
+ *
+ * Returns balances grouped by account.
+ * @param {string} source
+ * @returns {any}
+ */
+export function balances(source) {
+    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.balances(ptr0, len0);
+    return takeObject(ret);
+}
+
+/**
+ * Process pad directives and expand them.
+ *
+ * Returns directives with pad-generated transactions included.
+ * @param {string} source
+ * @returns {any}
+ */
+export function expand_pads(source) {
+    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.expand_pads(ptr0, len0);
+    return takeObject(ret);
+}
+
+/**
+ * Format a Beancount source string.
+ *
+ * Parses and reformats with consistent alignment.
+ * @param {string} source
+ * @returns {any}
+ */
+export function format(source) {
+    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.format(ptr0, len0);
+    return takeObject(ret);
+}
+
+/**
+ * List available native plugins.
+ * @returns {any}
+ */
+export function list_plugins() {
+    const ret = wasm.list_plugins();
+    return takeObject(ret);
+}
+
+/**
  * Parse a Beancount source string.
  *
  * Returns a JSON object with the parsed ledger and any errors.
@@ -123,7 +174,7 @@ let WASM_VECTOR_LEN = 0;
  * @returns {any}
  */
 export function parse(source) {
-    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export, wasm.__wbindgen_export2);
+    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
     const len0 = WASM_VECTOR_LEN;
     const ret = wasm.parse(ptr0, len0);
     return takeObject(ret);
@@ -138,11 +189,30 @@ export function parse(source) {
  * @returns {any}
  */
 export function query(source, query_str) {
-    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export, wasm.__wbindgen_export2);
+    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
     const len0 = WASM_VECTOR_LEN;
-    const ptr1 = passStringToWasm0(query_str, wasm.__wbindgen_export, wasm.__wbindgen_export2);
+    const ptr1 = passStringToWasm0(query_str, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
     const len1 = WASM_VECTOR_LEN;
     const ret = wasm.query(ptr0, len0, ptr1, len1);
+    return takeObject(ret);
+}
+
+/**
+ * Run a native plugin on the source.
+ *
+ * Available plugins: implicit_prices, check_commodity, auto_accounts,
+ * auto_tag, leafonly, noduplicates, onecommodity, unique_prices,
+ * check_closing, close_tree, coherent_cost, sellgains, pedantic, unrealized
+ * @param {string} source
+ * @param {string} plugin_name
+ * @returns {any}
+ */
+export function run_plugin(source, plugin_name) {
+    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
+    const len0 = WASM_VECTOR_LEN;
+    const ptr1 = passStringToWasm0(plugin_name, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
+    const len1 = WASM_VECTOR_LEN;
+    const ret = wasm.run_plugin(ptr0, len0, ptr1, len1);
     return takeObject(ret);
 }
 
@@ -154,7 +224,7 @@ export function query(source, query_str) {
  * @returns {any}
  */
 export function validate(ledger_json) {
-    const ptr0 = passStringToWasm0(ledger_json, wasm.__wbindgen_export, wasm.__wbindgen_export2);
+    const ptr0 = passStringToWasm0(ledger_json, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
     const len0 = WASM_VECTOR_LEN;
     const ret = wasm.validate(ptr0, len0);
     return takeObject(ret);
@@ -168,7 +238,7 @@ export function validate(ledger_json) {
  * @returns {any}
  */
 export function validate_source(source) {
-    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export, wasm.__wbindgen_export2);
+    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
     const len0 = WASM_VECTOR_LEN;
     const ret = wasm.validate_source(ptr0, len0);
     return takeObject(ret);
@@ -191,7 +261,7 @@ export function version() {
         return getStringFromWasm0(r0, r1);
     } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
-        wasm.__wbindgen_export3(deferred1_0, deferred1_1, 1);
+        wasm.__wbindgen_export(deferred1_0, deferred1_1, 1);
     }
 }
 

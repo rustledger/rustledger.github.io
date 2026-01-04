@@ -66,6 +66,7 @@
                 <div class="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-white/5">
                     <div class="flex gap-2">
                         <button id="btn-check" onclick="runCheck()" class="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition">Check</button>
+                        <button id="btn-format" onclick="runFormat()" class="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition">Format</button>
                         <button id="btn-query" onclick="showQueryInput()" class="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition">Query</button>
                     </div>
                     <div class="flex gap-2">
@@ -241,7 +242,7 @@ option "title" "My Ledger"
 
     <!-- WASM Module -->
     <script type="module">
-        import init, { validate_source, query, version } from './pkg/rustledger_wasm.js';
+        import init, { validate_source, query, format, list_plugins, run_plugin, balances, version } from './pkg/rustledger_wasm.js';
 
         const examples = {
             simple: `; Simple beancount example
@@ -321,6 +322,28 @@ option "operating_currency" "USD"
                 document.getElementById('wasm-status').classList.add('text-red-400/60');
             }
         }
+
+        window.runFormat = function() {
+            if (!wasmReady) return;
+            const editor = document.getElementById('editor');
+            const output = document.getElementById('output');
+            document.getElementById('query-input').classList.add('hidden');
+
+            try {
+                const result = format(editor.value);
+                if (result.formatted) {
+                    editor.value = result.formatted;
+                    output.innerHTML = '<span class="text-green-400">✓ Formatted successfully</span>';
+                } else {
+                    const errors = result.errors.map(e =>
+                        `<span class="text-red-400">Line ${e.line || '?'}:</span> ${escapeHtml(e.message)}`
+                    ).join('\n');
+                    output.innerHTML = errors;
+                }
+            } catch (e) {
+                output.innerHTML = `<span class="text-red-400">Error:</span> ${escapeHtml(e.message)}`;
+            }
+        };
 
         window.runCheck = function() {
             if (!wasmReady) return;

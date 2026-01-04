@@ -1,12 +1,17 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
+export const balances: (a: number, b: number) => number;
+export const expand_pads: (a: number, b: number) => number;
+export const format: (a: number, b: number) => number;
+export const list_plugins: () => number;
 export const parse: (a: number, b: number) => number;
 export const query: (a: number, b: number, c: number, d: number) => number;
+export const run_plugin: (a: number, b: number, c: number, d: number) => number;
 export const validate: (a: number, b: number) => number;
 export const validate_source: (a: number, b: number) => number;
 export const version: (a: number) => void;
-export const __wbindgen_export: (a: number, b: number) => number;
-export const __wbindgen_export2: (a: number, b: number, c: number, d: number) => number;
 export const __wbindgen_add_to_stack_pointer: (a: number) => number;
-export const __wbindgen_export3: (a: number, b: number, c: number) => void;
+export const __wbindgen_export: (a: number, b: number, c: number) => void;
+export const __wbindgen_export2: (a: number, b: number) => number;
+export const __wbindgen_export3: (a: number, b: number, c: number, d: number) => number;
