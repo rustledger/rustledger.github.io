@@ -563,44 +563,71 @@ option "operating_currency" "USD"
         }
 
         function highlightLine(line) {
-            let highlighted = escapeHtml(line);
-
-            // Comments
+            // Comments - highlight entire line
             if (line.trim().startsWith(';')) {
-                return `<span class="syn-comment">${highlighted}</span>`;
+                return `<span class="syn-comment">${escapeHtml(line)}</span>`;
             }
 
-            // Option directive
-            if (line.trim().startsWith('option')) {
-                highlighted = highlighted.replace(/^(\s*)(option)/, '$1<span class="syn-option">$2</span>');
+            // Tokenize first, then highlight each token
+            const tokens = [];
+            let remaining = line;
+            let pos = 0;
+
+            // Token patterns (order matters - more specific first)
+            const patterns = [
+                { regex: /^(\d{4}-\d{2}-\d{2})/, type: 'date' },
+                { regex: /^(\*|!|txn|open|close|balance|pad|event|note|document|commodity|price|query|custom|option)\b/, type: 'directive' },
+                { regex: /^(Assets|Liabilities|Equity|Income|Expenses)(:[A-Za-z0-9_-]+)+/, type: 'account' },
+                { regex: /^"[^"]*"/, type: 'string' },
+                { regex: /^#[a-zA-Z0-9_-]+/, type: 'tag' },
+                { regex: /^\^[a-zA-Z0-9_-]+/, type: 'link' },
+                { regex: /^-?\d+\.?\d*\s+[A-Z]{2,}\b/, type: 'amount' },
+                { regex: /^\{[^}]+\}/, type: 'cost' },
+                { regex: /^[A-Z]{2,}\b/, type: 'currency' },
+                { regex: /^\s+/, type: 'space' },
+                { regex: /^[^\s"#^{}\d]+/, type: 'text' },
+                { regex: /^./, type: 'text' }
+            ];
+
+            while (remaining.length > 0) {
+                let matched = false;
+                for (const pattern of patterns) {
+                    const match = remaining.match(pattern.regex);
+                    if (match) {
+                        tokens.push({ text: match[0], type: pattern.type });
+                        remaining = remaining.slice(match[0].length);
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched) {
+                    tokens.push({ text: remaining[0], type: 'text' });
+                    remaining = remaining.slice(1);
+                }
             }
 
-            // Date at start of line (directive)
-            highlighted = highlighted.replace(/^(\d{4}-\d{2}-\d{2})(\s+)(\*|!|txn|open|close|balance|pad|event|note|document|commodity|price|query|custom)/,
-                '<span class="syn-date">$1</span>$2<span class="syn-directive">$3</span>');
-
-            // Standalone date
-            highlighted = highlighted.replace(/^(\d{4}-\d{2}-\d{2})/, '<span class="syn-date">$1</span>');
-
-            // Accounts (multi-segment)
-            highlighted = highlighted.replace(/\b(Assets|Liabilities|Equity|Income|Expenses)(:[A-Za-z0-9_-]+)+/g, '<span class="syn-account">$&</span>');
-
-            // Amounts with currency
-            highlighted = highlighted.replace(/(-?\d+\.?\d*)\s+([A-Z]{2,})/g, '<span class="syn-amount">$1</span> <span class="syn-currency">$2</span>');
-
-            // Cost specs
-            highlighted = highlighted.replace(/\{([^}]+)\}/g, '{<span class="syn-amount">$1</span>}');
-
-            // Strings
-            highlighted = highlighted.replace(/"([^"]*)"/g, '<span class="syn-string">"$1"</span>');
-
-            // Tags
-            highlighted = highlighted.replace(/#([a-zA-Z0-9_-]+)/g, '<span class="syn-tag">#$1</span>');
-
-            // Links
-            highlighted = highlighted.replace(/\^([a-zA-Z0-9_-]+)/g, '<span class="syn-link">^$1</span>');
-
-            return highlighted;
+            // Build highlighted output
+            return tokens.map(token => {
+                const escaped = escapeHtml(token.text);
+                switch (token.type) {
+                    case 'date': return `<span class="syn-date">${escaped}</span>`;
+                    case 'directive': return `<span class="syn-directive">${escaped}</span>`;
+                    case 'account': return `<span class="syn-account">${escaped}</span>`;
+                    case 'string': return `<span class="syn-string">${escaped}</span>`;
+                    case 'tag': return `<span class="syn-tag">${escaped}</span>`;
+                    case 'link': return `<span class="syn-link">${escaped}</span>`;
+                    case 'amount': {
+                        const parts = token.text.match(/^(-?\d+\.?\d*)\s+([A-Z]{2,})$/);
+                        if (parts) {
+                            return `<span class="syn-amount">${escapeHtml(parts[1])}</span> <span class="syn-currency">${escapeHtml(parts[2])}</span>`;
+                        }
+                        return escaped;
+                    }
+                    case 'cost': return `{<span class="syn-amount">${escapeHtml(token.text.slice(1, -1))}</span>}`;
+                    case 'currency': return `<span class="syn-currency">${escaped}</span>`;
+                    default: return escaped;
+                }
+            }).join('');
         }
 
         function syncScroll() {
