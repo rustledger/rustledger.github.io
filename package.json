@@ -1,0 +1,23 @@
+{
+  "name": "rustledger-website",
+  "version": "1.0.0",
+  "description": "rustledger website and WASM playground",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 8080",
+    "build": "vite build",
+    "preview": "vite preview --port 8080"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  },
+  "dependencies": {
+    "@codemirror/commands": "^6.10.1",
+    "@codemirror/lang-javascript": "^6.2.4",
+    "@codemirror/language": "^6.12.1",
+    "@codemirror/state": "^6.5.3",
+    "@codemirror/view": "^6.39.8",
+    "@lezer/highlight": "^1.2.3",
+    "codemirror": "^6.0.2"
+  }
+}

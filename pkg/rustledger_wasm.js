@@ -123,9 +123,24 @@ let WASM_VECTOR_LEN = 0;
  * @returns {any}
  */
 export function balances(source) {
-    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
+    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export, wasm.__wbindgen_export2);
     const len0 = WASM_VECTOR_LEN;
     const ret = wasm.balances(ptr0, len0);
+    return takeObject(ret);
+}
+
+/**
+ * Get BQL query completions at cursor position.
+ *
+ * Returns context-aware completions for the BQL query language.
+ * @param {string} partial_query
+ * @param {number} cursor_pos
+ * @returns {any}
+ */
+export function bql_completions(partial_query, cursor_pos) {
+    const ptr0 = passStringToWasm0(partial_query, wasm.__wbindgen_export, wasm.__wbindgen_export2);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.bql_completions(ptr0, len0, cursor_pos);
     return takeObject(ret);
 }
 
@@ -137,7 +152,7 @@ export function balances(source) {
  * @returns {any}
  */
 export function expand_pads(source) {
-    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
+    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export, wasm.__wbindgen_export2);
     const len0 = WASM_VECTOR_LEN;
     const ret = wasm.expand_pads(ptr0, len0);
     return takeObject(ret);
@@ -151,7 +166,7 @@ export function expand_pads(source) {
  * @returns {any}
  */
 export function format(source) {
-    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
+    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export, wasm.__wbindgen_export2);
     const len0 = WASM_VECTOR_LEN;
     const ret = wasm.format(ptr0, len0);
     return takeObject(ret);
@@ -174,7 +189,7 @@ export function list_plugins() {
  * @returns {any}
  */
 export function parse(source) {
-    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
+    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export, wasm.__wbindgen_export2);
     const len0 = WASM_VECTOR_LEN;
     const ret = wasm.parse(ptr0, len0);
     return takeObject(ret);
@@ -189,9 +204,9 @@ export function parse(source) {
  * @returns {any}
  */
 export function query(source, query_str) {
-    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
+    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export, wasm.__wbindgen_export2);
     const len0 = WASM_VECTOR_LEN;
-    const ptr1 = passStringToWasm0(query_str, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
+    const ptr1 = passStringToWasm0(query_str, wasm.__wbindgen_export, wasm.__wbindgen_export2);
     const len1 = WASM_VECTOR_LEN;
     const ret = wasm.query(ptr0, len0, ptr1, len1);
     return takeObject(ret);
@@ -208,9 +223,9 @@ export function query(source, query_str) {
  * @returns {any}
  */
 export function run_plugin(source, plugin_name) {
-    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
+    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export, wasm.__wbindgen_export2);
     const len0 = WASM_VECTOR_LEN;
-    const ptr1 = passStringToWasm0(plugin_name, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
+    const ptr1 = passStringToWasm0(plugin_name, wasm.__wbindgen_export, wasm.__wbindgen_export2);
     const len1 = WASM_VECTOR_LEN;
     const ret = wasm.run_plugin(ptr0, len0, ptr1, len1);
     return takeObject(ret);
@@ -224,7 +239,7 @@ export function run_plugin(source, plugin_name) {
  * @returns {any}
  */
 export function validate(ledger_json) {
-    const ptr0 = passStringToWasm0(ledger_json, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
+    const ptr0 = passStringToWasm0(ledger_json, wasm.__wbindgen_export, wasm.__wbindgen_export2);
     const len0 = WASM_VECTOR_LEN;
     const ret = wasm.validate(ptr0, len0);
     return takeObject(ret);
@@ -238,7 +253,7 @@ export function validate(ledger_json) {
  * @returns {any}
  */
 export function validate_source(source) {
-    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export2, wasm.__wbindgen_export3);
+    const ptr0 = passStringToWasm0(source, wasm.__wbindgen_export, wasm.__wbindgen_export2);
     const len0 = WASM_VECTOR_LEN;
     const ret = wasm.validate_source(ptr0, len0);
     return takeObject(ret);
@@ -261,7 +276,7 @@ export function version() {
         return getStringFromWasm0(r0, r1);
     } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
-        wasm.__wbindgen_export(deferred1_0, deferred1_1, 1);
+        wasm.__wbindgen_export3(deferred1_0, deferred1_1, 1);
     }
 }
 
@@ -304,10 +319,6 @@ function __wbg_get_imports() {
         const ret = Error(getStringFromWasm0(arg0, arg1));
         return addHeapObject(ret);
     };
-    imports.wbg.__wbg___wbindgen_is_string_704ef9c8fc131030 = function(arg0) {
-        const ret = typeof(getObject(arg0)) === 'string';
-        return ret;
-    };
     imports.wbg.__wbg___wbindgen_throw_dd24417ed36fc46e = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));
     };
@@ -335,28 +346,15 @@ function __wbg_get_imports() {
         const ret = new Date(getObject(arg0));
         return addHeapObject(ret);
     };
-    imports.wbg.__wbg_new_b546ae120718850e = function() {
-        const ret = new Map();
-        return addHeapObject(ret);
-    };
     imports.wbg.__wbg_set_3f1d0b984ed272ed = function(arg0, arg1, arg2) {
         getObject(arg0)[takeObject(arg1)] = takeObject(arg2);
     };
     imports.wbg.__wbg_set_7df433eea03a5c14 = function(arg0, arg1, arg2) {
         getObject(arg0)[arg1 >>> 0] = takeObject(arg2);
     };
-    imports.wbg.__wbg_set_efaaf145b9377369 = function(arg0, arg1, arg2) {
-        const ret = getObject(arg0).set(getObject(arg1), getObject(arg2));
-        return addHeapObject(ret);
-    };
     imports.wbg.__wbindgen_cast_2241b6af4c4b2941 = function(arg0, arg1) {
         // Cast intrinsic for `Ref(String) -> Externref`.
         const ret = getStringFromWasm0(arg0, arg1);
-        return addHeapObject(ret);
-    };
-    imports.wbg.__wbindgen_cast_4625c577ab2ec9ee = function(arg0) {
-        // Cast intrinsic for `U64 -> Externref`.
-        const ret = BigInt.asUintN(64, arg0);
         return addHeapObject(ret);
     };
     imports.wbg.__wbindgen_cast_9ae0607507abb057 = function(arg0) {

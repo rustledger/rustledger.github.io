@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rustledger - Drop-in replacement for Beancount</title>
-    <meta name="description" content="Pure Rust implementation of Beancount. 10x faster, same commands, zero Python dependencies.">
+    <title>rustledger</title>
+    <meta name="description" content="Drop in Rust replacement for Beancount. Your ledger under your control. Forever.">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📒</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -13,94 +13,146 @@
         .fade-in { animation: fadeIn 0.6s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Editor with syntax highlighting */
-        .editor-container { position: relative; }
-        .editor-container textarea {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            width: 100%; height: 100%;
-            background: transparent;
-            color: transparent;
-            caret-color: white;
-            resize: none;
-            z-index: 2;
-            padding: 1rem;
-            padding-left: 3.5rem;
-            line-height: 1.5;
-            white-space: pre;
-            overflow-wrap: normal;
-            overflow-x: auto;
+        /* Example tabs (browser-style) */
+        .example-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            padding: 0.25rem;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-        .editor-container textarea:focus { outline: none; }
-        .editor-container .highlight-layer {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            padding: 1rem;
-            padding-left: 3.5rem;
-            line-height: 1.5;
-            white-space: pre;
-            overflow-wrap: normal;
-            overflow-x: auto;
-            pointer-events: none;
-            z-index: 1;
+        @media (min-width: 640px) {
+            .example-tabs {
+                gap: 0;
+                padding: 0;
+            }
         }
-        .line-numbers {
-            position: absolute;
-            top: 0; left: 0; bottom: 0;
-            width: 3rem;
-            padding: 1rem 0.5rem;
-            text-align: right;
-            line-height: 1.5;
-            color: rgba(255,255,255,0.2);
-            border-right: 1px solid rgba(255,255,255,0.1);
-            pointer-events: none;
-            z-index: 3;
-            overflow: hidden;
+        .example-tab {
+            padding: 0.4rem 0.7rem;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.5);
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0.25rem;
+            transition: all 0.15s;
+            position: relative;
+        }
+        @media (min-width: 640px) {
+            .example-tab {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.8rem;
+                border: none;
+                border-right: 1px solid rgba(255,255,255,0.05);
+                border-radius: 0;
+            }
+        }
+        .example-tab:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.05); }
+        .example-tab.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+        }
+        @media (min-width: 640px) {
+            .example-tab.active {
+                background: rgba(255,255,255,0.05);
+                border-color: transparent;
+                border-right-color: rgba(255,255,255,0.05);
+            }
+            .example-tab.active::after {
+                content: '';
+                position: absolute;
+                bottom: -1px;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: #3b82f6;
+            }
         }
 
-        /* Syntax colors */
-        .syn-comment { color: rgba(255,255,255,0.35); font-style: italic; }
-        .syn-date { color: #7dd3fc; }
-        .syn-directive { color: #c4b5fd; }
-        .syn-account { color: #86efac; }
-        .syn-amount { color: #fcd34d; }
-        .syn-currency { color: #fdba74; }
-        .syn-string { color: #fca5a5; }
-        .syn-tag { color: #67e8f9; }
-        .syn-link { color: #f0abfc; }
-        .syn-flag { color: #fbbf24; }
-        .syn-option { color: #a78bfa; }
+        /* Vertical resizer */
+        .resizer {
+            height: 6px;
+            background: rgba(255,255,255,0.05);
+            cursor: ns-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
+        }
+        .resizer:hover, .resizer.dragging { background: rgba(59, 130, 246, 0.3); }
+        .resizer::after {
+            content: '';
+            width: 40px;
+            height: 3px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+        }
+        .resizer:hover::after, .resizer.dragging::after { background: rgba(255,255,255,0.4); }
 
-        /* Error line highlighting */
-        .error-line { background: rgba(239, 68, 68, 0.15); display: block; }
-
-        /* Output tabs */
-        .tab-btn { transition: all 0.15s; }
-        .tab-btn.active { background: rgba(255,255,255,0.1); color: white; }
+        /* Output tabs - styled like example tabs */
+        .output-tabs-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            padding: 0.25rem;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            align-items: center;
+        }
+        @media (min-width: 640px) {
+            .output-tabs-container {
+                gap: 0;
+                padding: 0;
+            }
+        }
+        .output-tab {
+            padding: 0.4rem 0.7rem;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.5);
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0.25rem;
+            transition: all 0.15s;
+            position: relative;
+        }
+        @media (min-width: 640px) {
+            .output-tab {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.8rem;
+                border: none;
+                border-right: 1px solid rgba(255,255,255,0.05);
+                border-radius: 0;
+            }
+        }
+        .output-tab:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.05); }
+        .output-tab.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+        }
+        @media (min-width: 640px) {
+            .output-tab.active {
+                background: rgba(255,255,255,0.05);
+                border-color: transparent;
+                border-right-color: rgba(255,255,255,0.05);
+            }
+            .output-tab.active::after {
+                content: '';
+                position: absolute;
+                bottom: -1px;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: #3b82f6;
+            }
+        }
 
         /* Query results table */
         .result-table { border-collapse: collapse; width: 100%; }
         .result-table th { text-align: left; padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); font-weight: 500; }
         .result-table td { padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .result-table tr:hover td { background: rgba(255,255,255,0.03); }
-
-        /* Dark theme selects */
-        select {
-            background-color: rgba(255,255,255,0.1);
-            color: white;
-            border: none;
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.5rem center;
-            background-size: 1rem;
-            padding-right: 2rem;
-        }
-        select option {
-            background-color: #1a1a1a;
-            color: white;
-        }
     </style>
 </head>
 <body class="bg-black text-white antialiased">
@@ -121,21 +173,25 @@
         <div class="max-w-3xl mx-auto text-center fade-in">
             <p class="text-white/40 text-sm uppercase tracking-widest mb-6">Beancount, rewritten in Rust</p>
             <h1 class="text-5xl md:text-6xl font-bold tracking-tight mb-6">
-                Drop-in replacement<br>for Beancount
+                Drop in Rust replacement<br>for Beancount
             </h1>
             <p class="text-xl text-white/60 mb-12 max-w-xl mx-auto">
-                Pure Rust. 10x faster. Same commands.<br>Zero Python dependencies.
+                Your ledger under your control. Forever.
             </p>
 
-            <div class="flex flex-col sm:flex-row justify-center gap-4 mb-16">
-                <a href="https://github.com/rustledger/rustledger" class="bg-white text-black px-6 py-3 rounded font-medium hover:bg-white/90 transition">
-                    View on GitHub
-                </a>
-                <div class="mono bg-white/5 border border-white/10 px-6 py-3 rounded text-white/80 flex items-center gap-3">
+            <div class="flex flex-col gap-3 items-center mb-16">
+                <div class="mono inline-flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 rounded text-white/80">
                     <span class="text-white/40">$</span>
-                    <span>cargo install rustledger</span>
-                    <button onclick="navigator.clipboard.writeText('cargo install rustledger')" class="text-white/40 hover:text-white transition ml-2" title="Copy">
+                    <span>curl -sSf https://rustledger.github.io/install.sh | sh</span>
+                    <button onclick="navigator.clipboard.writeText('curl -sSf https://rustledger.github.io/install.sh | sh')" class="text-white/40 hover:text-white transition" title="Copy">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    </button>
+                </div>
+                <div class="mono inline-flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded text-white/60 text-sm">
+                    <span class="text-white/30">or</span>
+                    <span>cargo install rustledger</span>
+                    <button onclick="navigator.clipboard.writeText('cargo install rustledger')" class="text-white/40 hover:text-white transition" title="Copy">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     </button>
                 </div>
             </div>
@@ -149,80 +205,95 @@
             <p class="text-white/50 text-center mb-4 sm:mb-8 text-sm sm:text-base">Powered by WebAssembly</p>
 
             <div class="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
-                <!-- Toolbar -->
-                <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2 border-b border-white/10 bg-white/5">
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="loadExample('simple')" class="example-btn px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 rounded transition" data-example="simple">Simple</button>
-                        <button onclick="loadExample('portfolio')" class="example-btn px-3 py-1 text-sm bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 rounded transition" data-example="portfolio">Portfolio</button>
-                        <button onclick="loadExample('advanced')" class="example-btn px-3 py-1 text-sm bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded transition" data-example="advanced">Advanced</button>
-                        <button onclick="loadExample('error')" class="example-btn px-3 py-1 text-sm bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded transition" data-example="error">Errors</button>
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        <button id="btn-check" onclick="runCheck()" class="px-3 py-1 text-sm bg-green-500/20 hover:bg-green-500/30 text-green-300 rounded transition">Check</button>
-                        <button id="btn-format" onclick="runFormat()" class="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition">Format</button>
-                        <select id="query-select" onchange="runQueryPreset()" class="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition cursor-pointer">
-                            <option value="">Query...</option>
-                            <option value="BALANCES">Balances</option>
-                            <option value="SELECT account, SUM(position) WHERE account ~ 'Expenses' GROUP BY account ORDER BY SUM(position) DESC">Expenses by Category</option>
-                            <option value="SELECT account, SUM(position) WHERE account ~ 'Income' GROUP BY account">Income Sources</option>
-                            <option value="SELECT date, narration, position WHERE account ~ 'Expenses'">Recent Expenses</option>
-                            <option value="custom">Custom Query...</option>
-                        </select>
-                        <select id="plugin-select" onchange="runPluginPreset()" class="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition cursor-pointer">
-                            <option value="">Plugins...</option>
-                            <option value="implicit_prices">implicit_prices</option>
-                            <option value="auto_accounts">auto_accounts</option>
-                            <option value="check_commodity">check_commodity</option>
-                        </select>
-                        <button onclick="shareUrl()" class="px-2 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition" title="Share URL">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
-                        </button>
-                    </div>
+                <!-- Example Tabs -->
+                <div class="example-tabs">
+                    <div class="example-tab active" data-example="simple" onclick="loadExample('simple')">Budget</div>
+                    <div class="example-tab" data-example="stocks" onclick="loadExample('stocks')">Stocks</div>
+                    <div class="example-tab" data-example="crypto" onclick="loadExample('crypto')">Crypto</div>
+                    <div class="example-tab" data-example="travel" onclick="loadExample('travel')">Travel</div>
+                    <div class="example-tab" data-example="business" onclick="loadExample('business')">Business</div>
+                    <div class="example-tab" data-example="errors" onclick="loadExample('errors')">Errors</div>
+                    <div class="flex-1"></div>
+                    <button onclick="runFormat()" class="px-3 py-1.5 text-xs text-white/60 hover:text-white hover:bg-white/10 rounded transition" title="Format code">Format</button>
+                    <button onclick="shareUrl()" class="px-2 py-1.5 mr-2 text-white/40 hover:text-white transition" title="Share">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                    </button>
                 </div>
 
-                <!-- Editor & Output -->
-                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/10">
-                    <!-- Editor with syntax highlighting -->
-                    <div class="editor-container h-64 sm:h-80 md:h-96 overflow-hidden relative bg-black/30">
-                        <div class="line-numbers mono text-xs" id="line-numbers">1</div>
-                        <div class="highlight-layer mono text-sm" id="highlight-layer"></div>
-                        <textarea id="editor" class="mono text-sm" spellcheck="false" oninput="onEditorInput()" onscroll="syncScroll()"></textarea>
-                    </div>
+                <!-- Editor (CodeMirror will mount here) -->
+                <div id="editor-panel" class="overflow-hidden bg-black/30" style="height: 280px;"></div>
 
-                    <!-- Output panel -->
-                    <div class="flex flex-col h-48 sm:h-64 md:h-96">
-                        <!-- Output tabs -->
-                        <div class="flex items-center gap-1 px-3 py-2 border-b border-white/10 bg-white/5">
-                            <button onclick="switchTab('output')" class="tab-btn px-3 py-1 text-xs rounded active" data-tab="output">Output</button>
-                            <button onclick="switchTab('formatted')" class="tab-btn px-3 py-1 text-xs rounded hidden" data-tab="formatted">Formatted</button>
-                            <button onclick="switchTab('query')" class="tab-btn px-3 py-1 text-xs rounded hidden" data-tab="query">Query</button>
-                            <button onclick="switchTab('plugin')" class="tab-btn px-3 py-1 text-xs rounded hidden" data-tab="plugin">Plugin</button>
-                            <div class="flex-1"></div>
-                            <span id="timing" class="text-xs text-white/30"></span>
-                            <button onclick="copyOutput()" class="px-2 py-1 text-xs text-white/40 hover:text-white transition" title="Copy output">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                            </button>
-                        </div>
+                <!-- Resizer -->
+                <div class="resizer" id="resizer"></div>
 
-                        <!-- Query input (hidden by default) -->
-                        <div id="query-input" class="hidden px-3 py-2 border-b border-white/10 bg-white/5">
-                            <input type="text" id="query-text" class="mono w-full bg-transparent text-sm text-white/90 placeholder-white/30" placeholder="SELECT account, SUM(position) GROUP BY account" onkeydown="if(event.key==='Enter')runQuery()">
-                        </div>
-
-                        <!-- Output content -->
-                        <div id="output-container" class="flex-1 overflow-auto">
-                            <pre id="output" class="mono text-sm text-white/70 p-4 leading-relaxed"><span class="text-white/30">Click "Check" or select a query to run...</span></pre>
-                            <pre id="formatted-output" class="mono text-sm text-white/70 p-4 leading-relaxed hidden"></pre>
-                            <div id="query-output" class="text-sm p-4 hidden overflow-x-auto"></div>
-                            <pre id="plugin-output" class="mono text-sm text-white/70 p-4 leading-relaxed hidden"></pre>
-                        </div>
-                    </div>
+                <!-- Output Header -->
+                <div class="output-tabs-container">
+                    <div class="output-tab active" data-tab="query" onclick="switchTab('query')">Query</div>
+                    <div class="flex-1"></div>
+                    <div class="output-tab" data-tab="plugin" onclick="switchTab('plugin')">Plugins</div>
+                    <div id="status-tab" class="output-tab text-green-400" data-tab="output" onclick="switchTab('output')">✓ Valid</div>
+                    <button onclick="copyOutput()" class="p-2 text-white/30 hover:text-white transition" title="Copy">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    </button>
                 </div>
 
-                <!-- Status bar -->
-                <div class="flex items-center justify-between px-4 py-2 border-t border-white/10 bg-white/5 text-xs">
-                    <span id="wasm-status" class="text-white/30">Loading WebAssembly...</span>
-                    <span id="live-status" class="text-white/30"></span>
+                <!-- Query input (shown when Query tab active) -->
+                <div id="query-input" class="px-3 py-2 border-b border-white/10 bg-white/5">
+                    <input type="text" id="query-text" class="mono w-full bg-transparent text-sm text-white/90 placeholder-white/30 outline-none" placeholder="Enter BQL query..." onkeydown="if(event.key==='Enter')runQueryFromInput()" oninput="updateQueryButtons()">
+                </div>
+
+                <!-- Query preset buttons (shown when Query tab active) -->
+                <div id="query-options" class="px-3 py-2 border-b border-white/10 bg-white/5 flex gap-2 flex-wrap">
+                    <!-- Basic queries -->
+                    <button onclick="runQueryPreset('BALANCES')" data-query="BALANCES" class="query-btn px-3 py-1 text-xs rounded transition">Balances</button>
+                    <button onclick="runQueryPreset('JOURNAL')" data-query="JOURNAL" class="query-btn px-3 py-1 text-xs rounded transition">Journal</button>
+                    <button onclick="runQueryPreset('PRINT')" data-query="PRINT" class="query-btn px-3 py-1 text-xs rounded transition">Print</button>
+                    <!-- Account type filters -->
+                    <button onclick="runQueryPreset('SELECT account, SUM(position) WHERE account ~ &quot;Expenses&quot; GROUP BY account ORDER BY SUM(position) DESC')" data-query="SELECT account, SUM(position) WHERE account ~ &quot;Expenses&quot; GROUP BY account ORDER BY SUM(position) DESC" class="query-btn px-3 py-1 text-xs rounded transition">Expenses</button>
+                    <button onclick="runQueryPreset('SELECT account, SUM(position) WHERE account ~ &quot;Income&quot; GROUP BY account')" data-query="SELECT account, SUM(position) WHERE account ~ &quot;Income&quot; GROUP BY account" class="query-btn px-3 py-1 text-xs rounded transition">Income</button>
+                    <button onclick="runQueryPreset('SELECT account, SUM(position) WHERE account ~ &quot;Assets&quot; GROUP BY account')" data-query="SELECT account, SUM(position) WHERE account ~ &quot;Assets&quot; GROUP BY account" class="query-btn px-3 py-1 text-xs rounded transition">Assets</button>
+                    <!-- Aggregations -->
+                    <button onclick="runQueryPreset('SELECT account, SUM(position) GROUP BY account ORDER BY account')" data-query="SELECT account, SUM(position) GROUP BY account ORDER BY account" class="query-btn px-3 py-1 text-xs rounded transition">By Account</button>
+                    <button onclick="runQueryPreset('SELECT narration, SUM(position) GROUP BY narration ORDER BY SUM(position) DESC LIMIT 10')" data-query="SELECT narration, SUM(position) GROUP BY narration ORDER BY SUM(position) DESC LIMIT 10" class="query-btn px-3 py-1 text-xs rounded transition">Top Txns</button>
+                    <button onclick="runQueryPreset('SELECT payee, SUM(position) WHERE account ~ &quot;Expenses&quot; GROUP BY payee ORDER BY SUM(position) DESC')" data-query="SELECT payee, SUM(position) WHERE account ~ &quot;Expenses&quot; GROUP BY payee ORDER BY SUM(position) DESC" class="query-btn px-3 py-1 text-xs rounded transition">By Payee</button>
+                    <button onclick="runQueryPreset('SELECT YEAR(date), MONTH(date), account, SUM(position) WHERE account ~ &quot;Expenses&quot; GROUP BY YEAR(date), MONTH(date), account ORDER BY YEAR(date), MONTH(date)')" data-query="SELECT YEAR(date), MONTH(date), account, SUM(position) WHERE account ~ &quot;Expenses&quot; GROUP BY YEAR(date), MONTH(date), account ORDER BY YEAR(date), MONTH(date)" class="query-btn px-3 py-1 text-xs rounded transition">Monthly</button>
+                    <!-- Detail views -->
+                    <button onclick="runQueryPreset('SELECT date, payee, narration, account, position ORDER BY date DESC LIMIT 20')" data-query="SELECT date, payee, narration, account, position ORDER BY date DESC LIMIT 20" class="query-btn px-3 py-1 text-xs rounded transition">Recent</button>
+                    <button onclick="runQueryPreset('SELECT date, account, position, balance ORDER BY date, account')" data-query="SELECT date, account, position, balance ORDER BY date, account" class="query-btn px-3 py-1 text-xs rounded transition">Ledger</button>
+                    <!-- Analysis -->
+                    <button onclick="runQueryPreset('SELECT date, narration, account, position WHERE position > 500 USD ORDER BY date DESC')" data-query="SELECT date, narration, account, position WHERE position > 500 USD ORDER BY date DESC" class="query-btn px-3 py-1 text-xs rounded transition">Large</button>
+                    <button onclick="runQueryPreset('SELECT * WHERE account ~ &quot;Liabilities&quot;')" data-query="SELECT * WHERE account ~ &quot;Liabilities&quot;" class="query-btn px-3 py-1 text-xs rounded transition">Liabilities</button>
+                    <button onclick="runQueryPreset('SELECT DISTINCT payee ORDER BY payee')" data-query="SELECT DISTINCT payee ORDER BY payee" class="query-btn px-3 py-1 text-xs rounded transition">Payees</button>
+                </div>
+
+                <!-- Plugin options (shown when Plugin tab active) -->
+                <div id="plugin-options" class="hidden px-3 py-2 border-b border-white/10 bg-white/5 flex gap-2 flex-wrap">
+                    <button onclick="togglePlugin('implicit_prices')" data-plugin="implicit_prices" class="plugin-btn px-3 py-1 text-xs rounded transition">implicit_prices</button>
+                    <button onclick="togglePlugin('auto_accounts')" data-plugin="auto_accounts" class="plugin-btn px-3 py-1 text-xs rounded transition">auto_accounts</button>
+                    <button onclick="togglePlugin('check_commodity')" data-plugin="check_commodity" class="plugin-btn px-3 py-1 text-xs rounded transition">check_commodity</button>
+                    <button onclick="togglePlugin('auto_tag')" data-plugin="auto_tag" class="plugin-btn px-3 py-1 text-xs rounded transition">auto_tag</button>
+                    <button onclick="togglePlugin('leafonly')" data-plugin="leafonly" class="plugin-btn px-3 py-1 text-xs rounded transition">leafonly</button>
+                    <button onclick="togglePlugin('noduplicates')" data-plugin="noduplicates" class="plugin-btn px-3 py-1 text-xs rounded transition">noduplicates</button>
+                    <button onclick="togglePlugin('onecommodity')" data-plugin="onecommodity" class="plugin-btn px-3 py-1 text-xs rounded transition">onecommodity</button>
+                    <button onclick="togglePlugin('unique_prices')" data-plugin="unique_prices" class="plugin-btn px-3 py-1 text-xs rounded transition">unique_prices</button>
+                    <button onclick="togglePlugin('check_closing')" data-plugin="check_closing" class="plugin-btn px-3 py-1 text-xs rounded transition">check_closing</button>
+                    <button onclick="togglePlugin('close_tree')" data-plugin="close_tree" class="plugin-btn px-3 py-1 text-xs rounded transition">close_tree</button>
+                    <button onclick="togglePlugin('coherent_cost')" data-plugin="coherent_cost" class="plugin-btn px-3 py-1 text-xs rounded transition">coherent_cost</button>
+                    <button onclick="togglePlugin('sellgains')" data-plugin="sellgains" class="plugin-btn px-3 py-1 text-xs rounded transition">sellgains</button>
+                    <button onclick="togglePlugin('pedantic')" data-plugin="pedantic" class="plugin-btn px-3 py-1 text-xs rounded transition">pedantic</button>
+                    <button onclick="togglePlugin('unrealized')" data-plugin="unrealized" class="plugin-btn px-3 py-1 text-xs rounded transition">unrealized</button>
+                </div>
+
+                <!-- Output Content -->
+                <div id="output-panel" class="overflow-auto bg-black/20" style="height: 160px;">
+                    <pre id="output" class="mono text-sm text-white/70 p-3 leading-relaxed"><span class="text-white/30">Ready</span></pre>
+                    <div id="query-output" class="text-sm p-3 hidden overflow-x-auto"></div>
+                </div>
+
+                <!-- Footer -->
+                <div class="flex items-center gap-2 px-3 py-2 border-t border-white/10 bg-white/5">
+                    <div class="flex-1"></div>
+                    <span id="footer-status" class="text-xs text-white/30">Loading...</span>
                 </div>
             </div>
         </div>
@@ -245,8 +316,8 @@
                     <div class="text-white/40 text-sm">Booking methods</div>
                 </div>
                 <div>
-                    <div class="text-4xl font-bold mb-2">0</div>
-                    <div class="text-white/40 text-sm">Dependencies</div>
+                    <div class="text-4xl font-bold mb-2">100%</div>
+                    <div class="text-white/40 text-sm">Plain text</div>
                 </div>
             </div>
         </div>
@@ -334,8 +405,13 @@
         <div class="max-w-3xl mx-auto text-center">
             <h2 class="text-3xl font-bold mb-4">Ready to switch?</h2>
             <p class="text-white/50 mb-8">One command. No configuration.</p>
-            <div class="mono inline-block bg-white/5 border border-white/10 px-6 py-3 rounded text-white/80">
-                <span class="text-white/40">$</span> cargo install rustledger
+            <div class="flex flex-col gap-3 items-center">
+                <div class="mono inline-block bg-white/5 border border-white/10 px-6 py-3 rounded text-white/80">
+                    <span class="text-white/40">$</span> curl -sSf https://rustledger.github.io/install.sh | sh
+                </div>
+                <div class="mono inline-block bg-white/5 border border-white/10 px-4 py-2 rounded text-white/60 text-sm">
+                    <span class="text-white/30">or</span> cargo install rustledger
+                </div>
             </div>
         </div>
     </section>
@@ -352,659 +428,6 @@
         </div>
     </footer>
 
-    <!-- WASM Module -->
-    <script type="module">
-        import init, { validate_source, query, format, list_plugins, run_plugin, balances, version } from './pkg/rustledger_wasm.js?v=1.0.0-rc.2-fix1';
-
-        const examples = {
-            simple: `; Simple beancount example
-; Note: missing amounts are auto-calculated!
-
-option "title" "My Ledger"
-
-2024-01-01 open Assets:Bank:Checking USD
-2024-01-01 open Expenses:Food USD
-2024-01-01 open Equity:Opening USD
-
-2024-01-01 * "Opening balance"
-  Assets:Bank:Checking  1000.00 USD
-  Equity:Opening  ; <- auto-filled as -1000.00 USD
-
-2024-01-15 * "Grocery Store" "Weekly groceries"
-  Expenses:Food         85.50 USD
-  Assets:Bank:Checking  ; <- auto-filled
-
-2024-01-20 * "Coffee Shop" "Morning coffee"
-  Expenses:Food          5.25 USD
-  Assets:Bank:Checking
-
-2024-01-31 balance Assets:Bank:Checking 909.25 USD`,
-            portfolio: `; Investment portfolio example
-option "operating_currency" "USD"
-
-2024-01-01 open Assets:Brokerage:Cash USD
-2024-01-01 open Assets:Brokerage:AAPL AAPL
-2024-01-01 open Assets:Brokerage:GOOGL GOOGL
-2024-01-01 open Income:Dividends USD
-2024-01-01 open Equity:Opening USD
-
-2024-01-01 * "Initial deposit"
-  Assets:Brokerage:Cash  10000.00 USD
-  Equity:Opening
-
-2024-01-15 * "Buy Apple stock"
-  Assets:Brokerage:AAPL    10 AAPL {185.00 USD}
-  Assets:Brokerage:Cash  -1850.00 USD
-
-2024-02-01 * "Buy Google stock"
-  Assets:Brokerage:GOOGL    5 GOOGL {140.00 USD}
-  Assets:Brokerage:Cash  -700.00 USD
-
-2024-02-15 * "AAPL dividend"
-  Assets:Brokerage:Cash    2.40 USD
-  Income:Dividends
-
-2024-03-01 price AAPL 190.00 USD
-2024-03-01 price GOOGL 145.00 USD`,
-            advanced: `; Advanced: Multi-currency, tags, links, pad
-option "operating_currency" "USD"
-
-; Declare commodities
-2024-01-01 commodity USD
-2024-01-01 commodity EUR
-2024-01-01 commodity BTC
-
-; Open accounts
-2024-01-01 open Assets:Bank:Checking USD
-2024-01-01 open Assets:Bank:Savings USD
-2024-01-01 open Assets:Crypto:Coinbase BTC
-2024-01-01 open Assets:Receivables:Alice USD
-2024-01-01 open Liabilities:CreditCard USD
-2024-01-01 open Expenses:Travel USD
-2024-01-01 open Expenses:Food USD
-2024-01-01 open Expenses:Crypto USD
-2024-01-01 open Income:Salary USD
-2024-01-01 open Income:Gifts USD
-2024-01-01 open Equity:Opening USD
-
-; Opening balances with pad
-2024-01-01 pad Assets:Bank:Checking Equity:Opening
-2024-01-02 balance Assets:Bank:Checking 5000.00 USD
-
-; Salary with tags
-2024-01-15 * "Acme Corp" "January salary" #income
-  Assets:Bank:Checking  4200.00 USD
-  Income:Salary
-
-; Vacation expenses with links
-2024-02-01 * "Delta Airlines" "Flight to Paris" #vacation ^paris-trip
-  Expenses:Travel  850.00 USD
-  Liabilities:CreditCard
-
-2024-02-02 * "Hotel & meals" #vacation ^paris-trip
-  Expenses:Travel  320.00 USD
-  Expenses:Food    180.00 USD
-  Liabilities:CreditCard
-
-; Pay credit card
-2024-02-15 * "Credit card payment" ^paris-trip
-  Liabilities:CreditCard  1350.00 USD
-  Assets:Bank:Checking
-
-; Buy Bitcoin with cost basis
-2024-03-01 * "Buy BTC on Coinbase"
-  Assets:Crypto:Coinbase  0.05 BTC {42000.00 USD}
-  Expenses:Crypto         10.00 USD
-  Assets:Bank:Checking   -2110.00 USD
-
-; Friend pays back loan
-2024-03-10 * "Alice" "Repaid dinner loan"
-  Assets:Bank:Checking    45.00 USD
-  Assets:Receivables:Alice
-
-; Price updates for reporting
-2024-03-15 price BTC 45000.00 USD
-2024-03-15 price EUR 1.08 USD
-
-; Monthly balance check
-2024-03-31 balance Assets:Bank:Checking 5785.00 USD
-2024-03-31 balance Assets:Crypto:Coinbase 0.05 BTC`,
-            error: `; Example with intentional errors
-
-2024-01-01 open Assets:Bank USD
-2024-01-01 open Expenses:Food USD
-
-; Error: unbalanced transaction (5 USD missing)
-2024-01-15 * "Lunch"
-  Expenses:Food   15.00 USD
-  Assets:Bank    -10.00 USD
-
-; Error: balance assertion fails (-15 != 500)
-2024-01-20 balance Assets:Bank 500.00 USD`
-        };
-
-        let wasmReady = false;
-        let errorLines = new Set();
-        let liveValidationTimeout = null;
-        let currentOutputText = '';
-
-        async function initWasm() {
-            try {
-                await init('./pkg/rustledger_wasm_bg.wasm?v=1.0.0-rc.2-fix1');
-                wasmReady = true;
-                document.getElementById('wasm-status').textContent = `Ready (rustledger v${version()})`;
-                document.getElementById('wasm-status').classList.remove('text-white/30');
-                document.getElementById('wasm-status').classList.add('text-green-400/60');
-
-                // Initialize editor with simple example
-                loadExample('simple');
-
-                // Load from URL if present
-                loadFromUrl();
-            } catch (e) {
-                document.getElementById('wasm-status').textContent = `Failed to load: ${e.message}`;
-                document.getElementById('wasm-status').classList.add('text-red-400/60');
-            }
-        }
-
-        // Syntax highlighting
-        function highlightSyntax(code) {
-            errorLines.clear();
-
-            return code.split('\n').map((line, idx) => {
-                let highlighted = escapeHtml(line);
-
-                // Comments
-                if (line.trim().startsWith(';')) {
-                    return `<span class="syn-comment">${highlighted}</span>`;
-                }
-
-                // Option directive
-                if (line.trim().startsWith('option')) {
-                    highlighted = highlighted.replace(/^(\s*)(option)/, '$1<span class="syn-option">$2</span>');
-                }
-
-                // Date at start of line (directive)
-                highlighted = highlighted.replace(/^(\d{4}-\d{2}-\d{2})(\s+)(\*|!|txn|open|close|balance|pad|event|note|document|commodity|price|query|custom)/,
-                    '<span class="syn-date">$1</span>$2<span class="syn-directive">$3</span>');
-
-                // Standalone date
-                highlighted = highlighted.replace(/^(\d{4}-\d{2}-\d{2})/, '<span class="syn-date">$1</span>');
-
-                // Accounts (multi-segment)
-                highlighted = highlighted.replace(/\b(Assets|Liabilities|Equity|Income|Expenses)(:[A-Za-z0-9_-]+)+/g, '<span class="syn-account">$&</span>');
-
-                // Amounts with currency
-                highlighted = highlighted.replace(/(-?\d+\.?\d*)\s+([A-Z]{2,})/g, '<span class="syn-amount">$1</span> <span class="syn-currency">$2</span>');
-
-                // Cost specs
-                highlighted = highlighted.replace(/\{([^}]+)\}/g, '{<span class="syn-amount">$1</span>}');
-
-                // Strings
-                highlighted = highlighted.replace(/"([^"]*)"/g, '<span class="syn-string">"$1"</span>');
-
-                // Tags
-                highlighted = highlighted.replace(/#([a-zA-Z0-9_-]+)/g, '<span class="syn-tag">#$1</span>');
-
-                // Links
-                highlighted = highlighted.replace(/\^([a-zA-Z0-9_-]+)/g, '<span class="syn-link">^$1</span>');
-
-                return highlighted;
-            }).join('\n');
-        }
-
-        function updateHighlight() {
-            const editor = document.getElementById('editor');
-            const highlightLayer = document.getElementById('highlight-layer');
-            const lineNumbers = document.getElementById('line-numbers');
-
-            const code = editor.value;
-            const lines = code.split('\n');
-
-            // Update line numbers
-            lineNumbers.innerHTML = lines.map((_, i) => {
-                const lineNum = i + 1;
-                const isError = errorLines.has(lineNum);
-                return `<div class="${isError ? 'text-red-400' : ''}">${lineNum}</div>`;
-            }).join('');
-
-            // Update syntax highlighting with error lines
-            let highlighted = code.split('\n').map((line, idx) => {
-                let lineHtml = highlightLine(line);
-                if (errorLines.has(idx + 1)) {
-                    lineHtml = `<span class="error-line">${lineHtml}</span>`;
-                }
-                return lineHtml;
-            }).join('\n');
-
-            highlightLayer.innerHTML = highlighted + '\n'; // Extra newline for cursor at end
-        }
-
-        function highlightLine(line) {
-            // Comments - highlight entire line
-            if (line.trim().startsWith(';')) {
-                return `<span class="syn-comment">${escapeHtml(line)}</span>`;
-            }
-
-            // Tokenize first, then highlight each token
-            const tokens = [];
-            let remaining = line;
-            let pos = 0;
-
-            // Token patterns (order matters - more specific first)
-            const patterns = [
-                { regex: /^(\d{4}-\d{2}-\d{2})/, type: 'date' },
-                { regex: /^(\*|!|txn|open|close|balance|pad|event|note|document|commodity|price|query|custom|option)\b/, type: 'directive' },
-                { regex: /^(Assets|Liabilities|Equity|Income|Expenses)(:[A-Za-z0-9_-]+)+/, type: 'account' },
-                { regex: /^"[^"]*"/, type: 'string' },
-                { regex: /^#[a-zA-Z0-9_-]+/, type: 'tag' },
-                { regex: /^\^[a-zA-Z0-9_-]+/, type: 'link' },
-                { regex: /^-?\d+\.?\d*\s+[A-Z]{2,}\b/, type: 'amount' },
-                { regex: /^\{[^}]+\}/, type: 'cost' },
-                { regex: /^[A-Z]{2,}\b/, type: 'currency' },
-                { regex: /^\s+/, type: 'space' },
-                { regex: /^[^\s"#^{}\d]+/, type: 'text' },
-                { regex: /^./, type: 'text' }
-            ];
-
-            while (remaining.length > 0) {
-                let matched = false;
-                for (const pattern of patterns) {
-                    const match = remaining.match(pattern.regex);
-                    if (match) {
-                        tokens.push({ text: match[0], type: pattern.type });
-                        remaining = remaining.slice(match[0].length);
-                        matched = true;
-                        break;
-                    }
-                }
-                if (!matched) {
-                    tokens.push({ text: remaining[0], type: 'text' });
-                    remaining = remaining.slice(1);
-                }
-            }
-
-            // Build highlighted output
-            return tokens.map(token => {
-                const escaped = escapeHtml(token.text);
-                switch (token.type) {
-                    case 'date': return `<span class="syn-date">${escaped}</span>`;
-                    case 'directive': return `<span class="syn-directive">${escaped}</span>`;
-                    case 'account': return `<span class="syn-account">${escaped}</span>`;
-                    case 'string': return `<span class="syn-string">${escaped}</span>`;
-                    case 'tag': return `<span class="syn-tag">${escaped}</span>`;
-                    case 'link': return `<span class="syn-link">${escaped}</span>`;
-                    case 'amount': {
-                        const parts = token.text.match(/^(-?\d+\.?\d*)\s+([A-Z]{2,})$/);
-                        if (parts) {
-                            return `<span class="syn-amount">${escapeHtml(parts[1])}</span> <span class="syn-currency">${escapeHtml(parts[2])}</span>`;
-                        }
-                        return escaped;
-                    }
-                    case 'cost': return `{<span class="syn-amount">${escapeHtml(token.text.slice(1, -1))}</span>}`;
-                    case 'currency': return `<span class="syn-currency">${escaped}</span>`;
-                    default: return escaped;
-                }
-            }).join('');
-        }
-
-        window.syncScroll = function() {
-            const editor = document.getElementById('editor');
-            const highlightLayer = document.getElementById('highlight-layer');
-            const lineNumbers = document.getElementById('line-numbers');
-
-            highlightLayer.scrollTop = editor.scrollTop;
-            highlightLayer.scrollLeft = editor.scrollLeft;
-            lineNumbers.scrollTop = editor.scrollTop;
-        };
-
-        window.onEditorInput = function() {
-            updateHighlight();
-
-            // Debounced live validation
-            clearTimeout(liveValidationTimeout);
-            liveValidationTimeout = setTimeout(() => {
-                if (wasmReady) {
-                    liveValidate();
-                }
-            }, 500);
-        };
-
-        function liveValidate() {
-            const source = document.getElementById('editor').value;
-            const liveStatus = document.getElementById('live-status');
-
-            try {
-                const start = performance.now();
-                const result = validate_source(source);
-                const elapsed = (performance.now() - start).toFixed(1);
-
-                errorLines.clear();
-                if (result.valid) {
-                    liveStatus.textContent = `✓ Valid (${elapsed}ms)`;
-                    liveStatus.className = 'text-green-400/60 text-xs';
-                } else {
-                    result.errors.forEach(e => {
-                        if (e.line) errorLines.add(e.line);
-                    });
-                    liveStatus.textContent = `${result.errors.length} error${result.errors.length > 1 ? 's' : ''} (${elapsed}ms)`;
-                    liveStatus.className = 'text-red-400/60 text-xs';
-                }
-                updateHighlight();
-            } catch (e) {
-                liveStatus.textContent = '';
-            }
-        }
-
-        window.runFormat = function() {
-            if (!wasmReady) return;
-            const editor = document.getElementById('editor');
-
-            try {
-                const start = performance.now();
-                const result = format(editor.value);
-                const elapsed = (performance.now() - start).toFixed(1);
-
-                showTiming(`Formatted in ${elapsed}ms`);
-
-                if (result.formatted) {
-                    // Show diff in formatted tab
-                    showTab('formatted');
-                    document.getElementById('formatted-output').innerHTML =
-                        '<span class="text-green-400">✓ Formatted successfully</span>\n\n' +
-                        escapeHtml(result.formatted);
-                    currentOutputText = result.formatted;
-
-                    // Update editor
-                    editor.value = result.formatted;
-                    updateHighlight();
-                } else {
-                    showTab('output');
-                    const errors = result.errors.map(e =>
-                        `<span class="text-red-400">Line ${e.line || '?'}:</span> ${escapeHtml(e.message)}`
-                    ).join('\n');
-                    document.getElementById('output').innerHTML = errors;
-                    currentOutputText = result.errors.map(e => `Line ${e.line || '?'}: ${e.message}`).join('\n');
-                }
-            } catch (e) {
-                showTab('output');
-                document.getElementById('output').innerHTML = `<span class="text-red-400">Error:</span> ${escapeHtml(e.message)}`;
-                currentOutputText = `Error: ${e.message}`;
-            }
-        };
-
-        window.runCheck = function() {
-            if (!wasmReady) return;
-            const source = document.getElementById('editor').value;
-
-            try {
-                const start = performance.now();
-                const result = validate_source(source);
-                const elapsed = (performance.now() - start).toFixed(1);
-
-                // Count directives (rough estimate)
-                const directives = source.split('\n').filter(l => /^\d{4}-\d{2}-\d{2}/.test(l.trim())).length;
-                showTiming(`${directives} directives in ${elapsed}ms`);
-
-                showTab('output');
-                errorLines.clear();
-
-                if (result.valid) {
-                    document.getElementById('output').innerHTML = '<span class="text-green-400">✓ No errors found</span>';
-                    currentOutputText = '✓ No errors found';
-                } else {
-                    result.errors.forEach(e => {
-                        if (e.line) errorLines.add(e.line);
-                    });
-                    const errors = result.errors.map(e =>
-                        `<span class="text-red-400">Line ${e.line || '?'}:</span> ${escapeHtml(e.message)}`
-                    ).join('\n');
-                    document.getElementById('output').innerHTML = errors;
-                    currentOutputText = result.errors.map(e => `Line ${e.line || '?'}: ${e.message}`).join('\n');
-                }
-
-                updateHighlight();
-            } catch (e) {
-                showTab('output');
-                document.getElementById('output').innerHTML = `<span class="text-red-400">Error:</span> ${escapeHtml(e.message)}`;
-                currentOutputText = `Error: ${e.message}`;
-            }
-        };
-
-        window.runQueryPreset = function() {
-            const select = document.getElementById('query-select');
-            const value = select.value;
-
-            if (value === 'custom') {
-                document.getElementById('query-input').classList.remove('hidden');
-                document.getElementById('query-text').focus();
-                select.value = '';
-            } else if (value) {
-                document.getElementById('query-input').classList.add('hidden');
-                runQueryWithString(value);
-                select.value = '';
-            }
-        };
-
-        window.runQuery = function() {
-            const queryStr = document.getElementById('query-text').value || 'BALANCES';
-            runQueryWithString(queryStr);
-        };
-
-        function runQueryWithString(queryStr) {
-            if (!wasmReady) return;
-            const source = document.getElementById('editor').value;
-
-            try {
-                const start = performance.now();
-                const result = query(source, queryStr);
-                const elapsed = (performance.now() - start).toFixed(1);
-
-                showTab('query');
-
-                if (result.errors && result.errors.length > 0) {
-                    const errors = result.errors.map(e =>
-                        `<span class="text-red-400">Error:</span> ${escapeHtml(e.message)}`
-                    ).join('\n');
-                    document.getElementById('query-output').innerHTML = `<pre class="text-sm">${errors}</pre>`;
-                    currentOutputText = result.errors.map(e => `Error: ${e.message}`).join('\n');
-                    showTiming(`Query failed`);
-                } else {
-                    showTiming(`${result.rows.length} rows in ${elapsed}ms`);
-
-                    // Build HTML table
-                    let html = '<table class="result-table"><thead><tr>';
-                    for (const col of result.columns) {
-                        html += `<th>${escapeHtml(col)}</th>`;
-                    }
-                    html += '</tr></thead><tbody>';
-
-                    for (const row of result.rows) {
-                        html += '<tr>';
-                        for (const cell of row) {
-                            html += `<td>${formatCell(cell)}</td>`;
-                        }
-                        html += '</tr>';
-                    }
-                    html += '</tbody></table>';
-
-                    if (result.rows.length === 0) {
-                        html = '<span class="text-white/50">No results</span>';
-                    }
-
-                    document.getElementById('query-output').innerHTML = html;
-
-                    // Plain text for copy
-                    currentOutputText = result.columns.join('\t') + '\n' +
-                        result.rows.map(row => row.map(c => formatCellPlain(c)).join('\t')).join('\n');
-                }
-            } catch (e) {
-                showTab('query');
-                document.getElementById('query-output').innerHTML = `<pre class="text-red-400">Error: ${escapeHtml(e.message)}</pre>`;
-                currentOutputText = `Error: ${e.message}`;
-            }
-        }
-
-        window.runPluginPreset = function() {
-            const select = document.getElementById('plugin-select');
-            const value = select.value;
-
-            if (value) {
-                runPluginWithName(value);
-                select.value = '';
-            }
-        };
-
-        function runPluginWithName(pluginName) {
-            if (!wasmReady) return;
-            const source = document.getElementById('editor').value;
-
-            try {
-                const start = performance.now();
-                const result = run_plugin(source, pluginName);
-                const elapsed = (performance.now() - start).toFixed(1);
-
-                showTab('plugin');
-                showTiming(`Plugin ran in ${elapsed}ms`);
-
-                if (result.errors && result.errors.length > 0) {
-                    const errors = result.errors.map(e => {
-                        const severity = e.severity === 'warning' ? 'text-yellow-400' : 'text-red-400';
-                        return `<span class="${severity}">${e.severity}:</span> ${escapeHtml(e.message)}`;
-                    }).join('\n');
-                    document.getElementById('plugin-output').innerHTML =
-                        `<span class="text-white/50">Plugin: ${pluginName}</span>\n\n` + errors;
-                } else {
-                    document.getElementById('plugin-output').innerHTML =
-                        `<span class="text-white/50">Plugin: ${pluginName}</span>\n` +
-                        `<span class="text-green-400">✓ ${result.directives.length} directives processed</span>`;
-                }
-
-                currentOutputText = `Plugin: ${pluginName}\n${result.directives.length} directives processed`;
-            } catch (e) {
-                showTab('plugin');
-                document.getElementById('plugin-output').innerHTML = `<span class="text-red-400">Error:</span> ${escapeHtml(e.message)}`;
-                currentOutputText = `Error: ${e.message}`;
-            }
-        }
-
-        window.loadExample = function(name) {
-            const editor = document.getElementById('editor');
-            editor.value = examples[name];
-            updateHighlight();
-
-            showTab('output');
-            document.getElementById('output').innerHTML = '<span class="text-white/30">Click "Check" or select a query to run...</span>';
-            document.getElementById('timing').textContent = '';
-            document.getElementById('live-status').textContent = '';
-            errorLines.clear();
-
-            // Trigger live validation
-            setTimeout(() => liveValidate(), 100);
-        };
-
-        window.shareUrl = function() {
-            const source = document.getElementById('editor').value;
-            const encoded = btoa(encodeURIComponent(source));
-            const url = `${window.location.origin}${window.location.pathname}?code=${encoded}`;
-
-            navigator.clipboard.writeText(url).then(() => {
-                const btn = event.target.closest('button');
-                const originalHtml = btn.innerHTML;
-                btn.innerHTML = '✓';
-                setTimeout(() => btn.innerHTML = originalHtml, 1500);
-            });
-        };
-
-        function loadFromUrl() {
-            const params = new URLSearchParams(window.location.search);
-            const code = params.get('code');
-            if (code) {
-                try {
-                    const decoded = decodeURIComponent(atob(code));
-                    document.getElementById('editor').value = decoded;
-                    updateHighlight();
-                    setTimeout(() => liveValidate(), 100);
-                } catch (e) {
-                    console.error('Failed to decode URL:', e);
-                }
-            }
-        }
-
-        window.copyOutput = function() {
-            navigator.clipboard.writeText(currentOutputText).then(() => {
-                const btn = event.target.closest('button');
-                const originalHtml = btn.innerHTML;
-                btn.innerHTML = '✓';
-                setTimeout(() => btn.innerHTML = originalHtml, 1500);
-            });
-        };
-
-        function showTab(tabName) {
-            // Update tab buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.tab === tabName) {
-                    btn.classList.add('active');
-                    btn.classList.remove('hidden');
-                }
-            });
-
-            // Show corresponding content
-            document.getElementById('output').classList.add('hidden');
-            document.getElementById('formatted-output').classList.add('hidden');
-            document.getElementById('query-output').classList.add('hidden');
-            document.getElementById('plugin-output').classList.add('hidden');
-
-            const outputId = tabName === 'output' ? 'output' : `${tabName}-output`;
-            document.getElementById(outputId).classList.remove('hidden');
-        }
-
-        window.switchTab = function(tabName) {
-            showTab(tabName);
-        };
-
-        function showTiming(text) {
-            document.getElementById('timing').textContent = text;
-        }
-
-        function formatCell(cell) {
-            if (cell === null) return '<span class="text-white/30">-</span>';
-            if (typeof cell === 'object') {
-                if (cell.number && cell.currency) {
-                    return `<span class="syn-amount">${cell.number}</span> <span class="syn-currency">${cell.currency}</span>`;
-                }
-                if (cell.positions) {
-                    return cell.positions.map(p =>
-                        `<span class="syn-amount">${p.units.number}</span> <span class="syn-currency">${p.units.currency}</span>`
-                    ).join('<br>');
-                }
-                return escapeHtml(JSON.stringify(cell));
-            }
-            return escapeHtml(String(cell));
-        }
-
-        function formatCellPlain(cell) {
-            if (cell === null) return '-';
-            if (typeof cell === 'object') {
-                if (cell.number && cell.currency) {
-                    return `${cell.number} ${cell.currency}`;
-                }
-                if (cell.positions) {
-                    return cell.positions.map(p => `${p.units.number} ${p.units.currency}`).join(', ');
-                }
-                return JSON.stringify(cell);
-            }
-            return String(cell);
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        initWasm();
-    </script>
+    <script type="module" src="/src/main.js"></script>
 </body>
 </html>

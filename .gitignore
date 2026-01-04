@@ -1,4 +1,22 @@
-.DS_Store
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Nix
+result
+.direnv/
+
+# Editor
 *.swp
 *.swo
 *~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
