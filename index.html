@@ -630,7 +630,7 @@ option "operating_currency" "USD"
             }).join('');
         }
 
-        function syncScroll() {
+        window.syncScroll = function() {
             const editor = document.getElementById('editor');
             const highlightLayer = document.getElementById('highlight-layer');
             const lineNumbers = document.getElementById('line-numbers');
@@ -638,7 +638,7 @@ option "operating_currency" "USD"
             highlightLayer.scrollTop = editor.scrollTop;
             highlightLayer.scrollLeft = editor.scrollLeft;
             lineNumbers.scrollTop = editor.scrollTop;
-        }
+        };
 
         window.onEditorInput = function() {
             updateHighlight();
