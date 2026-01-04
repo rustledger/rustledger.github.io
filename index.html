@@ -240,7 +240,7 @@ option "title" "My Ledger"
 
     <!-- WASM Module -->
     <script type="module">
-        import init, { validate_source, query, format, list_plugins, run_plugin, balances, version } from './pkg/rustledger_wasm.js?v=1.0.0-rc.2';
+        import init, { validate_source, query, format, list_plugins, run_plugin, balances, version } from './pkg/rustledger_wasm.js?v=1.0.0-rc.2-fix1';
 
         const examples = {
             simple: `; Simple beancount example
@@ -310,7 +310,7 @@ option "operating_currency" "USD"
 
         async function initWasm() {
             try {
-                await init('./pkg/rustledger_wasm_bg.wasm?v=1.0.0-rc.2');
+                await init('./pkg/rustledger_wasm_bg.wasm?v=1.0.0-rc.2-fix1');
                 wasmReady = true;
                 document.getElementById('wasm-status').textContent = `Ready (rustledger v${version()})`;
                 document.getElementById('wasm-status').classList.remove('text-white/30');
