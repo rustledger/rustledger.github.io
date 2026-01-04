@@ -92,10 +92,14 @@ option "title" "My Ledger"
   Equity:Opening       -1000.00 USD
 
 2024-01-15 * "Grocery Store" "Weekly groceries"
-  Expenses:Food         85.50 USD
-  Assets:Bank:Checking
+  Expenses:Food          85.50 USD
+  Assets:Bank:Checking  -85.50 USD
 
-2024-01-20 balance Assets:Bank:Checking 914.50 USD</textarea>
+2024-01-20 * "Coffee Shop" "Morning coffee"
+  Expenses:Food           5.25 USD
+  Assets:Bank:Checking   -5.25 USD
+
+2024-01-31 balance Assets:Bank:Checking 909.25 USD</textarea>
                     </div>
                     <div class="relative">
                         <div id="query-input" class="hidden px-4 py-2 border-b border-white/10 bg-white/5">
@@ -250,10 +254,14 @@ option "title" "My Ledger"
   Equity:Opening       -1000.00 USD
 
 2024-01-15 * "Grocery Store" "Weekly groceries"
-  Expenses:Food         85.50 USD
-  Assets:Bank:Checking
+  Expenses:Food          85.50 USD
+  Assets:Bank:Checking  -85.50 USD
 
-2024-01-20 balance Assets:Bank:Checking 914.50 USD`,
+2024-01-20 * "Coffee Shop" "Morning coffee"
+  Expenses:Food           5.25 USD
+  Assets:Bank:Checking   -5.25 USD
+
+2024-01-31 balance Assets:Bank:Checking 909.25 USD`,
             portfolio: `; Investment portfolio example
 option "operating_currency" "USD"
 
@@ -264,8 +272,8 @@ option "operating_currency" "USD"
 2024-01-01 open Equity:Opening USD
 
 2024-01-01 * "Initial deposit"
-  Assets:Brokerage:Cash  10000.00 USD
-  Equity:Opening
+  Assets:Brokerage:Cash   10000.00 USD
+  Equity:Opening         -10000.00 USD
 
 2024-01-15 * "Buy Apple stock"
   Assets:Brokerage:AAPL    10 AAPL {185.00 USD}
@@ -277,25 +285,22 @@ option "operating_currency" "USD"
 
 2024-02-15 * "AAPL dividend"
   Assets:Brokerage:Cash    2.40 USD
-  Income:Dividends
+  Income:Dividends        -2.40 USD
 
 2024-03-01 price AAPL 190.00 USD
 2024-03-01 price GOOGL 145.00 USD`,
             error: `; Example with intentional errors
+
 2024-01-01 open Assets:Bank USD
+2024-01-01 open Expenses:Food USD
 
-; Error: account not opened
-2024-01-15 * "Coffee"
-  Expenses:Food  5.00 USD
-  Assets:Bank   -5.00 USD
+; Error: unbalanced transaction (5 USD missing)
+2024-01-15 * "Lunch"
+  Expenses:Food   15.00 USD
+  Assets:Bank    -10.00 USD
 
-; Error: unbalanced transaction
-2024-01-20 * "Lunch"
-  Expenses:Food  15.00 USD
-  Assets:Bank  -10.00 USD
-
-; Error: wrong balance
-2024-01-25 balance Assets:Bank 100.00 USD`
+; Error: balance assertion fails
+2024-01-20 balance Assets:Bank 500.00 USD`
         };
 
         let wasmReady = false;
