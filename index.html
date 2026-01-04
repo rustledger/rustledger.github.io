@@ -67,6 +67,7 @@
                     <div class="flex gap-2">
                         <button onclick="loadExample('simple')" class="example-btn px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 rounded transition" data-example="simple">Simple</button>
                         <button onclick="loadExample('portfolio')" class="example-btn px-3 py-1 text-sm bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 rounded transition" data-example="portfolio">Portfolio</button>
+                        <button onclick="loadExample('advanced')" class="example-btn px-3 py-1 text-sm bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded transition" data-example="advanced">Advanced</button>
                         <button onclick="loadExample('error')" class="example-btn px-3 py-1 text-sm bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded transition" data-example="error">Errors</button>
                     </div>
                     <div class="flex gap-2">
@@ -292,6 +293,69 @@ option "operating_currency" "USD"
 
 2024-03-01 price AAPL 190.00 USD
 2024-03-01 price GOOGL 145.00 USD`,
+            advanced: `; Advanced: Multi-currency, tags, links, pad
+option "operating_currency" "USD"
+
+; Declare commodities
+2024-01-01 commodity USD
+2024-01-01 commodity EUR
+2024-01-01 commodity BTC
+
+; Open accounts
+2024-01-01 open Assets:Bank:Checking USD
+2024-01-01 open Assets:Bank:Savings USD
+2024-01-01 open Assets:Crypto:Coinbase BTC
+2024-01-01 open Assets:Receivables:Alice USD
+2024-01-01 open Liabilities:CreditCard USD
+2024-01-01 open Expenses:Travel USD
+2024-01-01 open Expenses:Food USD
+2024-01-01 open Expenses:Crypto USD
+2024-01-01 open Income:Salary USD
+2024-01-01 open Income:Gifts USD
+2024-01-01 open Equity:Opening USD
+
+; Opening balances with pad
+2024-01-01 pad Assets:Bank:Checking Equity:Opening
+2024-01-02 balance Assets:Bank:Checking 5000.00 USD
+
+; Salary with tags
+2024-01-15 * "Acme Corp" "January salary" #income
+  Assets:Bank:Checking  4200.00 USD
+  Income:Salary
+
+; Vacation expenses with links
+2024-02-01 * "Delta Airlines" "Flight to Paris" #vacation ^paris-trip
+  Expenses:Travel  850.00 USD
+  Liabilities:CreditCard
+
+2024-02-02 * "Hotel & meals" #vacation ^paris-trip
+  Expenses:Travel  320.00 USD
+  Expenses:Food    180.00 USD
+  Liabilities:CreditCard
+
+; Pay credit card
+2024-02-15 * "Credit card payment" ^paris-trip
+  Liabilities:CreditCard  1350.00 USD
+  Assets:Bank:Checking
+
+; Buy Bitcoin with cost basis
+2024-03-01 * "Buy BTC on Coinbase"
+  Assets:Crypto:Coinbase  0.05 BTC {42000.00 USD}
+  Expenses:Crypto         10.00 USD
+  Assets:Bank:Checking   -2110.00 USD
+
+; Friend pays back loan
+2024-03-10 * "Alice" "Repaid dinner loan"
+  Assets:Bank:Checking    45.00 USD
+  Assets:Receivables:Alice
+
+; Price updates for reporting
+2024-03-15 price BTC 45000.00 USD
+2024-03-15 price EUR 1.08 USD
+
+; Monthly balance check
+2024-03-31 balance Assets:Bank:Checking 5985.00 USD
+2024-03-31 balance Assets:Crypto:Coinbase 0.05 BTC`,
             error: `; Example with intentional errors
 
 2024-01-01 open Assets:Bank USD
