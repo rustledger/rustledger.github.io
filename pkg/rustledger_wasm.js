@@ -132,7 +132,7 @@ export function parse(source) {
 /**
  * Run a BQL query on a Beancount source string.
  *
- * Parses the source, then executes the query.
+ * Parses the source, interpolates, then executes the query.
  * @param {string} source
  * @param {string} query_str
  * @returns {any}
@@ -163,7 +163,7 @@ export function validate(ledger_json) {
 /**
  * Validate a Beancount source string directly.
  *
- * Parses and validates in one step.
+ * Parses, interpolates, and validates in one step.
  * @param {string} source
  * @returns {any}
  */

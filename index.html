@@ -81,6 +81,8 @@
                 <div class="grid md:grid-cols-2 divide-x divide-white/10">
                     <div class="relative">
                         <textarea id="editor" class="mono w-full h-72 bg-transparent text-sm text-white/90 p-4 leading-relaxed" spellcheck="false">; Simple beancount example
+; Note: missing amounts are auto-calculated!
+
 option "title" "My Ledger"
 
 2024-01-01 open Assets:Bank:Checking USD
@@ -89,15 +91,15 @@ option "title" "My Ledger"
 
 2024-01-01 * "Opening balance"
   Assets:Bank:Checking  1000.00 USD
-  Equity:Opening       -1000.00 USD
+  Equity:Opening  ; <- auto-filled as -1000.00 USD
 
 2024-01-15 * "Grocery Store" "Weekly groceries"
-  Expenses:Food          85.50 USD
-  Assets:Bank:Checking  -85.50 USD
+  Expenses:Food         85.50 USD
+  Assets:Bank:Checking  ; <- auto-filled
 
 2024-01-20 * "Coffee Shop" "Morning coffee"
-  Expenses:Food           5.25 USD
-  Assets:Bank:Checking   -5.25 USD
+  Expenses:Food          5.25 USD
+  Assets:Bank:Checking
 
 2024-01-31 balance Assets:Bank:Checking 909.25 USD</textarea>
                     </div>
@@ -243,6 +245,8 @@ option "title" "My Ledger"
 
         const examples = {
             simple: `; Simple beancount example
+; Note: missing amounts are auto-calculated!
+
 option "title" "My Ledger"
 
 2024-01-01 open Assets:Bank:Checking USD
@@ -251,15 +255,15 @@ option "title" "My Ledger"
 
 2024-01-01 * "Opening balance"
   Assets:Bank:Checking  1000.00 USD
-  Equity:Opening       -1000.00 USD
+  Equity:Opening  ; <- auto-filled as -1000.00 USD
 
 2024-01-15 * "Grocery Store" "Weekly groceries"
-  Expenses:Food          85.50 USD
-  Assets:Bank:Checking  -85.50 USD
+  Expenses:Food         85.50 USD
+  Assets:Bank:Checking  ; <- auto-filled
 
 2024-01-20 * "Coffee Shop" "Morning coffee"
-  Expenses:Food           5.25 USD
-  Assets:Bank:Checking   -5.25 USD
+  Expenses:Food          5.25 USD
+  Assets:Bank:Checking
 
 2024-01-31 balance Assets:Bank:Checking 909.25 USD`,
             portfolio: `; Investment portfolio example
@@ -272,8 +276,8 @@ option "operating_currency" "USD"
 2024-01-01 open Equity:Opening USD
 
 2024-01-01 * "Initial deposit"
-  Assets:Brokerage:Cash   10000.00 USD
-  Equity:Opening         -10000.00 USD
+  Assets:Brokerage:Cash  10000.00 USD
+  Equity:Opening
 
 2024-01-15 * "Buy Apple stock"
   Assets:Brokerage:AAPL    10 AAPL {185.00 USD}
@@ -281,11 +285,11 @@ option "operating_currency" "USD"
 
 2024-02-01 * "Buy Google stock"
   Assets:Brokerage:GOOGL    5 GOOGL {140.00 USD}
-  Assets:Brokerage:Cash   -700.00 USD
+  Assets:Brokerage:Cash
 
 2024-02-15 * "AAPL dividend"
   Assets:Brokerage:Cash    2.40 USD
-  Income:Dividends        -2.40 USD
+  Income:Dividends
 
 2024-03-01 price AAPL 190.00 USD
 2024-03-01 price GOOGL 145.00 USD`,
@@ -299,7 +303,7 @@ option "operating_currency" "USD"
   Expenses:Food   15.00 USD
   Assets:Bank    -10.00 USD
 
-; Error: balance assertion fails
+; Error: balance assertion fails (-15 != 500)
 2024-01-20 balance Assets:Bank 500.00 USD`
         };
 
