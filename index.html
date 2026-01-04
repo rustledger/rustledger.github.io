@@ -70,11 +70,9 @@
                         <button id="btn-query" onclick="showQueryInput()" class="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition">Query</button>
                     </div>
                     <div class="flex gap-2">
-                        <select id="examples" onchange="loadExample()" class="px-2 py-1 text-sm bg-white/10 border border-white/10 rounded text-white/80">
-                            <option value="simple">Simple ledger</option>
-                            <option value="portfolio">Investment portfolio</option>
-                            <option value="error">With errors</option>
-                        </select>
+                        <button onclick="loadExample('simple')" class="example-btn px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 rounded transition" data-example="simple">Simple</button>
+                        <button onclick="loadExample('portfolio')" class="example-btn px-3 py-1 text-sm bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 rounded transition" data-example="portfolio">Portfolio</button>
+                        <button onclick="loadExample('error')" class="example-btn px-3 py-1 text-sm bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded transition" data-example="error">Errors</button>
                     </div>
                 </div>
 
@@ -398,10 +396,9 @@ option "operating_currency" "USD"
             }
         };
 
-        window.loadExample = function() {
-            const select = document.getElementById('examples');
+        window.loadExample = function(name) {
             const editor = document.getElementById('editor');
-            editor.value = examples[select.value];
+            editor.value = examples[name];
             document.getElementById('output').innerHTML = '<span class="text-white/30">Click "Check" or "Query" to run...</span>';
         };
 
