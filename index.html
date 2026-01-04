@@ -12,8 +12,77 @@
         .mono { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace; }
         .fade-in { animation: fadeIn 0.6s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        #editor { resize: none; }
-        #editor:focus { outline: none; }
+
+        /* Editor with syntax highlighting */
+        .editor-container { position: relative; }
+        .editor-container textarea {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100%; height: 100%;
+            background: transparent;
+            color: transparent;
+            caret-color: white;
+            resize: none;
+            z-index: 2;
+            padding: 1rem;
+            padding-left: 3.5rem;
+            line-height: 1.5;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+        }
+        .editor-container textarea:focus { outline: none; }
+        .editor-container .highlight-layer {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            padding: 1rem;
+            padding-left: 3.5rem;
+            line-height: 1.5;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .line-numbers {
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            width: 3rem;
+            padding: 1rem 0.5rem;
+            text-align: right;
+            line-height: 1.5;
+            color: rgba(255,255,255,0.2);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            pointer-events: none;
+            z-index: 3;
+            overflow: hidden;
+        }
+
+        /* Syntax colors */
+        .syn-comment { color: rgba(255,255,255,0.35); font-style: italic; }
+        .syn-date { color: #7dd3fc; }
+        .syn-directive { color: #c4b5fd; }
+        .syn-account { color: #86efac; }
+        .syn-amount { color: #fcd34d; }
+        .syn-currency { color: #fdba74; }
+        .syn-string { color: #fca5a5; }
+        .syn-tag { color: #67e8f9; }
+        .syn-link { color: #f0abfc; }
+        .syn-flag { color: #fbbf24; }
+        .syn-option { color: #a78bfa; }
+
+        /* Error line highlighting */
+        .error-line { background: rgba(239, 68, 68, 0.15); display: block; }
+
+        /* Output tabs */
+        .tab-btn { transition: all 0.15s; }
+        .tab-btn.active { background: rgba(255,255,255,0.1); color: white; }
+
+        /* Query results table */
+        .result-table { border-collapse: collapse; width: 100%; }
+        .result-table th { text-align: left; padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); font-weight: 500; }
+        .result-table td { padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .result-table tr:hover td { background: rgba(255,255,255,0.03); }
     </style>
 </head>
 <body class="bg-black text-white antialiased">
@@ -57,61 +126,87 @@
 
     <!-- Playground -->
     <section class="py-16 px-6 border-t border-white/10">
-        <div class="max-w-5xl mx-auto">
+        <div class="max-w-6xl mx-auto">
             <h2 class="text-2xl font-bold mb-2 text-center">Try it in your browser</h2>
             <p class="text-white/50 text-center mb-8">Powered by WebAssembly</p>
 
             <div class="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
                 <!-- Toolbar -->
-                <div class="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-white/5">
-                    <div class="flex gap-2">
+                <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2 border-b border-white/10 bg-white/5">
+                    <div class="flex flex-wrap gap-2">
                         <button onclick="loadExample('simple')" class="example-btn px-3 py-1 text-sm bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 rounded transition" data-example="simple">Simple</button>
                         <button onclick="loadExample('portfolio')" class="example-btn px-3 py-1 text-sm bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 rounded transition" data-example="portfolio">Portfolio</button>
                         <button onclick="loadExample('advanced')" class="example-btn px-3 py-1 text-sm bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded transition" data-example="advanced">Advanced</button>
                         <button onclick="loadExample('error')" class="example-btn px-3 py-1 text-sm bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded transition" data-example="error">Errors</button>
                     </div>
-                    <div class="flex gap-2">
-                        <button id="btn-check" onclick="runCheck()" class="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition">Check</button>
+                    <div class="flex flex-wrap gap-2">
+                        <button id="btn-check" onclick="runCheck()" class="px-3 py-1 text-sm bg-green-500/20 hover:bg-green-500/30 text-green-300 rounded transition">Check</button>
                         <button id="btn-format" onclick="runFormat()" class="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition">Format</button>
-                        <button id="btn-query" onclick="showQueryInput()" class="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition">Query</button>
+                        <select id="query-select" onchange="runQueryPreset()" class="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition cursor-pointer">
+                            <option value="">Query...</option>
+                            <option value="BALANCES">Balances</option>
+                            <option value="SELECT account, SUM(position) WHERE account ~ 'Expenses' GROUP BY account ORDER BY SUM(position) DESC">Expenses by Category</option>
+                            <option value="SELECT account, SUM(position) WHERE account ~ 'Income' GROUP BY account">Income Sources</option>
+                            <option value="SELECT date, narration, position WHERE account ~ 'Expenses'">Recent Expenses</option>
+                            <option value="custom">Custom Query...</option>
+                        </select>
+                        <select id="plugin-select" onchange="runPluginPreset()" class="px-3 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition cursor-pointer">
+                            <option value="">Plugins...</option>
+                            <option value="implicit_prices">implicit_prices</option>
+                            <option value="auto_accounts">auto_accounts</option>
+                            <option value="check_commodity">check_commodity</option>
+                        </select>
+                        <button onclick="shareUrl()" class="px-2 py-1 text-sm bg-white/10 hover:bg-white/20 rounded transition" title="Share URL">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                        </button>
                     </div>
                 </div>
 
                 <!-- Editor & Output -->
-                <div class="grid md:grid-cols-2 divide-x divide-white/10">
-                    <div class="relative">
-                        <textarea id="editor" class="mono w-full h-72 bg-transparent text-sm text-white/90 p-4 leading-relaxed" spellcheck="false">; Simple beancount example
-; Note: missing amounts are auto-calculated!
-
-option "title" "My Ledger"
-
-2024-01-01 open Assets:Bank:Checking USD
-2024-01-01 open Expenses:Food USD
-2024-01-01 open Equity:Opening USD
-
-2024-01-01 * "Opening balance"
-  Assets:Bank:Checking  1000.00 USD
-  Equity:Opening  ; <- auto-filled as -1000.00 USD
-
-2024-01-15 * "Grocery Store" "Weekly groceries"
-  Expenses:Food         85.50 USD
-  Assets:Bank:Checking  ; <- auto-filled
-
-2024-01-20 * "Coffee Shop" "Morning coffee"
-  Expenses:Food          5.25 USD
-  Assets:Bank:Checking
-
-2024-01-31 balance Assets:Bank:Checking 909.25 USD</textarea>
+                <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/10">
+                    <!-- Editor with syntax highlighting -->
+                    <div class="editor-container h-96 overflow-hidden relative bg-black/30">
+                        <div class="line-numbers mono text-xs" id="line-numbers">1</div>
+                        <div class="highlight-layer mono text-sm" id="highlight-layer"></div>
+                        <textarea id="editor" class="mono text-sm" spellcheck="false" oninput="onEditorInput()" onscroll="syncScroll()"></textarea>
                     </div>
-                    <div class="relative">
-                        <div id="query-input" class="hidden px-4 py-2 border-b border-white/10 bg-white/5">
+
+                    <!-- Output panel -->
+                    <div class="flex flex-col h-96">
+                        <!-- Output tabs -->
+                        <div class="flex items-center gap-1 px-3 py-2 border-b border-white/10 bg-white/5">
+                            <button onclick="switchTab('output')" class="tab-btn px-3 py-1 text-xs rounded active" data-tab="output">Output</button>
+                            <button onclick="switchTab('formatted')" class="tab-btn px-3 py-1 text-xs rounded hidden" data-tab="formatted">Formatted</button>
+                            <button onclick="switchTab('query')" class="tab-btn px-3 py-1 text-xs rounded hidden" data-tab="query">Query</button>
+                            <button onclick="switchTab('plugin')" class="tab-btn px-3 py-1 text-xs rounded hidden" data-tab="plugin">Plugin</button>
+                            <div class="flex-1"></div>
+                            <span id="timing" class="text-xs text-white/30"></span>
+                            <button onclick="copyOutput()" class="px-2 py-1 text-xs text-white/40 hover:text-white transition" title="Copy output">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- Query input (hidden by default) -->
+                        <div id="query-input" class="hidden px-3 py-2 border-b border-white/10 bg-white/5">
                             <input type="text" id="query-text" class="mono w-full bg-transparent text-sm text-white/90 placeholder-white/30" placeholder="SELECT account, SUM(position) GROUP BY account" onkeydown="if(event.key==='Enter')runQuery()">
                         </div>
-                        <pre id="output" class="mono h-72 overflow-auto text-sm text-white/70 p-4 leading-relaxed"><span class="text-white/30">Click "Check" or "Query" to run...</span></pre>
+
+                        <!-- Output content -->
+                        <div id="output-container" class="flex-1 overflow-auto">
+                            <pre id="output" class="mono text-sm text-white/70 p-4 leading-relaxed"><span class="text-white/30">Click "Check" or select a query to run...</span></pre>
+                            <pre id="formatted-output" class="mono text-sm text-white/70 p-4 leading-relaxed hidden"></pre>
+                            <div id="query-output" class="text-sm p-4 hidden overflow-x-auto"></div>
+                            <pre id="plugin-output" class="mono text-sm text-white/70 p-4 leading-relaxed hidden"></pre>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Status bar -->
+                <div class="flex items-center justify-between px-4 py-2 border-t border-white/10 bg-white/5 text-xs">
+                    <span id="wasm-status" class="text-white/30">Loading WebAssembly...</span>
+                    <span id="live-status" class="text-white/30"></span>
+                </div>
             </div>
-            <p id="wasm-status" class="text-white/30 text-xs text-center mt-3">Loading WebAssembly...</p>
         </div>
     </section>
 
@@ -230,7 +325,7 @@ option "title" "My Ledger"
     <!-- Footer -->
     <footer class="py-12 px-6 border-t border-white/10">
         <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-white/40">
-            <div>rustledger v1.0.0-rc.1</div>
+            <div>rustledger v1.0.0-rc.2</div>
             <div class="flex gap-6">
                 <a href="https://github.com/rustledger/rustledger" class="hover:text-white transition">GitHub</a>
                 <a href="https://crates.io/crates/rustledger" class="hover:text-white transition">Crates.io</a>
@@ -371,6 +466,9 @@ option "operating_currency" "USD"
         };
 
         let wasmReady = false;
+        let errorLines = new Set();
+        let liveValidationTimeout = null;
+        let currentOutputText = '';
 
         async function initWasm() {
             try {
@@ -379,102 +477,480 @@ option "operating_currency" "USD"
                 document.getElementById('wasm-status').textContent = `Ready (rustledger v${version()})`;
                 document.getElementById('wasm-status').classList.remove('text-white/30');
                 document.getElementById('wasm-status').classList.add('text-green-400/60');
+
+                // Initialize editor with simple example
+                loadExample('simple');
+
+                // Load from URL if present
+                loadFromUrl();
             } catch (e) {
                 document.getElementById('wasm-status').textContent = `Failed to load: ${e.message}`;
                 document.getElementById('wasm-status').classList.add('text-red-400/60');
             }
         }
 
+        // Syntax highlighting
+        function highlightSyntax(code) {
+            errorLines.clear();
+
+            return code.split('\n').map((line, idx) => {
+                let highlighted = escapeHtml(line);
+
+                // Comments
+                if (line.trim().startsWith(';')) {
+                    return `<span class="syn-comment">${highlighted}</span>`;
+                }
+
+                // Option directive
+                if (line.trim().startsWith('option')) {
+                    highlighted = highlighted.replace(/^(\s*)(option)/, '$1<span class="syn-option">$2</span>');
+                }
+
+                // Date at start of line (directive)
+                highlighted = highlighted.replace(/^(\d{4}-\d{2}-\d{2})(\s+)(\*|!|txn|open|close|balance|pad|event|note|document|commodity|price|query|custom)/,
+                    '<span class="syn-date">$1</span>$2<span class="syn-directive">$3</span>');
+
+                // Standalone date
+                highlighted = highlighted.replace(/^(\d{4}-\d{2}-\d{2})/, '<span class="syn-date">$1</span>');
+
+                // Accounts (multi-segment)
+                highlighted = highlighted.replace(/\b(Assets|Liabilities|Equity|Income|Expenses)(:[A-Za-z0-9_-]+)+/g, '<span class="syn-account">$&</span>');
+
+                // Amounts with currency
+                highlighted = highlighted.replace(/(-?\d+\.?\d*)\s+([A-Z]{2,})/g, '<span class="syn-amount">$1</span> <span class="syn-currency">$2</span>');
+
+                // Cost specs
+                highlighted = highlighted.replace(/\{([^}]+)\}/g, '{<span class="syn-amount">$1</span>}');
+
+                // Strings
+                highlighted = highlighted.replace(/"([^"]*)"/g, '<span class="syn-string">"$1"</span>');
+
+                // Tags
+                highlighted = highlighted.replace(/#([a-zA-Z0-9_-]+)/g, '<span class="syn-tag">#$1</span>');
+
+                // Links
+                highlighted = highlighted.replace(/\^([a-zA-Z0-9_-]+)/g, '<span class="syn-link">^$1</span>');
+
+                return highlighted;
+            }).join('\n');
+        }
+
+        function updateHighlight() {
+            const editor = document.getElementById('editor');
+            const highlightLayer = document.getElementById('highlight-layer');
+            const lineNumbers = document.getElementById('line-numbers');
+
+            const code = editor.value;
+            const lines = code.split('\n');
+
+            // Update line numbers
+            lineNumbers.innerHTML = lines.map((_, i) => {
+                const lineNum = i + 1;
+                const isError = errorLines.has(lineNum);
+                return `<div class="${isError ? 'text-red-400' : ''}">${lineNum}</div>`;
+            }).join('');
+
+            // Update syntax highlighting with error lines
+            let highlighted = code.split('\n').map((line, idx) => {
+                let lineHtml = highlightLine(line);
+                if (errorLines.has(idx + 1)) {
+                    lineHtml = `<span class="error-line">${lineHtml}</span>`;
+                }
+                return lineHtml;
+            }).join('\n');
+
+            highlightLayer.innerHTML = highlighted + '\n'; // Extra newline for cursor at end
+        }
+
+        function highlightLine(line) {
+            let highlighted = escapeHtml(line);
+
+            // Comments
+            if (line.trim().startsWith(';')) {
+                return `<span class="syn-comment">${highlighted}</span>`;
+            }
+
+            // Option directive
+            if (line.trim().startsWith('option')) {
+                highlighted = highlighted.replace(/^(\s*)(option)/, '$1<span class="syn-option">$2</span>');
+            }
+
+            // Date at start of line (directive)
+            highlighted = highlighted.replace(/^(\d{4}-\d{2}-\d{2})(\s+)(\*|!|txn|open|close|balance|pad|event|note|document|commodity|price|query|custom)/,
+                '<span class="syn-date">$1</span>$2<span class="syn-directive">$3</span>');
+
+            // Standalone date
+            highlighted = highlighted.replace(/^(\d{4}-\d{2}-\d{2})/, '<span class="syn-date">$1</span>');
+
+            // Accounts (multi-segment)
+            highlighted = highlighted.replace(/\b(Assets|Liabilities|Equity|Income|Expenses)(:[A-Za-z0-9_-]+)+/g, '<span class="syn-account">$&</span>');
+
+            // Amounts with currency
+            highlighted = highlighted.replace(/(-?\d+\.?\d*)\s+([A-Z]{2,})/g, '<span class="syn-amount">$1</span> <span class="syn-currency">$2</span>');
+
+            // Cost specs
+            highlighted = highlighted.replace(/\{([^}]+)\}/g, '{<span class="syn-amount">$1</span>}');
+
+            // Strings
+            highlighted = highlighted.replace(/"([^"]*)"/g, '<span class="syn-string">"$1"</span>');
+
+            // Tags
+            highlighted = highlighted.replace(/#([a-zA-Z0-9_-]+)/g, '<span class="syn-tag">#$1</span>');
+
+            // Links
+            highlighted = highlighted.replace(/\^([a-zA-Z0-9_-]+)/g, '<span class="syn-link">^$1</span>');
+
+            return highlighted;
+        }
+
+        function syncScroll() {
+            const editor = document.getElementById('editor');
+            const highlightLayer = document.getElementById('highlight-layer');
+            const lineNumbers = document.getElementById('line-numbers');
+
+            highlightLayer.scrollTop = editor.scrollTop;
+            highlightLayer.scrollLeft = editor.scrollLeft;
+            lineNumbers.scrollTop = editor.scrollTop;
+        }
+
+        window.onEditorInput = function() {
+            updateHighlight();
+
+            // Debounced live validation
+            clearTimeout(liveValidationTimeout);
+            liveValidationTimeout = setTimeout(() => {
+                if (wasmReady) {
+                    liveValidate();
+                }
+            }, 500);
+        };
+
+        function liveValidate() {
+            const source = document.getElementById('editor').value;
+            const liveStatus = document.getElementById('live-status');
+
+            try {
+                const start = performance.now();
+                const result = validate_source(source);
+                const elapsed = (performance.now() - start).toFixed(1);
+
+                errorLines.clear();
+                if (result.valid) {
+                    liveStatus.textContent = `✓ Valid (${elapsed}ms)`;
+                    liveStatus.className = 'text-green-400/60 text-xs';
+                } else {
+                    result.errors.forEach(e => {
+                        if (e.line) errorLines.add(e.line);
+                    });
+                    liveStatus.textContent = `${result.errors.length} error${result.errors.length > 1 ? 's' : ''} (${elapsed}ms)`;
+                    liveStatus.className = 'text-red-400/60 text-xs';
+                }
+                updateHighlight();
+            } catch (e) {
+                liveStatus.textContent = '';
+            }
+        }
+
         window.runFormat = function() {
             if (!wasmReady) return;
             const editor = document.getElementById('editor');
-            const output = document.getElementById('output');
-            document.getElementById('query-input').classList.add('hidden');
 
             try {
+                const start = performance.now();
                 const result = format(editor.value);
+                const elapsed = (performance.now() - start).toFixed(1);
+
+                showTiming(`Formatted in ${elapsed}ms`);
+
                 if (result.formatted) {
+                    // Show diff in formatted tab
+                    showTab('formatted');
+                    document.getElementById('formatted-output').innerHTML =
+                        '<span class="text-green-400">✓ Formatted successfully</span>\n\n' +
+                        escapeHtml(result.formatted);
+                    currentOutputText = result.formatted;
+
+                    // Update editor
                     editor.value = result.formatted;
-                    output.innerHTML = '<span class="text-green-400">✓ Formatted successfully</span>';
+                    updateHighlight();
                 } else {
+                    showTab('output');
                     const errors = result.errors.map(e =>
                         `<span class="text-red-400">Line ${e.line || '?'}:</span> ${escapeHtml(e.message)}`
                     ).join('\n');
-                    output.innerHTML = errors;
+                    document.getElementById('output').innerHTML = errors;
+                    currentOutputText = result.errors.map(e => `Line ${e.line || '?'}: ${e.message}`).join('\n');
                 }
             } catch (e) {
-                output.innerHTML = `<span class="text-red-400">Error:</span> ${escapeHtml(e.message)}`;
+                showTab('output');
+                document.getElementById('output').innerHTML = `<span class="text-red-400">Error:</span> ${escapeHtml(e.message)}`;
+                currentOutputText = `Error: ${e.message}`;
             }
         };
 
         window.runCheck = function() {
             if (!wasmReady) return;
             const source = document.getElementById('editor').value;
-            const output = document.getElementById('output');
-            document.getElementById('query-input').classList.add('hidden');
 
             try {
+                const start = performance.now();
                 const result = validate_source(source);
+                const elapsed = (performance.now() - start).toFixed(1);
+
+                // Count directives (rough estimate)
+                const directives = source.split('\n').filter(l => /^\d{4}-\d{2}-\d{2}/.test(l.trim())).length;
+                showTiming(`${directives} directives in ${elapsed}ms`);
+
+                showTab('output');
+                errorLines.clear();
+
                 if (result.valid) {
-                    output.innerHTML = '<span class="text-green-400">✓ No errors found</span>';
+                    document.getElementById('output').innerHTML = '<span class="text-green-400">✓ No errors found</span>';
+                    currentOutputText = '✓ No errors found';
                 } else {
+                    result.errors.forEach(e => {
+                        if (e.line) errorLines.add(e.line);
+                    });
                     const errors = result.errors.map(e =>
                         `<span class="text-red-400">Line ${e.line || '?'}:</span> ${escapeHtml(e.message)}`
                     ).join('\n');
-                    output.innerHTML = errors;
+                    document.getElementById('output').innerHTML = errors;
+                    currentOutputText = result.errors.map(e => `Line ${e.line || '?'}: ${e.message}`).join('\n');
                 }
+
+                updateHighlight();
             } catch (e) {
-                output.innerHTML = `<span class="text-red-400">Error:</span> ${escapeHtml(e.message)}`;
+                showTab('output');
+                document.getElementById('output').innerHTML = `<span class="text-red-400">Error:</span> ${escapeHtml(e.message)}`;
+                currentOutputText = `Error: ${e.message}`;
             }
         };
 
-        window.showQueryInput = function() {
-            document.getElementById('query-input').classList.remove('hidden');
-            document.getElementById('query-text').focus();
+        window.runQueryPreset = function() {
+            const select = document.getElementById('query-select');
+            const value = select.value;
+
+            if (value === 'custom') {
+                document.getElementById('query-input').classList.remove('hidden');
+                document.getElementById('query-text').focus();
+                select.value = '';
+            } else if (value) {
+                document.getElementById('query-input').classList.add('hidden');
+                runQueryWithString(value);
+                select.value = '';
+            }
         };
 
         window.runQuery = function() {
+            const queryStr = document.getElementById('query-text').value || 'BALANCES';
+            runQueryWithString(queryStr);
+        };
+
+        function runQueryWithString(queryStr) {
             if (!wasmReady) return;
             const source = document.getElementById('editor').value;
-            const queryStr = document.getElementById('query-text').value || 'SELECT account, SUM(position) GROUP BY account';
-            const output = document.getElementById('output');
 
             try {
+                const start = performance.now();
                 const result = query(source, queryStr);
+                const elapsed = (performance.now() - start).toFixed(1);
+
+                showTab('query');
+
                 if (result.errors && result.errors.length > 0) {
                     const errors = result.errors.map(e =>
                         `<span class="text-red-400">Error:</span> ${escapeHtml(e.message)}`
                     ).join('\n');
-                    output.innerHTML = errors;
+                    document.getElementById('query-output').innerHTML = `<pre class="text-sm">${errors}</pre>`;
+                    currentOutputText = result.errors.map(e => `Error: ${e.message}`).join('\n');
+                    showTiming(`Query failed`);
                 } else {
-                    // Format as table
-                    let html = '<span class="text-white/50">' + result.columns.join('  |  ') + '</span>\n';
-                    html += '<span class="text-white/30">' + '-'.repeat(60) + '</span>\n';
-                    for (const row of result.rows) {
-                        html += row.map(cell => formatCell(cell)).join('  |  ') + '\n';
+                    showTiming(`${result.rows.length} rows in ${elapsed}ms`);
+
+                    // Build HTML table
+                    let html = '<table class="result-table"><thead><tr>';
+                    for (const col of result.columns) {
+                        html += `<th>${escapeHtml(col)}</th>`;
                     }
-                    output.innerHTML = html || '<span class="text-white/50">No results</span>';
+                    html += '</tr></thead><tbody>';
+
+                    for (const row of result.rows) {
+                        html += '<tr>';
+                        for (const cell of row) {
+                            html += `<td>${formatCell(cell)}</td>`;
+                        }
+                        html += '</tr>';
+                    }
+                    html += '</tbody></table>';
+
+                    if (result.rows.length === 0) {
+                        html = '<span class="text-white/50">No results</span>';
+                    }
+
+                    document.getElementById('query-output').innerHTML = html;
+
+                    // Plain text for copy
+                    currentOutputText = result.columns.join('\t') + '\n' +
+                        result.rows.map(row => row.map(c => formatCellPlain(c)).join('\t')).join('\n');
                 }
             } catch (e) {
-                output.innerHTML = `<span class="text-red-400">Error:</span> ${escapeHtml(e.message)}`;
+                showTab('query');
+                document.getElementById('query-output').innerHTML = `<pre class="text-red-400">Error: ${escapeHtml(e.message)}</pre>`;
+                currentOutputText = `Error: ${e.message}`;
+            }
+        }
+
+        window.runPluginPreset = function() {
+            const select = document.getElementById('plugin-select');
+            const value = select.value;
+
+            if (value) {
+                runPluginWithName(value);
+                select.value = '';
             }
         };
+
+        function runPluginWithName(pluginName) {
+            if (!wasmReady) return;
+            const source = document.getElementById('editor').value;
+
+            try {
+                const start = performance.now();
+                const result = run_plugin(source, pluginName);
+                const elapsed = (performance.now() - start).toFixed(1);
+
+                showTab('plugin');
+                showTiming(`Plugin ran in ${elapsed}ms`);
+
+                if (result.errors && result.errors.length > 0) {
+                    const errors = result.errors.map(e => {
+                        const severity = e.severity === 'warning' ? 'text-yellow-400' : 'text-red-400';
+                        return `<span class="${severity}">${e.severity}:</span> ${escapeHtml(e.message)}`;
+                    }).join('\n');
+                    document.getElementById('plugin-output').innerHTML =
+                        `<span class="text-white/50">Plugin: ${pluginName}</span>\n\n` + errors;
+                } else {
+                    document.getElementById('plugin-output').innerHTML =
+                        `<span class="text-white/50">Plugin: ${pluginName}</span>\n` +
+                        `<span class="text-green-400">✓ ${result.directives.length} directives processed</span>`;
+                }
+
+                currentOutputText = `Plugin: ${pluginName}\n${result.directives.length} directives processed`;
+            } catch (e) {
+                showTab('plugin');
+                document.getElementById('plugin-output').innerHTML = `<span class="text-red-400">Error:</span> ${escapeHtml(e.message)}`;
+                currentOutputText = `Error: ${e.message}`;
+            }
+        }
 
         window.loadExample = function(name) {
             const editor = document.getElementById('editor');
             editor.value = examples[name];
-            document.getElementById('output').innerHTML = '<span class="text-white/30">Click "Check" or "Query" to run...</span>';
+            updateHighlight();
+
+            showTab('output');
+            document.getElementById('output').innerHTML = '<span class="text-white/30">Click "Check" or select a query to run...</span>';
+            document.getElementById('timing').textContent = '';
+            document.getElementById('live-status').textContent = '';
+            errorLines.clear();
+
+            // Trigger live validation
+            setTimeout(() => liveValidate(), 100);
         };
+
+        window.shareUrl = function() {
+            const source = document.getElementById('editor').value;
+            const encoded = btoa(encodeURIComponent(source));
+            const url = `${window.location.origin}${window.location.pathname}?code=${encoded}`;
+
+            navigator.clipboard.writeText(url).then(() => {
+                const btn = event.target.closest('button');
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '✓';
+                setTimeout(() => btn.innerHTML = originalHtml, 1500);
+            });
+        };
+
+        function loadFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            if (code) {
+                try {
+                    const decoded = decodeURIComponent(atob(code));
+                    document.getElementById('editor').value = decoded;
+                    updateHighlight();
+                    setTimeout(() => liveValidate(), 100);
+                } catch (e) {
+                    console.error('Failed to decode URL:', e);
+                }
+            }
+        }
+
+        window.copyOutput = function() {
+            navigator.clipboard.writeText(currentOutputText).then(() => {
+                const btn = event.target.closest('button');
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '✓';
+                setTimeout(() => btn.innerHTML = originalHtml, 1500);
+            });
+        };
+
+        function showTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.tab === tabName) {
+                    btn.classList.add('active');
+                    btn.classList.remove('hidden');
+                }
+            });
+
+            // Show corresponding content
+            document.getElementById('output').classList.add('hidden');
+            document.getElementById('formatted-output').classList.add('hidden');
+            document.getElementById('query-output').classList.add('hidden');
+            document.getElementById('plugin-output').classList.add('hidden');
+
+            const outputId = tabName === 'output' ? 'output' : `${tabName}-output`;
+            document.getElementById(outputId).classList.remove('hidden');
+        }
+
+        window.switchTab = function(tabName) {
+            showTab(tabName);
+        };
+
+        function showTiming(text) {
+            document.getElementById('timing').textContent = text;
+        }
 
         function formatCell(cell) {
             if (cell === null) return '<span class="text-white/30">-</span>';
             if (typeof cell === 'object') {
                 if (cell.number && cell.currency) {
+                    return `<span class="syn-amount">${cell.number}</span> <span class="syn-currency">${cell.currency}</span>`;
+                }
+                if (cell.positions) {
+                    return cell.positions.map(p =>
+                        `<span class="syn-amount">${p.units.number}</span> <span class="syn-currency">${p.units.currency}</span>`
+                    ).join('<br>');
+                }
+                return escapeHtml(JSON.stringify(cell));
+            }
+            return escapeHtml(String(cell));
+        }
+
+        function formatCellPlain(cell) {
+            if (cell === null) return '-';
+            if (typeof cell === 'object') {
+                if (cell.number && cell.currency) {
                     return `${cell.number} ${cell.currency}`;
+                }
+                if (cell.positions) {
+                    return cell.positions.map(p => `${p.units.number} ${p.units.currency}`).join(', ');
                 }
                 return JSON.stringify(cell);
             }
-            return escapeHtml(String(cell));
+            return String(cell);
         }
 
         function escapeHtml(text) {
