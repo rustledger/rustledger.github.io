@@ -1,6 +1,6 @@
 #!/bin/sh
 # rustledger installer
-# Usage: curl -sSf https://rustledger.github.io/install.sh | sh
+# Usage: curl -sSfL rustledger.github.io/i.sh | sh
 #
 # Environment variables:
 #   RUSTLEDGER_VERSION  - Version to install (default: latest)
