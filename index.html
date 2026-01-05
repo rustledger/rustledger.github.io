@@ -246,7 +246,7 @@
                 <div id="query-options" class="px-3 py-2 border-b border-white/10 bg-white/5 flex gap-2 flex-wrap">
                     <!-- Basic queries -->
                     <button onclick="runQueryPreset('BALANCES')" data-query="BALANCES" class="query-btn px-3 py-1 text-xs rounded transition">Balances</button>
-                    <button onclick="runQueryPreset('JOURNAL')" data-query="JOURNAL" class="query-btn px-3 py-1 text-xs rounded transition">Journal</button>
+                    <button onclick="runQueryPreset('JOURNAL &quot;Assets&quot;')" data-query="JOURNAL &quot;Assets&quot;" class="query-btn px-3 py-1 text-xs rounded transition">Journal</button>
                     <button onclick="runQueryPreset('PRINT')" data-query="PRINT" class="query-btn px-3 py-1 text-xs rounded transition">Print</button>
                     <!-- Account type filters -->
                     <button onclick="runQueryPreset('SELECT account, SUM(position) WHERE account ~ &quot;Expenses&quot; GROUP BY account ORDER BY SUM(position) DESC')" data-query="SELECT account, SUM(position) WHERE account ~ &quot;Expenses&quot; GROUP BY account ORDER BY SUM(position) DESC" class="query-btn px-3 py-1 text-xs rounded transition">Expenses</button>
