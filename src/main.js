@@ -604,9 +604,15 @@ function selectAutocompleteItem(index) {
         tokenStart--;
     }
 
+    // Find the end of the current token
+    let tokenEnd = cursorPos;
+    while (tokenEnd < value.length && !value[tokenEnd].match(/[\s(),]/)) {
+        tokenEnd++;
+    }
+
     // Replace current token with completion
     const before = value.substring(0, tokenStart);
-    const after = value.substring(cursorPos);
+    const after = value.substring(tokenEnd);
     const completion = item.text;
 
     queryInput.value = before + completion + after;
