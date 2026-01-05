@@ -1,10 +1,14 @@
 import { createEditor } from './editor.js';
+import './style.css';
+import LZString from 'lz-string';
 
 // Global state
 let editor = null;
 let wasmReady = false;
 let liveValidationTimeout = null;
 let errorLines = new Set();
+let errorMessages = new Map(); // Map<lineNumber, errorMessage> for tooltips
+let knownAccounts = new Set(); // For autocomplete
 
 // WASM functions (will be set after loading)
 let validate_source = null;
@@ -354,13 +358,25 @@ function liveValidate() {
         const elapsed = (performance.now() - start).toFixed(1);
 
         errorLines.clear();
+        errorMessages.clear();
+
+        // Extract accounts for autocomplete
+        extractAccounts(source);
+
         if (result.valid) {
             statusTab.textContent = '✓ Valid';
             statusTab.className = 'output-tab text-green-400' + (statusTab.classList.contains('active') ? ' active' : '');
             showOutput(`<span class="text-green-400">✓ No errors found</span> <span class="text-white/30">(${elapsed}ms)</span>`);
+            // Clear error highlights
+            if (editor && editor.highlightErrorLines) {
+                editor.highlightErrorLines(new Set(), new Map());
+            }
         } else {
             result.errors.forEach(e => {
-                if (e.line) errorLines.add(e.line);
+                if (e.line) {
+                    errorLines.add(e.line);
+                    errorMessages.set(e.line, e.message);
+                }
             });
             const errorCount = result.errors.length;
             statusTab.textContent = `✗ ${errorCount} error${errorCount > 1 ? 's' : ''}`;
@@ -370,6 +386,11 @@ function liveValidate() {
                 `<span class="text-red-400">Line ${e.line || '?'}:</span> ${escapeHtml(e.message)}`
             ).join('\n');
             showOutput(errorHtml + `\n<span class="text-white/30">(${elapsed}ms)</span>`);
+
+            // Highlight error lines in editor with tooltips
+            if (editor && editor.highlightErrorLines) {
+                editor.highlightErrorLines(errorLines, errorMessages);
+            }
         }
 
         // Update plugin button states
@@ -377,6 +398,20 @@ function liveValidate() {
     } catch (e) {
         statusTab.textContent = 'Error';
         console.error('Validation error:', e);
+    }
+}
+
+// Extract accounts from source for autocomplete
+function extractAccounts(source) {
+    knownAccounts.clear();
+    const accountRegex = /[A-Z][A-Za-z0-9-]*(?::[A-Za-z0-9-]+)+/g;
+    let match;
+    while ((match = accountRegex.exec(source)) !== null) {
+        knownAccounts.add(match[0]);
+    }
+    // Update editor's known accounts for autocomplete
+    if (editor && editor.setKnownAccounts) {
+        editor.setKnownAccounts(knownAccounts);
     }
 }
 
@@ -521,6 +556,7 @@ function validateQueryInput() {
 let autocompleteDropdown = null;
 let autocompleteSelectedIndex = -1;
 let autocompleteItems = [];
+let autocompleteContext = null; // Store cursor position when autocomplete is shown
 
 function createAutocompleteDropdown() {
     if (autocompleteDropdown) return;
@@ -588,27 +624,18 @@ function hideAutocomplete() {
     }
     autocompleteSelectedIndex = -1;
     autocompleteItems = [];
+    autocompleteContext = null;
 }
 
 function selectAutocompleteItem(index) {
     if (index < 0 || index >= autocompleteItems.length) return;
+    if (!autocompleteContext) return;
 
     const item = autocompleteItems[index];
     const queryInput = document.getElementById('query-text');
-    const cursorPos = queryInput.selectionStart;
-    const value = queryInput.value;
 
-    // Find the start of the current token
-    let tokenStart = cursorPos;
-    while (tokenStart > 0 && !value[tokenStart - 1].match(/[\s(),]/)) {
-        tokenStart--;
-    }
-
-    // Find the end of the current token
-    let tokenEnd = cursorPos;
-    while (tokenEnd < value.length && !value[tokenEnd].match(/[\s(),]/)) {
-        tokenEnd++;
-    }
+    // Use stored context (cursor position may have changed due to click)
+    const { tokenStart, tokenEnd, value } = autocompleteContext;
 
     // Replace current token with completion
     const before = value.substring(0, tokenStart);
@@ -691,7 +718,15 @@ function handleQueryInput(e) {
         while (tokenStart > 0 && !value[tokenStart - 1].match(/[\s(),]/)) {
             tokenStart--;
         }
+        // Find end of current token
+        let tokenEnd = cursorPos;
+        while (tokenEnd < value.length && !value[tokenEnd].match(/[\s(),]/)) {
+            tokenEnd++;
+        }
         const currentToken = value.substring(tokenStart, cursorPos);
+
+        // Store context for when user selects an item (cursor position may change on click)
+        autocompleteContext = { tokenStart, tokenEnd, value };
 
         showAutocomplete(result.completions, currentToken);
     } else {
@@ -920,25 +955,19 @@ window.copyOutput = function() {
     const activeOutput = document.querySelector('#output-panel > :not(.hidden)');
     if (activeOutput) {
         navigator.clipboard.writeText(activeOutput.textContent);
+        showToast('Copied!');
     }
 };
 
-// Share URL
+// Share URL with lz-string compression
 window.shareUrl = function() {
     if (!editor) return;
     const content = editor.getContent();
-    const compressed = btoa(encodeURIComponent(content));
+    // Use lz-string for efficient compression
+    const compressed = LZString.compressToEncodedURIComponent(content);
     const url = `${window.location.origin}${window.location.pathname}?code=${compressed}`;
     navigator.clipboard.writeText(url);
-    const statusTab = document.getElementById('status-tab');
-    const prevContent = statusTab.textContent;
-    const prevClass = statusTab.className;
-    statusTab.textContent = 'URL copied!';
-    statusTab.className = 'output-tab text-blue-400' + (statusTab.classList.contains('active') ? ' active' : '');
-    setTimeout(() => {
-        statusTab.textContent = prevContent;
-        statusTab.className = prevClass;
-    }, 1500);
+    showToast('URL copied to clipboard!');
 };
 
 // Copy install commands
@@ -948,6 +977,36 @@ window.copyInstall = function(type) {
         cargo: 'cargo install rustledger'
     };
     navigator.clipboard.writeText(commands[type] || '');
+};
+
+// Download ledger file
+window.downloadLedger = function() {
+    if (!editor) return;
+    const content = editor.getContent();
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ledger.beancount';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+};
+
+// Upload ledger file
+window.uploadLedger = function(event) {
+    const file = event.target.files[0];
+    if (!file || !editor) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        editor.setContent(e.target.result);
+        // Clear example tab selection
+        document.querySelectorAll('.example-tab').forEach(t => t.classList.remove('active'));
+    };
+    reader.readAsText(file);
+    event.target.value = ''; // Reset input
 };
 
 // Panel resizer
@@ -983,23 +1042,134 @@ function initResizer() {
     }
 }
 
-// Load from URL
+// Load from URL (supports both lz-string and legacy base64 formats)
 function loadFromUrl() {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     if (code) {
         try {
-            const decoded = decodeURIComponent(atob(code));
-            editor.setContent(decoded);
-            // Clear all example tabs
-            document.querySelectorAll('.example-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
+            // Try lz-string first (new format)
+            let decoded = LZString.decompressFromEncodedURIComponent(code);
+
+            // Fallback to legacy base64 format
+            if (!decoded) {
+                decoded = decodeURIComponent(atob(code));
+            }
+
+            if (decoded) {
+                editor.setContent(decoded);
+                // Clear all example tabs
+                document.querySelectorAll('.example-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+            }
         } catch (e) {
             console.error('Failed to decode URL:', e);
         }
     }
 }
+
+// Fetch GitHub stars
+async function fetchGitHubStars() {
+    const starsEl = document.getElementById('github-stars');
+    if (!starsEl) return;
+
+    try {
+        const response = await fetch('https://api.github.com/repos/rustledger/rustledger');
+        const data = await response.json();
+        if (data.stargazers_count !== undefined) {
+            const stars = data.stargazers_count;
+            starsEl.textContent = stars >= 1000 ? `${(stars / 1000).toFixed(1)}k` : stars;
+        }
+    } catch (e) {
+        starsEl.textContent = '-';
+    }
+}
+
+// Animate stats on scroll
+function initStatsAnimation() {
+    const statsSection = document.getElementById('stats-section');
+    if (!statsSection) return;
+
+    const animateValue = (el, start, end, duration, suffix = '') => {
+        const startTime = performance.now();
+        const update = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+            const current = Math.floor(start + (end - start) * easeOut);
+            el.textContent = current + suffix;
+            if (progress < 1) requestAnimationFrame(update);
+        };
+        requestAnimationFrame(update);
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                document.querySelectorAll('[data-animate-stat]').forEach(el => {
+                    const value = parseInt(el.dataset.animateStat);
+                    const suffix = el.dataset.suffix || '';
+                    animateValue(el, 0, value, 1000, suffix);
+                });
+                observer.disconnect();
+            }
+        });
+    }, { threshold: 0.5 });
+
+    observer.observe(statsSection);
+}
+
+// Scroll reveal animation
+function initScrollReveal() {
+    const revealElements = document.querySelectorAll('.reveal');
+    if (!revealElements.length) return;
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                // Also trigger stagger-children if present
+                const staggerContainer = entry.target.querySelector('.stagger-children');
+                if (staggerContainer) {
+                    staggerContainer.classList.add('visible');
+                }
+                // Check if the reveal element itself has stagger-children
+                if (entry.target.querySelector('.stagger-children')) {
+                    entry.target.querySelectorAll('.stagger-children').forEach(el => {
+                        el.classList.add('visible');
+                    });
+                }
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    revealElements.forEach(el => observer.observe(el));
+}
+
+// Toast notification
+function showToast(message, duration = 2000) {
+    // Remove existing toast
+    const existing = document.getElementById('toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-2 rounded-lg text-sm z-50 animate-toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('animate-toast-out');
+        setTimeout(() => toast.remove(), 200);
+    }, duration);
+}
+
+// Make toast available globally for inline onclick handlers
+window.showToast = showToast;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -1018,6 +1188,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check URL for shared code
     loadFromUrl();
+
+    // Fetch GitHub stars
+    fetchGitHubStars();
+
+    // Initialize stats animation
+    initStatsAnimation();
+
+    // Initialize scroll reveal animations
+    initScrollReveal();
 
     // Set initial active states
     document.querySelector('.example-tab[data-example="simple"]')?.classList.add('active');

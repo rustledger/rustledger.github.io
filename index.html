@@ -3,157 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rustledger</title>
-    <meta name="description" content="Drop in Rust replacement for Beancount. Your ledger under your control. Forever.">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📒</text></svg>">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body { font-family: system-ui, -apple-system, sans-serif; }
-        .mono { font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace; }
-        .fade-in { animation: fadeIn 0.6s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    <title>rustledger - Drop in Rust replacement for Beancount</title>
+    <meta name="description" content="Drop in Rust replacement for Beancount. Accounting in plain text, under your control, forever. 10x faster, single binary, 100% compatible.">
 
-        /* Example tabs (browser-style) */
-        .example-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.25rem;
-            padding: 0.25rem;
-            background: rgba(255,255,255,0.03);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        @media (min-width: 640px) {
-            .example-tabs {
-                gap: 0;
-                padding: 0;
-            }
-        }
-        .example-tab {
-            padding: 0.4rem 0.7rem;
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.5);
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 0.25rem;
-            transition: all 0.15s;
-            position: relative;
-        }
-        @media (min-width: 640px) {
-            .example-tab {
-                padding: 0.6rem 1.2rem;
-                font-size: 0.8rem;
-                border: none;
-                border-right: 1px solid rgba(255,255,255,0.05);
-                border-radius: 0;
-            }
-        }
-        .example-tab:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.05); }
-        .example-tab.active {
-            color: white;
-            background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.2);
-        }
-        @media (min-width: 640px) {
-            .example-tab.active {
-                background: rgba(255,255,255,0.05);
-                border-color: transparent;
-                border-right-color: rgba(255,255,255,0.05);
-            }
-            .example-tab.active::after {
-                content: '';
-                position: absolute;
-                bottom: -1px;
-                left: 0;
-                right: 0;
-                height: 2px;
-                background: #3b82f6;
-            }
-        }
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rustledger.github.io/">
+    <meta property="og:title" content="rustledger - Drop in Rust replacement for Beancount">
+    <meta property="og:description" content="Accounting in plain text, under your control, forever. 10x faster, single binary, 100% compatible with Beancount.">
+    <meta property="og:image" content="https://rustledger.github.io/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="rustledger - Drop in Rust replacement for Beancount">
+    <meta name="twitter:description" content="Accounting in plain text, under your control, forever. 10x faster, single binary.">
 
-        /* Vertical resizer */
-        .resizer {
-            height: 6px;
-            background: rgba(255,255,255,0.05);
-            cursor: ns-resize;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.15s;
-        }
-        .resizer:hover, .resizer.dragging { background: rgba(59, 130, 246, 0.3); }
-        .resizer::after {
-            content: '';
-            width: 40px;
-            height: 3px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 2px;
-        }
-        .resizer:hover::after, .resizer.dragging::after { background: rgba(255,255,255,0.4); }
-
-        /* Output tabs - styled like example tabs */
-        .output-tabs-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.25rem;
-            padding: 0.25rem;
-            background: rgba(255,255,255,0.03);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            align-items: center;
-        }
-        @media (min-width: 640px) {
-            .output-tabs-container {
-                gap: 0;
-                padding: 0;
-            }
-        }
-        .output-tab {
-            padding: 0.4rem 0.7rem;
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.5);
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 0.25rem;
-            transition: all 0.15s;
-            position: relative;
-        }
-        @media (min-width: 640px) {
-            .output-tab {
-                padding: 0.6rem 1.2rem;
-                font-size: 0.8rem;
-                border: none;
-                border-right: 1px solid rgba(255,255,255,0.05);
-                border-radius: 0;
-            }
-        }
-        .output-tab:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.05); }
-        .output-tab.active {
-            color: white;
-            background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.2);
-        }
-        @media (min-width: 640px) {
-            .output-tab.active {
-                background: rgba(255,255,255,0.05);
-                border-color: transparent;
-                border-right-color: rgba(255,255,255,0.05);
-            }
-            .output-tab.active::after {
-                content: '';
-                position: absolute;
-                bottom: -1px;
-                left: 0;
-                right: 0;
-                height: 2px;
-                background: #3b82f6;
-            }
-        }
-
-        /* Query results table */
-        .result-table { border-collapse: collapse; width: 100%; }
-        .result-table th { text-align: left; padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); font-weight: 500; }
-        .result-table td { padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .result-table tr:hover td { background: rgba(255,255,255,0.03); }
-    </style>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23f97316'/%3E%3Ctext x='50' y='68' font-size='50' font-family='system-ui' font-weight='bold' text-anchor='middle' fill='white'%3Erl%3C/text%3E%3C/svg%3E">
 </head>
 <body class="bg-black text-white antialiased">
     <!-- Nav -->
@@ -170,30 +34,36 @@
 
     <!-- Hero -->
     <section class="min-h-[90vh] flex items-center justify-center px-6 pt-20">
-        <div class="max-w-3xl mx-auto text-center fade-in">
+        <div class="max-w-3xl mx-auto text-center">
             <p class="text-white/40 text-sm uppercase tracking-widest mb-6">Beancount, rewritten in Rust</p>
             <h1 class="text-5xl md:text-6xl font-bold tracking-tight mb-6">
-                Drop in Rust replacement<br>for Beancount
+                Drop in <span class="text-accent">Rust</span> replacement<br>for Beancount
             </h1>
             <p class="text-xl text-white/60 mb-12 max-w-xl mx-auto">
-                Your ledger under your control. Forever.
+                Accounting in plain text, under your control, forever.
             </p>
 
             <div class="flex flex-col gap-3 items-center mb-16">
                 <div class="mono inline-flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 rounded text-white/80">
                     <span class="text-white/40">$</span>
                     <span>curl -sSf https://rustledger.github.io/install.sh | sh</span>
-                    <button onclick="navigator.clipboard.writeText('curl -sSf https://rustledger.github.io/install.sh | sh')" class="text-white/40 hover:text-white transition" title="Copy">
+                    <button onclick="navigator.clipboard.writeText('curl -sSf https://rustledger.github.io/install.sh | sh').then(() => showToast('Copied!'))" class="text-white/40 hover:text-white transition" title="Copy">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     </button>
                 </div>
                 <div class="mono inline-flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded text-white/60 text-sm">
                     <span class="text-white/30">or</span>
                     <span>cargo install rustledger</span>
-                    <button onclick="navigator.clipboard.writeText('cargo install rustledger')" class="text-white/40 hover:text-white transition" title="Copy">
+                    <button onclick="navigator.clipboard.writeText('cargo install rustledger').then(() => showToast('Copied!'))" class="text-white/40 hover:text-white transition" title="Copy">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     </button>
                 </div>
+                <!-- GitHub Star Button -->
+                <a href="https://github.com/rustledger/rustledger" target="_blank" class="mt-4 inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/20 px-4 py-2 rounded-lg transition">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    <span>Star on GitHub</span>
+                    <span id="github-stars" class="bg-white/20 px-2 py-0.5 rounded text-sm">...</span>
+                </a>
             </div>
         </div>
     </section>
@@ -215,6 +85,13 @@
                     <div class="example-tab" data-example="errors" onclick="loadExample('errors')">Errors</div>
                     <div class="flex-1"></div>
                     <button onclick="runFormat()" class="px-3 py-1.5 text-xs text-white/60 hover:text-white hover:bg-white/10 rounded transition" title="Format code">Format</button>
+                    <button onclick="downloadLedger()" class="px-2 py-1.5 text-white/40 hover:text-white transition" title="Download .beancount file">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    </button>
+                    <label class="px-2 py-1.5 text-white/40 hover:text-white transition cursor-pointer" title="Upload .beancount file">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                        <input type="file" accept=".beancount,.bean,.txt" onchange="uploadLedger(event)" class="hidden">
+                    </label>
                     <button onclick="shareUrl()" class="px-2 py-1.5 mr-2 text-white/40 hover:text-white transition" title="Share">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
                     </button>
@@ -230,8 +107,8 @@
                 <div class="output-tabs-container">
                     <div class="output-tab active" data-tab="query" onclick="switchTab('query')">Query</div>
                     <div class="flex-1"></div>
-                    <div class="output-tab" data-tab="plugin" onclick="switchTab('plugin')">Plugins</div>
-                    <div id="status-tab" class="output-tab text-green-400" data-tab="output" onclick="switchTab('output')">✓ Valid</div>
+                    <div class="output-tab text-yellow-400" style="border-left: 1px solid rgba(255,255,255,0.15)" data-tab="plugin" onclick="switchTab('plugin')">⚡ Plugins</div>
+                    <div id="status-tab" class="output-tab text-green-400" style="border-left: 1px solid rgba(255,255,255,0.15)" data-tab="output" onclick="switchTab('output')">✓ Valid</div>
                     <button onclick="copyOutput()" class="p-2 text-white/30 hover:text-white transition" title="Copy">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     </button>
@@ -299,36 +176,117 @@
         </div>
     </section>
 
-    <!-- Stats -->
+    <!-- What is Plain Text Accounting -->
     <section class="py-20 px-6 border-t border-white/10">
-        <div class="max-w-5xl mx-auto">
+        <div class="max-w-4xl mx-auto reveal">
+            <h2 class="text-2xl font-bold mb-4 text-center">What is plain text accounting?</h2>
+            <p class="text-white/50 text-center mb-16 max-w-2xl mx-auto">
+                Your finances in simple text files you control forever.
+            </p>
+            <div class="space-y-12">
+                <div class="flex items-start gap-6">
+                    <div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-lg mb-1">Your data, your files</h3>
+                        <p class="text-white/50">Simple .beancount files work with any text editor. No vendor lock-in, no subscriptions, no cloud required.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-6">
+                    <div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-lg mb-1">Git-friendly</h3>
+                        <p class="text-white/50">Track every change with version control. See exactly what changed and when. Collaborate with diffs.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-6">
+                    <div class="w-10 h-10 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-lg mb-1">Future-proof</h3>
+                        <p class="text-white/50">Text files from 1990 still work today. Your financial history will outlive any app or company.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section id="stats-section" class="py-20 px-6 border-t border-white/10">
+        <div class="max-w-5xl mx-auto reveal">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                 <div>
-                    <div class="text-4xl font-bold mb-2">10x</div>
+                    <div class="text-4xl font-bold mb-2"><span class="stat-number gradient-text-orange" data-animate-stat="10" data-suffix="x">10x</span></div>
                     <div class="text-white/40 text-sm">Faster</div>
                 </div>
                 <div>
-                    <div class="text-4xl font-bold mb-2">14</div>
+                    <div class="text-4xl font-bold mb-2"><span class="stat-number gradient-text-orange" data-animate-stat="14">14</span></div>
                     <div class="text-white/40 text-sm">Built-in plugins</div>
                 </div>
                 <div>
-                    <div class="text-4xl font-bold mb-2">7</div>
+                    <div class="text-4xl font-bold mb-2"><span class="stat-number gradient-text-orange" data-animate-stat="7">7</span></div>
                     <div class="text-white/40 text-sm">Booking methods</div>
                 </div>
                 <div>
-                    <div class="text-4xl font-bold mb-2">100%</div>
+                    <div class="text-4xl font-bold mb-2"><span class="stat-number gradient-text-orange" data-animate-stat="100" data-suffix="%">100%</span></div>
                     <div class="text-white/40 text-sm">Plain text</div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Why Switch / Comparison -->
+    <section class="py-20 px-6 border-t border-white/10">
+        <div class="max-w-4xl mx-auto reveal">
+            <h2 class="text-2xl font-bold mb-4 text-center">Why switch from Beancount?</h2>
+            <p class="text-white/50 text-center mb-12">Same syntax, same workflow, better tooling</p>
+
+            <div class="space-y-4">
+                <div class="grid grid-cols-3 gap-4 text-sm text-white/40 pb-2 border-b border-white/10">
+                    <div></div>
+                    <div class="text-center">Beancount</div>
+                    <div class="text-center text-white">rustledger</div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 py-3 items-center">
+                    <div class="text-white/70">Installation</div>
+                    <div class="text-center text-white/40">Python + pip + deps</div>
+                    <div class="text-center text-white">Single binary</div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 py-3 items-center bg-white/[0.02] rounded-lg px-4 -mx-4">
+                    <div class="text-white/70">Parse 10k transactions</div>
+                    <div class="text-center text-white/40">~2.5s</div>
+                    <div class="text-center text-white">~0.25s</div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 py-3 items-center">
+                    <div class="text-white/70">Browser/WASM</div>
+                    <div class="text-center text-white/40">Not possible</div>
+                    <div class="text-center text-white">Full support</div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 py-3 items-center bg-white/[0.02] rounded-lg px-4 -mx-4">
+                    <div class="text-white/70">Plugin system</div>
+                    <div class="text-center text-white/40">Python only</div>
+                    <div class="text-center text-white">Native + WASM</div>
+                </div>
+            </div>
+
+            <p class="text-center text-white/40 text-sm mt-10">Your existing .beancount files work without changes</p>
+        </div>
+    </section>
+
     <!-- Features -->
     <section class="py-20 px-6">
-        <div class="max-w-5xl mx-auto">
+        <div class="max-w-5xl mx-auto reveal">
             <div class="grid md:grid-cols-2 gap-12">
                 <div>
-                    <h2 class="text-2xl font-bold mb-8">Same commands you know</h2>
+                    <h2 class="text-2xl font-bold mb-8 text-center">Same commands you know</h2>
                     <div class="mono text-sm bg-white/5 border border-white/10 rounded-lg p-6 space-y-3">
                         <div><span class="text-white/40">$</span> bean-check ledger.beancount</div>
                         <div><span class="text-white/40">$</span> bean-format --in-place ledger.beancount</div>
@@ -337,7 +295,7 @@
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-bold mb-8">Full BQL support</h2>
+                    <h2 class="text-2xl font-bold mb-8 text-center">Full BQL support</h2>
                     <div class="mono text-sm bg-white/5 border border-white/10 rounded-lg p-6 space-y-3">
                         <div class="text-white/40">beancount> <span class="text-white">SELECT account, SUM(position)</span></div>
                         <div class="text-white/40">        ...> <span class="text-white">WHERE account ~ "Expenses"</span></div>
@@ -351,62 +309,44 @@
 
     <!-- Feature List -->
     <section class="py-20 px-6 border-t border-white/10">
-        <div class="max-w-5xl mx-auto">
+        <div class="max-w-5xl mx-auto reveal">
             <h2 class="text-2xl font-bold mb-12 text-center">Everything you need</h2>
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-8">
-                <div class="flex gap-4">
-                    <div class="text-white/20 text-xl">→</div>
-                    <div>
-                        <div class="font-medium mb-1">Full syntax support</div>
-                        <div class="text-sm text-white/50">All 12 directive types, cost specs, price annotations, arithmetic</div>
-                    </div>
+                <div>
+                    <div class="font-medium mb-1">Full syntax support</div>
+                    <div class="text-sm text-white/50">All 12 directive types, cost specs, price annotations, arithmetic</div>
                 </div>
-                <div class="flex gap-4">
-                    <div class="text-white/20 text-xl">→</div>
-                    <div>
-                        <div class="font-medium mb-1">Error recovery</div>
-                        <div class="text-sm text-white/50">Parser continues after errors, reports all issues at once</div>
-                    </div>
+                <div>
+                    <div class="font-medium mb-1">Error recovery</div>
+                    <div class="text-sm text-white/50">Parser continues after errors, reports all issues at once</div>
                 </div>
-                <div class="flex gap-4">
-                    <div class="text-white/20 text-xl">→</div>
-                    <div>
-                        <div class="font-medium mb-1">14 built-in plugins</div>
-                        <div class="text-sm text-white/50">implicit_prices, auto_accounts, pedantic, and more</div>
-                    </div>
+                <div>
+                    <div class="font-medium mb-1">14 built-in plugins</div>
+                    <div class="text-sm text-white/50">implicit_prices, auto_accounts, pedantic, and more</div>
                 </div>
-                <div class="flex gap-4">
-                    <div class="text-white/20 text-xl">→</div>
-                    <div>
-                        <div class="font-medium mb-1">WASM plugins</div>
-                        <div class="text-sm text-white/50">Extend with WebAssembly for sandboxed custom logic</div>
-                    </div>
+                <div>
+                    <div class="font-medium mb-1">WASM plugins</div>
+                    <div class="text-sm text-white/50">Extend with WebAssembly for sandboxed custom logic</div>
                 </div>
-                <div class="flex gap-4">
-                    <div class="text-white/20 text-xl">→</div>
-                    <div>
-                        <div class="font-medium mb-1">7 booking methods</div>
-                        <div class="text-sm text-white/50">STRICT, FIFO, LIFO, HIFO, AVERAGE, and more</div>
-                    </div>
+                <div>
+                    <div class="font-medium mb-1">7 booking methods</div>
+                    <div class="text-sm text-white/50">STRICT, FIFO, LIFO, HIFO, AVERAGE, and more</div>
                 </div>
-                <div class="flex gap-4">
-                    <div class="text-white/20 text-xl">→</div>
-                    <div>
-                        <div class="font-medium mb-1">30 error codes</div>
-                        <div class="text-sm text-white/50">Comprehensive validation with clear messages</div>
-                    </div>
+                <div>
+                    <div class="font-medium mb-1">30 error codes</div>
+                    <div class="text-sm text-white/50">Comprehensive validation with clear messages</div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- CTA -->
-    <section class="py-24 px-6 border-t border-white/10">
-        <div class="max-w-3xl mx-auto text-center">
+    <section class="py-20 px-6 border-t border-white/10">
+        <div class="max-w-3xl mx-auto text-center reveal">
             <h2 class="text-3xl font-bold mb-4">Ready to switch?</h2>
             <p class="text-white/50 mb-8">One command. No configuration.</p>
             <div class="flex flex-col gap-3 items-center">
-                <div class="mono inline-block bg-white/5 border border-white/10 px-6 py-3 rounded text-white/80">
+                <div class="mono inline-block bg-white/5 border border-white/10 px-6 py-3 rounded text-white/80 accent-border">
                     <span class="text-white/40">$</span> curl -sSf https://rustledger.github.io/install.sh | sh
                 </div>
                 <div class="mono inline-block bg-white/5 border border-white/10 px-4 py-2 rounded text-white/60 text-sm">

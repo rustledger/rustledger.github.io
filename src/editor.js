@@ -213,11 +213,212 @@ const errorLineDecoration = EditorView.baseTheme({
     }
 });
 
+// Account autocomplete state
+let accountAutocomplete = {
+    dropdown: null,
+    items: [],
+    selectedIndex: -1,
+    startPos: 0,
+    active: false
+};
+
+// Create account autocomplete dropdown
+function createAccountAutocompleteDropdown() {
+    if (accountAutocomplete.dropdown) return;
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'editor-autocomplete hidden';
+    document.body.appendChild(dropdown);
+    accountAutocomplete.dropdown = dropdown;
+}
+
+// Show account autocomplete
+function showAccountAutocomplete(view, accounts, filter, startPos) {
+    if (!accountAutocomplete.dropdown) createAccountAutocompleteDropdown();
+
+    const dropdown = accountAutocomplete.dropdown;
+    const lowerFilter = filter.toLowerCase();
+
+    // Filter accounts
+    accountAutocomplete.items = accounts.filter(a =>
+        a.toLowerCase().includes(lowerFilter)
+    ).slice(0, 10);
+
+    if (accountAutocomplete.items.length === 0) {
+        hideAccountAutocomplete();
+        return;
+    }
+
+    accountAutocomplete.selectedIndex = 0;
+    accountAutocomplete.startPos = startPos;
+    accountAutocomplete.active = true;
+
+    // Render items
+    dropdown.innerHTML = accountAutocomplete.items.map((item, idx) => {
+        const parts = item.split(':');
+        const coloredParts = parts.map((part, i) => {
+            const colors = ['#22d3ee', '#5eead4', '#6ee7b7', '#fcd34d', '#fdba74'];
+            const color = colors[Math.min(i, colors.length - 1)];
+            return `<span style="color: ${color}">${part}</span>`;
+        }).join('<span style="color: rgba(255,255,255,0.5)">:</span>');
+
+        return `<div class="editor-autocomplete-item ${idx === 0 ? 'selected' : ''}" data-index="${idx}">${coloredParts}</div>`;
+    }).join('');
+
+    // Position dropdown
+    const cursorCoords = view.coordsAtPos(view.state.selection.main.head);
+    if (cursorCoords) {
+        dropdown.style.left = `${cursorCoords.left}px`;
+        dropdown.style.top = `${cursorCoords.bottom + 4}px`;
+    }
+
+    dropdown.classList.remove('hidden');
+
+    // Add click handlers
+    dropdown.querySelectorAll('.editor-autocomplete-item').forEach(el => {
+        el.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            const idx = parseInt(el.dataset.index);
+            selectAccountAutocompleteItem(view, idx);
+        });
+    });
+}
+
+// Hide account autocomplete
+function hideAccountAutocomplete() {
+    if (accountAutocomplete.dropdown) {
+        accountAutocomplete.dropdown.classList.add('hidden');
+    }
+    accountAutocomplete.active = false;
+    accountAutocomplete.items = [];
+    accountAutocomplete.selectedIndex = -1;
+}
+
+// Select account autocomplete item
+function selectAccountAutocompleteItem(view, index) {
+    if (index < 0 || index >= accountAutocomplete.items.length) return;
+
+    const item = accountAutocomplete.items[index];
+    const from = accountAutocomplete.startPos;
+    const to = view.state.selection.main.head;
+
+    view.dispatch({
+        changes: { from, to, insert: item },
+        selection: { anchor: from + item.length }
+    });
+
+    hideAccountAutocomplete();
+}
+
+// Update autocomplete selection
+function updateAccountAutocompleteSelection(direction) {
+    if (accountAutocomplete.items.length === 0) return;
+
+    accountAutocomplete.selectedIndex += direction;
+    if (accountAutocomplete.selectedIndex < 0) {
+        accountAutocomplete.selectedIndex = accountAutocomplete.items.length - 1;
+    }
+    if (accountAutocomplete.selectedIndex >= accountAutocomplete.items.length) {
+        accountAutocomplete.selectedIndex = 0;
+    }
+
+    // Update visual selection
+    const dropdown = accountAutocomplete.dropdown;
+    dropdown.querySelectorAll('.editor-autocomplete-item').forEach((el, idx) => {
+        if (idx === accountAutocomplete.selectedIndex) {
+            el.classList.add('selected');
+            el.scrollIntoView({ block: 'nearest' });
+        } else {
+            el.classList.remove('selected');
+        }
+    });
+}
+
+// Stored accounts for autocomplete (will be set from main.js)
+let knownAccountsRef = new Set();
+
 // Create editor instance
 export function createEditor(container, initialContent, onChange) {
     const updateListener = EditorView.updateListener.of((update) => {
         if (update.docChanged && onChange) {
             onChange(update.state.doc.toString());
+        }
+    });
+
+    // Custom keymap for autocomplete
+    const autocompleteKeymap = keymap.of([{
+        key: 'ArrowDown',
+        run: (view) => {
+            if (accountAutocomplete.active) {
+                updateAccountAutocompleteSelection(1);
+                return true;
+            }
+            return false;
+        }
+    }, {
+        key: 'ArrowUp',
+        run: (view) => {
+            if (accountAutocomplete.active) {
+                updateAccountAutocompleteSelection(-1);
+                return true;
+            }
+            return false;
+        }
+    }, {
+        key: 'Enter',
+        run: (view) => {
+            if (accountAutocomplete.active && accountAutocomplete.selectedIndex >= 0) {
+                selectAccountAutocompleteItem(view, accountAutocomplete.selectedIndex);
+                return true;
+            }
+            return false;
+        }
+    }, {
+        key: 'Tab',
+        run: (view) => {
+            if (accountAutocomplete.active && accountAutocomplete.items.length > 0) {
+                selectAccountAutocompleteItem(view, Math.max(0, accountAutocomplete.selectedIndex));
+                return true;
+            }
+            return false;
+        }
+    }, {
+        key: 'Escape',
+        run: (view) => {
+            if (accountAutocomplete.active) {
+                hideAccountAutocomplete();
+                return true;
+            }
+            return false;
+        }
+    }]);
+
+    // Account autocomplete trigger on typing
+    const autocompleteUpdateListener = EditorView.updateListener.of((update) => {
+        if (!update.docChanged) return;
+
+        const view = update.view;
+        const pos = view.state.selection.main.head;
+        const line = view.state.doc.lineAt(pos);
+        const lineText = line.text;
+        const colInLine = pos - line.from;
+
+        // Find start of current word (looking for account pattern)
+        let wordStart = colInLine;
+        while (wordStart > 0 && !lineText[wordStart - 1].match(/[\s]/)) {
+            wordStart--;
+        }
+
+        const currentWord = lineText.slice(wordStart, colInLine);
+
+        // Check if we're typing an account (starts with capital letter and has colon)
+        if (currentWord.length >= 2 && /^[A-Z][A-Za-z0-9-]*:?/.test(currentWord)) {
+            const accounts = Array.from(knownAccountsRef);
+            if (accounts.length > 0) {
+                showAccountAutocomplete(view, accounts, currentWord, line.from + wordStart);
+            }
+        } else {
+            hideAccountAutocomplete();
         }
     });
 
@@ -228,6 +429,7 @@ export function createEditor(container, initialContent, onChange) {
             highlightActiveLine(),
             highlightActiveLineGutter(),
             history(),
+            autocompleteKeymap,
             keymap.of([...defaultKeymap, ...historyKeymap]),
             beancountLanguage,
             syntaxHighlighting(highlightStyle),
@@ -236,6 +438,7 @@ export function createEditor(container, initialContent, onChange) {
             accountColorizer,
             errorLineDecoration,
             updateListener,
+            autocompleteUpdateListener,
             EditorView.lineWrapping
         ]
     });
@@ -243,6 +446,13 @@ export function createEditor(container, initialContent, onChange) {
     const view = new EditorView({
         state,
         parent: container
+    });
+
+    // Hide autocomplete when clicking outside
+    document.addEventListener('click', (e) => {
+        if (accountAutocomplete.dropdown && !accountAutocomplete.dropdown.contains(e.target)) {
+            hideAccountAutocomplete();
+        }
     });
 
     return {
@@ -259,19 +469,66 @@ export function createEditor(container, initialContent, onChange) {
                 }
             });
         },
-        highlightErrorLines(lineNumbers) {
-            // For now, we'll just use CSS classes
-            // A more sophisticated approach would use decorations
-            const scroller = container.querySelector('.cm-scroller');
-            if (scroller) {
+        highlightErrorLines(lineNumbers, errorMessages = new Map()) {
+            // Use requestAnimationFrame to ensure DOM is ready
+            requestAnimationFrame(() => {
+                const scroller = container.querySelector('.cm-scroller');
+                if (!scroller) return;
+
                 scroller.querySelectorAll('.cm-line').forEach((line, idx) => {
-                    if (lineNumbers.has(idx + 1)) {
+                    const lineNum = idx + 1;
+                    if (lineNumbers.has(lineNum)) {
                         line.classList.add('cm-error-line');
+                        // Store error message as data attribute
+                        if (errorMessages.has(lineNum)) {
+                            line.dataset.errorMessage = errorMessages.get(lineNum);
+                        }
                     } else {
                         line.classList.remove('cm-error-line');
+                        delete line.dataset.errorMessage;
                     }
                 });
-            }
+
+                // Set up tooltip listeners if not already set
+                if (!scroller.dataset.tooltipInit) {
+                    scroller.dataset.tooltipInit = 'true';
+                    let tooltip = null;
+
+                    scroller.addEventListener('mouseover', (e) => {
+                        const errorLine = e.target.closest('.cm-error-line');
+                        if (errorLine && errorLine.dataset.errorMessage) {
+                            // Remove existing tooltip
+                            if (tooltip) tooltip.remove();
+
+                            tooltip = document.createElement('div');
+                            tooltip.className = 'error-tooltip';
+                            tooltip.textContent = errorLine.dataset.errorMessage;
+                            document.body.appendChild(tooltip);
+
+                            // Position tooltip above the line
+                            const rect = errorLine.getBoundingClientRect();
+                            tooltip.style.left = `${rect.left + 20}px`;
+                            tooltip.style.top = `${rect.top - tooltip.offsetHeight - 8}px`;
+
+                            // If tooltip goes off top, show below
+                            if (parseFloat(tooltip.style.top) < 0) {
+                                tooltip.style.top = `${rect.bottom + 8}px`;
+                            }
+                        }
+                    });
+
+                    scroller.addEventListener('mouseout', (e) => {
+                        const errorLine = e.target.closest('.cm-error-line');
+                        if (errorLine && tooltip) {
+                            tooltip.remove();
+                            tooltip = null;
+                        }
+                    });
+                }
+            });
+        },
+        setKnownAccounts(accounts) {
+            knownAccountsRef = accounts;
         }
     };
 }
