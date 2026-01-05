@@ -31,8 +31,10 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Copy install.sh to dist
-        run: cp install.sh dist/
+      - name: Copy assets to dist
+        run: |
+          cp i dist/
+          cp og-image.png dist/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
