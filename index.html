@@ -245,7 +245,8 @@
             <h2 class="text-2xl font-bold mb-4 text-center">Why switch from Beancount?</h2>
             <p class="text-white/50 text-center mb-12">Same syntax, same workflow, better tooling</p>
 
-            <div class="space-y-4">
+            <!-- Desktop table -->
+            <div class="hidden sm:block space-y-4">
                 <div class="grid grid-cols-3 gap-4 text-sm text-white/40 pb-2 border-b border-white/10">
                     <div></div>
                     <div class="text-center">Beancount</div>
@@ -274,6 +275,38 @@
                     <div class="text-white/70">Plugin system</div>
                     <div class="text-center text-white/40">Python only</div>
                     <div class="text-center text-white">Native + WASM</div>
+                </div>
+            </div>
+
+            <!-- Mobile cards -->
+            <div class="sm:hidden space-y-4">
+                <div class="bg-white/[0.02] rounded-lg p-4">
+                    <div class="text-white/50 text-sm mb-2">Installation</div>
+                    <div class="flex justify-between items-center">
+                        <div class="text-white/40 text-sm">Beancount<br><span class="text-white/30">Python + pip</span></div>
+                        <div class="text-white text-sm text-right">rustledger<br><span class="text-white/70">Single binary</span></div>
+                    </div>
+                </div>
+                <div class="bg-white/[0.02] rounded-lg p-4">
+                    <div class="text-white/50 text-sm mb-2">Parse 10k transactions</div>
+                    <div class="flex justify-between items-center">
+                        <div class="text-white/40 text-sm">~2.5s</div>
+                        <div class="text-white text-sm">~0.25s</div>
+                    </div>
+                </div>
+                <div class="bg-white/[0.02] rounded-lg p-4">
+                    <div class="text-white/50 text-sm mb-2">Browser/WASM</div>
+                    <div class="flex justify-between items-center">
+                        <div class="text-white/40 text-sm">Not possible</div>
+                        <div class="text-white text-sm">Full support</div>
+                    </div>
+                </div>
+                <div class="bg-white/[0.02] rounded-lg p-4">
+                    <div class="text-white/50 text-sm mb-2">Plugin system</div>
+                    <div class="flex justify-between items-center">
+                        <div class="text-white/40 text-sm">Python only</div>
+                        <div class="text-white text-sm">Native + WASM</div>
+                    </div>
                 </div>
             </div>
 
@@ -317,8 +350,8 @@
                     <div class="text-sm text-white/50">All 12 directive types, cost specs, price annotations, arithmetic</div>
                 </div>
                 <div>
-                    <div class="font-medium mb-1">Error recovery</div>
-                    <div class="text-sm text-white/50">Parser continues after errors, reports all issues at once</div>
+                    <div class="font-medium mb-1">Zero dependencies</div>
+                    <div class="text-sm text-white/50">Single binary, no Python or runtime required</div>
                 </div>
                 <div>
                     <div class="font-medium mb-1">14 built-in plugins</div>
