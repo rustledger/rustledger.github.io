@@ -718,9 +718,9 @@ function updateQueryButtons() {
     document.querySelectorAll('.query-btn').forEach(btn => {
         const btnQuery = btn.dataset.query;
         if (currentQuery === btnQuery) {
-            btn.className = 'query-btn px-3 py-1 text-xs rounded transition bg-green-900/50 text-green-300 hover:bg-green-800/50';
+            btn.className = 'query-btn px-3 py-1 text-xs rounded transition bg-white/20 text-white hover:bg-white/30';
         } else {
-            btn.className = 'query-btn px-3 py-1 text-xs rounded transition bg-red-900/30 text-red-300/70 hover:bg-red-800/40';
+            btn.className = 'query-btn px-3 py-1 text-xs rounded transition bg-white/5 text-white/60 hover:bg-white/10 hover:text-white/80';
         }
     });
 
