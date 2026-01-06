@@ -1171,38 +1171,103 @@ function showToast(message, duration = 2000) {
 // Make toast available globally for inline onclick handlers
 window.showToast = showToast;
 
-// User agent detection for hero variants
-function detectUserType() {
+// User type detection for hero variants
+// Uses multiple signals: Client Hints API, User Agent, and Referrer
+
+// Detect referrer source
+function detectReferrerSource() {
+    const referrer = document.referrer.toLowerCase();
+
+    // Technical community referrers
+    if (referrer.includes('news.ycombinator.com') || referrer.includes('hn.algolia.com')) {
+        return 'hackernews';
+    }
+    if (referrer.includes('github.com')) {
+        return 'github';
+    }
+    if (referrer.includes('reddit.com/r/rust') ||
+        referrer.includes('reddit.com/r/programming') ||
+        referrer.includes('reddit.com/r/plaintextaccounting')) {
+        return 'reddit-tech';
+    }
+    if (referrer.includes('lobste.rs')) {
+        return 'lobsters';
+    }
+    if (referrer.includes('stackoverflow.com') || referrer.includes('stackexchange.com')) {
+        return 'stackoverflow';
+    }
+
+    return null;
+}
+
+// Detect platform using Client Hints API (modern) with UA fallback
+async function detectPlatform() {
+    // Try Client Hints API first (modern browsers)
+    if (navigator.userAgentData) {
+        try {
+            const hints = await navigator.userAgentData.getHighEntropyValues(['platform', 'platformVersion']);
+            return {
+                platform: hints.platform?.toLowerCase() || '',
+                mobile: navigator.userAgentData.mobile || false,
+                brands: navigator.userAgentData.brands || []
+            };
+        } catch (e) {
+            // Fall through to UA parsing
+        }
+    }
+
+    // Fallback to User Agent parsing
+    const ua = navigator.userAgent.toLowerCase();
+    return {
+        platform: ua.includes('linux') ? 'linux' :
+                  ua.includes('mac') ? 'macos' :
+                  ua.includes('win') ? 'windows' : 'unknown',
+        mobile: /mobile|android|iphone|ipad/i.test(ua),
+        brands: [],
+        ua: ua
+    };
+}
+
+// Determine user type from all signals
+async function detectUserType() {
+    const platformInfo = await detectPlatform();
+    const referrer = detectReferrerSource();
     const ua = navigator.userAgent.toLowerCase();
 
-    // Technical user indicators
-    const technicalIndicators = [
-        'linux',           // Linux users
-        'x11',             // X11 (Linux/Unix)
-        'firefox',         // Firefox users tend to be more technical
-        'arch',            // Arch Linux
-        'ubuntu',          // Ubuntu
-        'fedora',          // Fedora
-        'debian',          // Debian
-        'gentoo',          // Gentoo
-        'manjaro',         // Manjaro
-        'curl',            // curl requests
-        'wget',            // wget requests
-        'httpie',          // HTTPie
-        'postman',         // Postman
-        'insomnia',        // Insomnia
-    ];
+    // Referrer-based detection (highest priority)
+    if (referrer === 'hackernews') return 'hackernews';
+    if (referrer === 'github') return 'technical';
+    if (referrer === 'lobsters') return 'technical';
+    if (referrer === 'reddit-tech') return 'technical';
+    if (referrer === 'stackoverflow') return 'technical';
 
-    // Check for technical indicators
-    const isTechnical = technicalIndicators.some(indicator => ua.includes(indicator));
+    // Platform-based detection
+    if (platformInfo.platform === 'linux') return 'technical';
 
-    return isTechnical ? 'technical' : 'general';
+    // Browser-based detection (from UA or brands)
+    const isFirefox = ua.includes('firefox') ||
+        platformInfo.brands?.some(b => b.brand?.toLowerCase().includes('firefox'));
+    const isBrave = platformInfo.brands?.some(b => b.brand?.toLowerCase().includes('brave'));
+
+    if (isFirefox || isBrave) return 'technical';
+
+    // CLI tool detection
+    const cliTools = ['curl', 'wget', 'httpie', 'python-requests', 'go-http-client', 'node-fetch'];
+    if (cliTools.some(tool => ua.includes(tool))) return 'technical';
+
+    // Default to general audience
+    return 'general';
 }
 
 // Hero content variants
 const heroVariants = {
     technical: {
         tagline: 'Beancount, rewritten in Rust',
+        heading: 'Drop in <span class="text-accent">Rust</span> replacement<br>for Beancount',
+        subheading: 'Accounting in plain text, under your control, forever.'
+    },
+    hackernews: {
+        tagline: 'Hello, Hacker News!',
         heading: 'Drop in <span class="text-accent">Rust</span> replacement<br>for Beancount',
         subheading: 'Accounting in plain text, under your control, forever.'
     },
@@ -1214,16 +1279,26 @@ const heroVariants = {
 };
 
 // Apply hero variant based on user type
-function applyHeroVariant() {
-    // Allow URL parameter override for testing: ?hero=technical or ?hero=general
+async function applyHeroVariant() {
+    // Allow URL parameter override for testing: ?hero=technical, ?hero=general, ?hero=hackernews
     const params = new URLSearchParams(window.location.search);
     const heroOverride = params.get('hero');
+
+    // Check localStorage for saved preference
+    const savedPreference = localStorage.getItem('heroVariant');
 
     let userType;
     if (heroOverride && heroVariants[heroOverride]) {
         userType = heroOverride;
+    } else if (savedPreference && heroVariants[savedPreference]) {
+        userType = savedPreference;
     } else {
-        userType = detectUserType();
+        userType = await detectUserType();
+    }
+
+    // Save detected type (but not overrides) for consistency on return visits
+    if (!heroOverride && !savedPreference) {
+        localStorage.setItem('heroVariant', userType);
     }
 
     const variant = heroVariants[userType];
@@ -1236,8 +1311,9 @@ function applyHeroVariant() {
     if (heading && variant.heading) heading.innerHTML = variant.heading;
     if (subheading && variant.subheading) subheading.textContent = variant.subheading;
 
-    // Log for debugging (can be removed later)
-    console.log(`Hero variant: ${userType}${heroOverride ? ' (override)' : ''}`);
+    // Log for debugging
+    const source = heroOverride ? 'override' : savedPreference ? 'saved' : 'detected';
+    console.log(`Hero variant: ${userType} (${source})`);
 }
 
 // Initialize
