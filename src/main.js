@@ -1171,8 +1171,79 @@ function showToast(message, duration = 2000) {
 // Make toast available globally for inline onclick handlers
 window.showToast = showToast;
 
+// User agent detection for hero variants
+function detectUserType() {
+    const ua = navigator.userAgent.toLowerCase();
+
+    // Technical user indicators
+    const technicalIndicators = [
+        'linux',           // Linux users
+        'x11',             // X11 (Linux/Unix)
+        'firefox',         // Firefox users tend to be more technical
+        'arch',            // Arch Linux
+        'ubuntu',          // Ubuntu
+        'fedora',          // Fedora
+        'debian',          // Debian
+        'gentoo',          // Gentoo
+        'manjaro',         // Manjaro
+        'curl',            // curl requests
+        'wget',            // wget requests
+        'httpie',          // HTTPie
+        'postman',         // Postman
+        'insomnia',        // Insomnia
+    ];
+
+    // Check for technical indicators
+    const isTechnical = technicalIndicators.some(indicator => ua.includes(indicator));
+
+    return isTechnical ? 'technical' : 'general';
+}
+
+// Hero content variants
+const heroVariants = {
+    technical: {
+        tagline: 'Beancount, rewritten in Rust',
+        heading: 'Drop in <span class="text-accent">Rust</span> replacement<br>for Beancount',
+        subheading: 'Accounting in plain text, under your control, forever.'
+    },
+    general: {
+        tagline: 'Plain text accounting for everyone',
+        heading: 'Simple, powerful<br>bookkeeping in plain text',
+        subheading: 'Track your finances with human-readable files. Local and private.'
+    }
+};
+
+// Apply hero variant based on user type
+function applyHeroVariant() {
+    // Allow URL parameter override for testing: ?hero=technical or ?hero=general
+    const params = new URLSearchParams(window.location.search);
+    const heroOverride = params.get('hero');
+
+    let userType;
+    if (heroOverride && heroVariants[heroOverride]) {
+        userType = heroOverride;
+    } else {
+        userType = detectUserType();
+    }
+
+    const variant = heroVariants[userType];
+
+    const tagline = document.getElementById('hero-tagline');
+    const heading = document.getElementById('hero-heading');
+    const subheading = document.getElementById('hero-subheading');
+
+    if (tagline && variant.tagline) tagline.textContent = variant.tagline;
+    if (heading && variant.heading) heading.innerHTML = variant.heading;
+    if (subheading && variant.subheading) subheading.textContent = variant.subheading;
+
+    // Log for debugging (can be removed later)
+    console.log(`Hero variant: ${userType}${heroOverride ? ' (override)' : ''}`);
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    // Apply hero variant based on user agent
+    applyHeroVariant();
     // Create CodeMirror editor
     const container = document.getElementById('editor-panel');
     editor = createEditor(container, examples.simple, onEditorChange);
