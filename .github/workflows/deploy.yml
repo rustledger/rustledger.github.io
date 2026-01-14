@@ -20,6 +20,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Fetch latest WASM from releases
+        run: |
+          # Get the latest release with WASM assets
+          RELEASE_JSON=$(curl -s "https://api.github.com/repos/rustledger/rustledger/releases" | jq '[.[] | select(.assets[]?.name | test("wasm"))] | .[0]')
+          WASM_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name | test("wasm.*\\.tar\\.gz$")) | .browser_download_url')
+          VERSION=$(echo "$RELEASE_JSON" | jq -r '.tag_name')
+
+          echo "Downloading WASM from $VERSION: $WASM_URL"
+
+          # Download and extract to pkg/
+          curl -sL "$WASM_URL" -o wasm.tar.gz
+          rm -rf pkg
+          mkdir -p pkg
+          tar -xzf wasm.tar.gz -C pkg --strip-components=1
+          rm wasm.tar.gz
+
+          echo "WASM version: $VERSION"
+          ls -la pkg/
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -28,13 +47,23 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
       - name: Build
         run: npm run build
-
-      - name: Copy assets to dist
-        run: |
-          cp i dist/
-          cp og-image.png dist/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

@@ -6,14 +6,28 @@
   "scripts": {
     "dev": "vite --port 8080",
     "build": "vite build",
-    "preview": "vite preview --port 8080"
+    "preview": "vite preview --port 8080",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@eslint/js": "^9.18.0",
     "@tailwindcss/vite": "^4.1.18",
     "autoprefixer": "^10.4.23",
+    "eslint": "^9.18.0",
+    "globals": "^15.14.0",
+    "jsdom": "^26.0.0",
     "postcss": "^8.5.6",
+    "prettier": "^3.4.2",
     "tailwindcss": "^4.1.18",
-    "vite": "^5.4.0"
+    "typescript": "^5.7.3",
+    "vite": "^5.4.0",
+    "vitest": "^2.1.8"
   },
   "dependencies": {
     "@codemirror/commands": "^6.10.1",

@@ -16,14 +16,25 @@
     <meta name="twitter:title" content="rustledger - Drop in Rust replacement for Beancount">
     <meta name="twitter:description" content="Accounting in plain text, under your control, forever. 10x faster, single binary.">
 
+    <!-- Preconnect to external resources -->
+    <link rel="preconnect" href="https://api.github.com">
+
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0a0a'/%3E%3Ctext x='50' y='68' font-size='50' font-family='system-ui' font-weight='bold' text-anchor='middle' fill='white'%3Erl%3C/text%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0a0a'/%3E%3Ctext x='50' y='68' font-size='50' font-family='system-ui' font-weight='bold' text-anchor='middle'%3E%3Ctspan fill='%23f97316'%3Er%3C/tspan%3E%3Ctspan fill='white'%3El%3C/tspan%3E%3C/text%3E%3C/svg%3E">
 </head>
 <body class="bg-black text-white antialiased">
+    <!-- Skip to main content for accessibility -->
+    <a href="#playground" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded">
+        Skip to playground
+    </a>
+
     <!-- Nav -->
     <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-sm border-b border-white/10 z-50">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-            <a href="/" class="text-base sm:text-lg font-semibold tracking-tight shrink-0"><span class="text-accent">rust</span>ledger</a>
+            <a href="/" class="flex items-center gap-2 text-base sm:text-lg font-semibold tracking-tight shrink-0">
+                <svg class="w-6 h-6" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="#0a0a0a"/><text x="50" y="68" font-size="50" font-family="system-ui" font-weight="bold" text-anchor="middle"><tspan fill="#f97316">r</tspan><tspan fill="white">l</tspan></text></svg>
+                <span><span class="text-accent">rust</span>ledger</span>
+            </a>
             <div class="flex items-center gap-3 sm:gap-8 text-xs sm:text-sm">
                 <a href="https://docs.rs/rustledger-core" class="text-white/60 hover:text-white transition">Docs</a>
                 <a href="https://crates.io/crates/rustledger" class="text-white/60 hover:text-white transition hidden sm:block">Crates</a>
@@ -47,15 +58,15 @@
                 <div class="mono inline-flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 rounded text-white/80">
                     <span class="text-white/40">$</span>
                     <span>curl -sSfL rustledger.github.io/i | sh</span>
-                    <button onclick="navigator.clipboard.writeText('curl -sSfL rustledger.github.io/i | sh').then(() => showToast('Copied!'))" class="text-white/40 hover:text-white transition" title="Copy">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    <button onclick="navigator.clipboard.writeText('curl -sSfL rustledger.github.io/i | sh').then(() => showToast('Copied!'))" class="text-white/40 hover:text-white transition" title="Copy" aria-label="Copy install command">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     </button>
                 </div>
                 <div class="mono inline-flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded text-white/60 text-sm">
                     <span class="text-white/30">or</span>
                     <span>cargo install rustledger</span>
-                    <button onclick="navigator.clipboard.writeText('cargo install rustledger').then(() => showToast('Copied!'))" class="text-white/40 hover:text-white transition" title="Copy">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    <button onclick="navigator.clipboard.writeText('cargo install rustledger').then(() => showToast('Copied!'))" class="text-white/40 hover:text-white transition" title="Copy" aria-label="Copy cargo install command">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     </button>
                 </div>
                 <!-- GitHub Star Button -->
@@ -69,7 +80,7 @@
     </section>
 
     <!-- Playground -->
-    <section class="py-8 sm:py-16 px-3 sm:px-6 border-t border-white/10">
+    <section id="playground" class="py-8 sm:py-16 px-3 sm:px-6 border-t border-white/10">
         <div class="max-w-6xl mx-auto">
             <h2 class="text-xl sm:text-2xl font-bold mb-2 text-center">Try it in your browser</h2>
             <p class="text-white/50 text-center mb-4 sm:mb-8 text-sm sm:text-base">Powered by WebAssembly</p>
@@ -85,15 +96,15 @@
                     <div class="example-tab" data-example="errors" onclick="loadExample('errors')">Errors</div>
                     <div class="flex-1"></div>
                     <button onclick="runFormat()" class="px-3 py-1.5 text-xs text-white/60 hover:text-white hover:bg-white/10 rounded transition" title="Format code">Format</button>
-                    <button onclick="downloadLedger()" class="px-2 py-1.5 text-white/40 hover:text-white transition" title="Download .beancount file">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <button onclick="downloadLedger()" class="px-2 py-1.5 text-white/40 hover:text-white transition" title="Download .beancount file" aria-label="Download beancount file">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                     </button>
-                    <label class="px-2 py-1.5 text-white/40 hover:text-white transition cursor-pointer" title="Upload .beancount file">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                        <input type="file" accept=".beancount,.bean,.txt" onchange="uploadLedger(event)" class="hidden">
+                    <label class="px-2 py-1.5 text-white/40 hover:text-white transition cursor-pointer" title="Upload .beancount file" aria-label="Upload beancount file">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                        <input type="file" accept=".beancount,.bean,.txt" onchange="uploadLedger(event)" class="hidden" aria-label="Upload beancount file">
                     </label>
-                    <button onclick="shareUrl()" class="px-2 py-1.5 mr-2 text-white/40 hover:text-white transition" title="Share">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                    <button onclick="shareUrl()" class="px-2 py-1.5 mr-2 text-white/40 hover:text-white transition" title="Share" aria-label="Share URL">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
                     </button>
                 </div>
 
@@ -109,14 +120,15 @@
                     <div class="flex-1"></div>
                     <div class="output-tab text-yellow-400" style="border-left: 1px solid rgba(255,255,255,0.15)" data-tab="plugin" onclick="switchTab('plugin')">⚡ Plugins</div>
                     <div id="status-tab" class="output-tab text-green-400" style="border-left: 1px solid rgba(255,255,255,0.15)" data-tab="output" onclick="switchTab('output')">✓ Valid</div>
-                    <button onclick="copyOutput()" class="p-2 text-white/30 hover:text-white transition" title="Copy">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    <button onclick="copyOutput()" class="p-2 text-white/30 hover:text-white transition" title="Copy" aria-label="Copy output">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                     </button>
                 </div>
 
                 <!-- Query input (shown when Query tab active) -->
                 <div id="query-input" class="px-3 py-2 border-b border-white/10 bg-white/5">
-                    <input type="text" id="query-text" class="mono w-full bg-transparent text-sm text-white/90 placeholder-white/30 outline-none" placeholder="Enter BQL query..." onkeydown="if(event.key==='Enter')runQueryFromInput()" oninput="updateQueryButtons()">
+                    <label for="query-text" class="sr-only">BQL Query</label>
+                    <input type="text" id="query-text" class="mono w-full bg-transparent text-sm text-white/90 placeholder-white/30 outline-none" placeholder="Enter BQL query..." onkeydown="if(event.key==='Enter')runQueryFromInput()" oninput="updateQueryButtons()" aria-label="BQL Query">
                 </div>
 
                 <!-- Query preset buttons (shown when Query tab active) -->
@@ -392,7 +404,7 @@
     <!-- Footer -->
     <footer class="py-12 px-6 border-t border-white/10">
         <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-white/40">
-            <div><span class="text-accent">rust</span>ledger v1.0.0-rc.2</div>
+            <div><span class="text-accent">rust</span>ledger <span id="footer-version">...</span></div>
             <div class="flex gap-6">
                 <a href="https://github.com/rustledger/rustledger" class="hover:text-white transition">GitHub</a>
                 <a href="https://crates.io/crates/rustledger" class="hover:text-white transition">Crates.io</a>

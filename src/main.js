@@ -1069,20 +1069,35 @@ function loadFromUrl() {
     }
 }
 
-// Fetch GitHub stars
-async function fetchGitHubStars() {
+// Fetch GitHub stars and version
+async function fetchGitHubInfo() {
     const starsEl = document.getElementById('github-stars');
-    if (!starsEl) return;
+    const versionEl = document.getElementById('footer-version');
 
     try {
-        const response = await fetch('https://api.github.com/repos/rustledger/rustledger');
-        const data = await response.json();
-        if (data.stargazers_count !== undefined) {
-            const stars = data.stargazers_count;
+        // Fetch repo info (stars) and releases list in parallel
+        // Note: /releases/latest returns 404 for repos with only pre-releases
+        const [repoResponse, releasesResponse] = await Promise.all([
+            fetch('https://api.github.com/repos/rustledger/rustledger'),
+            fetch('https://api.github.com/repos/rustledger/rustledger/releases?per_page=1')
+        ]);
+
+        const repoData = await repoResponse.json();
+        const releasesData = await releasesResponse.json();
+
+        // Update stars
+        if (starsEl && repoData.stargazers_count !== undefined) {
+            const stars = repoData.stargazers_count;
             starsEl.textContent = stars >= 1000 ? `${(stars / 1000).toFixed(1)}k` : stars;
         }
+
+        // Update version (first release in list, which is the newest)
+        if (versionEl && releasesData.length > 0 && releasesData[0].tag_name) {
+            versionEl.textContent = releasesData[0].tag_name;
+        }
     } catch (e) {
-        starsEl.textContent = '-';
+        if (starsEl) starsEl.textContent = '-';
+        if (versionEl) versionEl.textContent = '';
     }
 }
 
@@ -1189,8 +1204,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check URL for shared code
     loadFromUrl();
 
-    // Fetch GitHub stars
-    fetchGitHubStars();
+    // Fetch GitHub stars and version
+    fetchGitHubInfo();
 
     // Initialize stats animation
     initStatsAnimation();

@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -5,6 +6,12 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
   ],
+
+  // Test config
+  test: {
+    environment: 'jsdom',
+    include: ['src/**/*.test.js'],
+  },
   // Serve from root
   root: '.',
 

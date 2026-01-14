@@ -4,6 +4,9 @@ node_modules/
 # Build output
 dist/
 
+# WASM (fetched from releases at build time)
+pkg/
+
 # Nix
 result
 .direnv/
