@@ -526,10 +526,10 @@
                         <button
                             onclick="
                                 runQueryPreset(
-                                    'SELECT date, narration, account, position WHERE position > 500 USD ORDER BY date DESC'
+                                    'SELECT date, narration, account, position WHERE number(position) > 500 ORDER BY date DESC'
                                 )
                             "
-                            data-query="SELECT date, narration, account, position WHERE position > 500 USD ORDER BY date DESC"
+                            data-query="SELECT date, narration, account, position WHERE number(position) > 500 ORDER BY date DESC"
                             class="query-btn px-3 py-1 text-xs rounded transition"
                         >
                             Large
