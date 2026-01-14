@@ -14,14 +14,8 @@
       {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            # Node.js and package managers
-            nodejs_22
-            nodePackages.npm
-
-            # Dev tools
-            nodePackages.vite
-            nodePackages.typescript
-            nodePackages.prettier
+            # Bun - fast JavaScript runtime and package manager
+            bun
 
             # Useful utilities
             jq
@@ -32,15 +26,15 @@
             echo "rustledger.github.io dev environment"
             echo ""
             echo "Commands:"
-            echo "  npm run dev    - Start Vite dev server with hot reload"
-            echo "  npm run build  - Build for production"
-            echo "  npm run preview - Preview production build"
+            echo "  bun run dev    - Start Vite dev server with hot reload"
+            echo "  bun run build  - Build for production"
+            echo "  bun run preview - Preview production build"
             echo ""
 
-            # Install npm deps if node_modules doesn't exist
+            # Install deps if node_modules doesn't exist
             if [ ! -d "node_modules" ]; then
-              echo "Installing npm dependencies..."
-              npm install
+              echo "Installing dependencies..."
+              bun install
             fi
           '';
         };

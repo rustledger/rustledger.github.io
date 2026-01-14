@@ -6,8 +6,7 @@ Thanks for your interest in contributing to the rustledger website!
 
 ### Prerequisites
 
-- Node.js 20+ (see `.nvmrc`)
-- npm
+- [Bun](https://bun.sh) (fast JavaScript runtime and package manager)
 
 ### Getting Started
 
@@ -17,10 +16,10 @@ git clone https://github.com/rustledger/rustledger.github.io.git
 cd rustledger.github.io
 
 # Install dependencies
-npm install
+bun install
 
 # Start dev server
-npm run dev
+bun run dev
 ```
 
 The site will be available at http://localhost:8080
@@ -29,13 +28,13 @@ The site will be available at http://localhost:8080
 
 | Script | Description |
 |--------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build |
-| `npm run format` | Format code with Prettier |
-| `npm run lint` | Lint code with ESLint |
-| `npm run typecheck` | Type check with TypeScript |
-| `npm run test` | Run tests with Vitest |
+| `bun run dev` | Start development server |
+| `bun run build` | Build for production |
+| `bun run preview` | Preview production build |
+| `bun run format` | Format code with Prettier |
+| `bun run lint` | Lint code with ESLint |
+| `bun run typecheck` | Type check with TypeScript |
+| `bun run test` | Run tests with Vitest |
 
 ## Project Structure
 
@@ -59,16 +58,16 @@ The site will be available at http://localhost:8080
 2. Make your changes
 3. Ensure all checks pass:
    ```bash
-   npm run format:check
-   npm run lint
-   npm run typecheck
-   npm run test
+   bun run format:check
+   bun run lint
+   bun run typecheck
+   bun run test
    ```
 4. Submit a pull request
 
 ## Code Style
 
-- We use Prettier for formatting (run `npm run format`)
+- We use Prettier for formatting (run `bun run format`)
 - We use ESLint for linting
 - TypeScript checking is enabled via JSDoc comments
 
