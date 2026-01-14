@@ -469,13 +469,13 @@
                         <button
                             onclick="
                                 runQueryPreset(
-                                    'SELECT narration, SUM(position) GROUP BY narration ORDER BY SUM(position) DESC LIMIT 10'
+                                    'SELECT narration, SUM(position) WHERE account ~ &quot;Expenses&quot; GROUP BY narration ORDER BY SUM(position) DESC LIMIT 10'
                                 )
                             "
-                            data-query="SELECT narration, SUM(position) GROUP BY narration ORDER BY SUM(position) DESC LIMIT 10"
+                            data-query='SELECT narration, SUM(position) WHERE account ~ "Expenses" GROUP BY narration ORDER BY SUM(position) DESC LIMIT 10'
                             class="query-btn px-3 py-1 text-xs rounded transition"
                         >
-                            Top Txns
+                            Top Expenses
                         </button>
                         <button
                             onclick="
