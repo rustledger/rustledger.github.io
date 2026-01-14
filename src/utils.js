@@ -33,7 +33,8 @@ export function extractAccounts(source) {
  */
 export function getEnabledPlugins(content) {
     const plugins = new Set();
-    const regex = /^plugin\s+"([^"]+)"/gm;
+    // Match plugin directives, allowing leading whitespace but not comments
+    const regex = /^\s*plugin\s+"([^"]+)"/gm;
     let match;
     while ((match = regex.exec(content)) !== null) {
         plugins.add(match[1]);

@@ -9,6 +9,9 @@ export default [
             sourceType: 'module',
             globals: {
                 ...globals.browser,
+                // Window functions defined in main.js
+                runQueryPreset: 'readonly',
+                runQueryFromInput: 'readonly',
             },
         },
         rules: {

@@ -1,12 +1,26 @@
+// @ts-check
 import { EditorState, RangeSetBuilder } from '@codemirror/state';
-import { EditorView, keymap, lineNumbers, highlightActiveLine, highlightActiveLineGutter, Decoration, ViewPlugin } from '@codemirror/view';
+import {
+    EditorView,
+    keymap,
+    lineNumbers,
+    highlightActiveLine,
+    highlightActiveLineGutter,
+    Decoration,
+    ViewPlugin,
+} from '@codemirror/view';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { syntaxHighlighting, HighlightStyle, StreamLanguage } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
 
+/**
+ * @typedef {import('@codemirror/view').ViewUpdate} ViewUpdate
+ * @typedef {import('@codemirror/view').DecorationSet} DecorationSet
+ */
+
 // Beancount syntax definition using StreamLanguage
 const beancountLanguage = StreamLanguage.define({
-    token(stream, state) {
+    token(stream, _state) {
         // Comments
         if (stream.match(/;.*/)) {
             return 'comment';
@@ -38,7 +52,11 @@ const beancountLanguage = StreamLanguage.define({
         }
 
         // Directives
-        if (stream.match(/\b(open|close|commodity|pad|event|query|note|document|custom|balance|price|txn|pushtag|poptag|include|option|plugin)\b/)) {
+        if (
+            stream.match(
+                /\b(open|close|commodity|pad|event|query|note|document|custom|balance|price|txn|pushtag|poptag|include|option|plugin)\b/
+            )
+        ) {
             return 'keyword';
         }
 
@@ -49,7 +67,7 @@ const beancountLanguage = StreamLanguage.define({
 
         // Accounts (Assets:Something:Else) - skip tokenization, let decorations handle coloring
         if (stream.match(/[A-Z][A-Za-z0-9-]*:[A-Za-z0-9-:]+/)) {
-            return null;  // No syntax highlight, decorations will colorize
+            return null; // No syntax highlight, decorations will colorize
         }
 
         // Tags
@@ -73,156 +91,184 @@ const beancountLanguage = StreamLanguage.define({
     },
     startState() {
         return {};
-    }
+    },
 });
 
 // Dark theme matching the site's aesthetic
-const darkTheme = EditorView.theme({
-    '&': {
-        backgroundColor: 'transparent',
-        color: 'rgba(255, 255, 255, 0.85)',
-        fontSize: '14px',
-        height: '100%'
+const darkTheme = EditorView.theme(
+    {
+        '&': {
+            backgroundColor: 'transparent',
+            color: 'rgba(255, 255, 255, 0.85)',
+            fontSize: '14px',
+            height: '100%',
+        },
+        '.cm-content': {
+            caretColor: 'white',
+            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+            padding: '16px 0',
+        },
+        '.cm-cursor': {
+            borderLeftColor: 'white',
+        },
+        '.cm-selectionBackground, &.cm-focused .cm-selectionBackground': {
+            backgroundColor: 'rgba(255, 255, 255, 0.15)',
+        },
+        '.cm-gutters': {
+            backgroundColor: 'transparent',
+            borderRight: '1px solid rgba(255, 255, 255, 0.1)',
+            color: 'rgba(255, 255, 255, 0.25)',
+            minWidth: '3rem',
+        },
+        '.cm-lineNumbers .cm-gutterElement': {
+            padding: '0 8px 0 8px',
+            minWidth: '2.5rem',
+            textAlign: 'right',
+        },
+        '.cm-activeLineGutter': {
+            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            color: 'rgba(255, 255, 255, 0.5)',
+        },
+        '.cm-activeLine': {
+            backgroundColor: 'rgba(255, 255, 255, 0.03)',
+        },
+        '.cm-line': {
+            padding: '0 16px',
+        },
+        '&.cm-focused': {
+            outline: 'none',
+        },
+        '.cm-scroller': {
+            overflow: 'auto',
+            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+            lineHeight: '1.5',
+        },
     },
-    '.cm-content': {
-        caretColor: 'white',
-        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
-        padding: '16px 0'
-    },
-    '.cm-cursor': {
-        borderLeftColor: 'white'
-    },
-    '.cm-selectionBackground, &.cm-focused .cm-selectionBackground': {
-        backgroundColor: 'rgba(255, 255, 255, 0.15)'
-    },
-    '.cm-gutters': {
-        backgroundColor: 'transparent',
-        borderRight: '1px solid rgba(255, 255, 255, 0.1)',
-        color: 'rgba(255, 255, 255, 0.25)',
-        minWidth: '3rem'
-    },
-    '.cm-lineNumbers .cm-gutterElement': {
-        padding: '0 8px 0 8px',
-        minWidth: '2.5rem',
-        textAlign: 'right'
-    },
-    '.cm-activeLineGutter': {
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-        color: 'rgba(255, 255, 255, 0.5)'
-    },
-    '.cm-activeLine': {
-        backgroundColor: 'rgba(255, 255, 255, 0.03)'
-    },
-    '.cm-line': {
-        padding: '0 16px'
-    },
-    '&.cm-focused': {
-        outline: 'none'
-    },
-    '.cm-scroller': {
-        overflow: 'auto',
-        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
-        lineHeight: '1.5'
-    }
-}, { dark: true });
+    { dark: true }
+);
 
 // Syntax highlighting colors
 const highlightStyle = HighlightStyle.define([
     { tag: tags.comment, color: 'rgba(255, 255, 255, 0.35)', fontStyle: 'italic' },
     { tag: tags.string, color: '#fca5a5' },
     { tag: tags.number, color: '#fcd34d' },
-    { tag: tags.atom, color: '#fdba74' },        // Currency
-    { tag: tags.keyword, color: '#c4b5fd' },     // Directives
-    { tag: tags.operator, color: '#fbbf24' },    // Flags
+    { tag: tags.atom, color: '#fdba74' }, // Currency
+    { tag: tags.keyword, color: '#c4b5fd' }, // Directives
+    { tag: tags.operator, color: '#fbbf24' }, // Flags
     { tag: tags.variableName, color: '#86efac' }, // Accounts (fallback, overridden by decorations)
-    { tag: tags.labelName, color: '#67e8f9' },   // Tags
-    { tag: tags.link, color: '#f0abfc' }         // Links
+    { tag: tags.labelName, color: '#67e8f9' }, // Tags
+    { tag: tags.link, color: '#f0abfc' }, // Links
 ]);
 
 // Account hierarchy colors (matching main.js)
 const accountColors = [
-    '#22d3ee',  // cyan-400 - Root (Assets, Expenses, etc.)
-    '#5eead4',  // teal-300 - Level 1
-    '#6ee7b7',  // emerald-300 - Level 2
-    '#fcd34d',  // amber-300 - Level 3
-    '#fdba74'   // orange-300 - Level 4+
+    '#22d3ee', // cyan-400 - Root (Assets, Expenses, etc.)
+    '#5eead4', // teal-300 - Level 1
+    '#6ee7b7', // emerald-300 - Level 2
+    '#fcd34d', // amber-300 - Level 3
+    '#fdba74', // orange-300 - Level 4+
 ];
 
 // Create decoration marks for each account level with !important to override syntax highlighting
 const accountDecorations = accountColors.map((color) =>
     Decoration.mark({ attributes: { style: `color: ${color} !important` } })
 );
-const colonDecoration = Decoration.mark({ attributes: { style: 'color: rgba(255, 255, 255, 0.5) !important' } });
+const colonDecoration = Decoration.mark({
+    attributes: { style: 'color: rgba(255, 255, 255, 0.5) !important' },
+});
 
 // Account colorization theme (fallback, inline styles take precedence)
 const accountTheme = EditorView.baseTheme({});
 
 // ViewPlugin to colorize account hierarchy
-const accountColorizer = ViewPlugin.fromClass(class {
-    constructor(view) {
-        this.decorations = this.buildDecorations(view);
-    }
+const accountColorizer = ViewPlugin.fromClass(
+    class {
+        /** @type {DecorationSet} */
+        decorations;
 
-    update(update) {
-        if (update.docChanged || update.viewportChanged) {
-            this.decorations = this.buildDecorations(update.view);
+        /** @param {EditorView} view */
+        constructor(view) {
+            this.decorations = this.buildDecorations(view);
         }
-    }
 
-    buildDecorations(view) {
-        const builder = new RangeSetBuilder();
-        const accountRegex = /[A-Z][A-Za-z0-9-]*(?::[A-Za-z0-9-]+)+/g;
-
-        for (const { from, to } of view.visibleRanges) {
-            const text = view.state.sliceDoc(from, to);
-            let match;
-
-            while ((match = accountRegex.exec(text)) !== null) {
-                const accountStart = from + match.index;
-                const parts = match[0].split(':');
-                let pos = accountStart;
-
-                for (let i = 0; i < parts.length; i++) {
-                    const part = parts[i];
-                    const partEnd = pos + part.length;
-                    const colorIndex = Math.min(i, accountDecorations.length - 1);
-
-                    builder.add(pos, partEnd, accountDecorations[colorIndex]);
-
-                    if (i < parts.length - 1) {
-                        // Add colon decoration
-                        builder.add(partEnd, partEnd + 1, colonDecoration);
-                        pos = partEnd + 1;
-                    } else {
-                        pos = partEnd;
-                    }
-                }
+        /** @param {ViewUpdate} update */
+        update(update) {
+            if (update.docChanged || update.viewportChanged) {
+                this.decorations = this.buildDecorations(update.view);
             }
         }
 
-        return builder.finish();
+        /**
+         * @param {EditorView} view
+         * @returns {DecorationSet}
+         */
+        buildDecorations(view) {
+            /** @type {RangeSetBuilder<Decoration>} */
+            const builder = new RangeSetBuilder();
+            const accountRegex = /[A-Z][A-Za-z0-9-]*(?::[A-Za-z0-9-]+)+/g;
+
+            for (const { from, to } of view.visibleRanges) {
+                const text = view.state.sliceDoc(from, to);
+                let match;
+
+                while ((match = accountRegex.exec(text)) !== null) {
+                    const accountStart = from + match.index;
+                    const parts = match[0].split(':');
+                    let pos = accountStart;
+
+                    for (let i = 0; i < parts.length; i++) {
+                        const part = parts[i];
+                        const partEnd = pos + part.length;
+                        const colorIndex = Math.min(i, accountDecorations.length - 1);
+
+                        builder.add(pos, partEnd, accountDecorations[colorIndex]);
+
+                        if (i < parts.length - 1) {
+                            // Add colon decoration
+                            builder.add(partEnd, partEnd + 1, colonDecoration);
+                            pos = partEnd + 1;
+                        } else {
+                            pos = partEnd;
+                        }
+                    }
+                }
+            }
+
+            return builder.finish();
+        }
+    },
+    {
+        decorations: (v) => v.decorations,
     }
-}, {
-    decorations: v => v.decorations
-});
+);
 
 // Error line decoration
 const errorLineDecoration = EditorView.baseTheme({
     '.cm-error-line': {
-        backgroundColor: 'rgba(239, 68, 68, 0.15)'
-    }
+        backgroundColor: 'rgba(239, 68, 68, 0.15)',
+    },
 });
 
-// Account autocomplete state
-let accountAutocomplete = {
+/**
+ * @typedef {{
+ *   dropdown: HTMLDivElement | null,
+ *   items: string[],
+ *   selectedIndex: number,
+ *   startPos: number,
+ *   active: boolean
+ * }} AutocompleteState
+ */
+
+/** @type {AutocompleteState} */
+const accountAutocomplete = {
     dropdown: null,
     items: [],
     selectedIndex: -1,
     startPos: 0,
-    active: false
+    active: false,
 };
 
-// Create account autocomplete dropdown
+/** Create account autocomplete dropdown */
 function createAccountAutocompleteDropdown() {
     if (accountAutocomplete.dropdown) return;
 
@@ -232,17 +278,23 @@ function createAccountAutocompleteDropdown() {
     accountAutocomplete.dropdown = dropdown;
 }
 
-// Show account autocomplete
+/**
+ * Show account autocomplete
+ * @param {EditorView} view
+ * @param {string[]} accounts
+ * @param {string} filter
+ * @param {number} startPos
+ */
 function showAccountAutocomplete(view, accounts, filter, startPos) {
     if (!accountAutocomplete.dropdown) createAccountAutocompleteDropdown();
 
-    const dropdown = accountAutocomplete.dropdown;
+    const dropdown = /** @type {HTMLDivElement} */ (accountAutocomplete.dropdown);
     const lowerFilter = filter.toLowerCase();
 
     // Filter accounts
-    accountAutocomplete.items = accounts.filter(a =>
-        a.toLowerCase().includes(lowerFilter)
-    ).slice(0, 10);
+    accountAutocomplete.items = accounts
+        .filter((a) => a.toLowerCase().includes(lowerFilter))
+        .slice(0, 10);
 
     if (accountAutocomplete.items.length === 0) {
         hideAccountAutocomplete();
@@ -254,16 +306,20 @@ function showAccountAutocomplete(view, accounts, filter, startPos) {
     accountAutocomplete.active = true;
 
     // Render items
-    dropdown.innerHTML = accountAutocomplete.items.map((item, idx) => {
-        const parts = item.split(':');
-        const coloredParts = parts.map((part, i) => {
-            const colors = ['#22d3ee', '#5eead4', '#6ee7b7', '#fcd34d', '#fdba74'];
-            const color = colors[Math.min(i, colors.length - 1)];
-            return `<span style="color: ${color}">${part}</span>`;
-        }).join('<span style="color: rgba(255,255,255,0.5)">:</span>');
+    dropdown.innerHTML = accountAutocomplete.items
+        .map((item, idx) => {
+            const parts = item.split(':');
+            const coloredParts = parts
+                .map((part, i) => {
+                    const colors = ['#22d3ee', '#5eead4', '#6ee7b7', '#fcd34d', '#fdba74'];
+                    const color = colors[Math.min(i, colors.length - 1)];
+                    return `<span style="color: ${color}">${part}</span>`;
+                })
+                .join('<span style="color: rgba(255,255,255,0.5)">:</span>');
 
-        return `<div class="editor-autocomplete-item ${idx === 0 ? 'selected' : ''}" data-index="${idx}">${coloredParts}</div>`;
-    }).join('');
+            return `<div class="editor-autocomplete-item ${idx === 0 ? 'selected' : ''}" data-index="${idx}">${coloredParts}</div>`;
+        })
+        .join('');
 
     // Position dropdown
     const cursorCoords = view.coordsAtPos(view.state.selection.main.head);
@@ -275,16 +331,16 @@ function showAccountAutocomplete(view, accounts, filter, startPos) {
     dropdown.classList.remove('hidden');
 
     // Add click handlers
-    dropdown.querySelectorAll('.editor-autocomplete-item').forEach(el => {
+    dropdown.querySelectorAll('.editor-autocomplete-item').forEach((el) => {
         el.addEventListener('mousedown', (e) => {
             e.preventDefault();
-            const idx = parseInt(el.dataset.index);
+            const idx = parseInt(/** @type {HTMLElement} */ (el).dataset.index || '0');
             selectAccountAutocompleteItem(view, idx);
         });
     });
 }
 
-// Hide account autocomplete
+/** Hide account autocomplete */
 function hideAccountAutocomplete() {
     if (accountAutocomplete.dropdown) {
         accountAutocomplete.dropdown.classList.add('hidden');
@@ -294,7 +350,11 @@ function hideAccountAutocomplete() {
     accountAutocomplete.selectedIndex = -1;
 }
 
-// Select account autocomplete item
+/**
+ * Select account autocomplete item
+ * @param {EditorView} view
+ * @param {number} index
+ */
 function selectAccountAutocompleteItem(view, index) {
     if (index < 0 || index >= accountAutocomplete.items.length) return;
 
@@ -304,13 +364,16 @@ function selectAccountAutocompleteItem(view, index) {
 
     view.dispatch({
         changes: { from, to, insert: item },
-        selection: { anchor: from + item.length }
+        selection: { anchor: from + item.length },
     });
 
     hideAccountAutocomplete();
 }
 
-// Update autocomplete selection
+/**
+ * Update autocomplete selection
+ * @param {number} direction
+ */
 function updateAccountAutocompleteSelection(direction) {
     if (accountAutocomplete.items.length === 0) return;
 
@@ -324,6 +387,7 @@ function updateAccountAutocompleteSelection(direction) {
 
     // Update visual selection
     const dropdown = accountAutocomplete.dropdown;
+    if (!dropdown) return;
     dropdown.querySelectorAll('.editor-autocomplete-item').forEach((el, idx) => {
         if (idx === accountAutocomplete.selectedIndex) {
             el.classList.add('selected');
@@ -334,10 +398,15 @@ function updateAccountAutocompleteSelection(direction) {
     });
 }
 
-// Stored accounts for autocomplete (will be set from main.js)
+/** @type {Set<string>} Stored accounts for autocomplete (will be set from main.js) */
 let knownAccountsRef = new Set();
 
-// Create editor instance
+/**
+ * Create editor instance
+ * @param {HTMLElement} container
+ * @param {string} initialContent
+ * @param {((content: string) => void) | null} onChange
+ */
 export function createEditor(container, initialContent, onChange) {
     const updateListener = EditorView.updateListener.of((update) => {
         if (update.docChanged && onChange) {
@@ -346,52 +415,61 @@ export function createEditor(container, initialContent, onChange) {
     });
 
     // Custom keymap for autocomplete
-    const autocompleteKeymap = keymap.of([{
-        key: 'ArrowDown',
-        run: (view) => {
-            if (accountAutocomplete.active) {
-                updateAccountAutocompleteSelection(1);
-                return true;
-            }
-            return false;
-        }
-    }, {
-        key: 'ArrowUp',
-        run: (view) => {
-            if (accountAutocomplete.active) {
-                updateAccountAutocompleteSelection(-1);
-                return true;
-            }
-            return false;
-        }
-    }, {
-        key: 'Enter',
-        run: (view) => {
-            if (accountAutocomplete.active && accountAutocomplete.selectedIndex >= 0) {
-                selectAccountAutocompleteItem(view, accountAutocomplete.selectedIndex);
-                return true;
-            }
-            return false;
-        }
-    }, {
-        key: 'Tab',
-        run: (view) => {
-            if (accountAutocomplete.active && accountAutocomplete.items.length > 0) {
-                selectAccountAutocompleteItem(view, Math.max(0, accountAutocomplete.selectedIndex));
-                return true;
-            }
-            return false;
-        }
-    }, {
-        key: 'Escape',
-        run: (view) => {
-            if (accountAutocomplete.active) {
-                hideAccountAutocomplete();
-                return true;
-            }
-            return false;
-        }
-    }]);
+    const autocompleteKeymap = keymap.of([
+        {
+            key: 'ArrowDown',
+            run: (_view) => {
+                if (accountAutocomplete.active) {
+                    updateAccountAutocompleteSelection(1);
+                    return true;
+                }
+                return false;
+            },
+        },
+        {
+            key: 'ArrowUp',
+            run: (_view) => {
+                if (accountAutocomplete.active) {
+                    updateAccountAutocompleteSelection(-1);
+                    return true;
+                }
+                return false;
+            },
+        },
+        {
+            key: 'Enter',
+            run: (view) => {
+                if (accountAutocomplete.active && accountAutocomplete.selectedIndex >= 0) {
+                    selectAccountAutocompleteItem(view, accountAutocomplete.selectedIndex);
+                    return true;
+                }
+                return false;
+            },
+        },
+        {
+            key: 'Tab',
+            run: (view) => {
+                if (accountAutocomplete.active && accountAutocomplete.items.length > 0) {
+                    selectAccountAutocompleteItem(
+                        view,
+                        Math.max(0, accountAutocomplete.selectedIndex)
+                    );
+                    return true;
+                }
+                return false;
+            },
+        },
+        {
+            key: 'Escape',
+            run: (_view) => {
+                if (accountAutocomplete.active) {
+                    hideAccountAutocomplete();
+                    return true;
+                }
+                return false;
+            },
+        },
+    ]);
 
     // Account autocomplete trigger on typing
     const autocompleteUpdateListener = EditorView.updateListener.of((update) => {
@@ -439,63 +517,81 @@ export function createEditor(container, initialContent, onChange) {
             errorLineDecoration,
             updateListener,
             autocompleteUpdateListener,
-            EditorView.lineWrapping
-        ]
+            EditorView.lineWrapping,
+        ],
     });
 
     const view = new EditorView({
         state,
-        parent: container
+        parent: container,
     });
 
     // Hide autocomplete when clicking outside
     document.addEventListener('click', (e) => {
-        if (accountAutocomplete.dropdown && !accountAutocomplete.dropdown.contains(e.target)) {
+        const target = /** @type {Node | null} */ (e.target);
+        if (
+            accountAutocomplete.dropdown &&
+            target &&
+            !accountAutocomplete.dropdown.contains(target)
+        ) {
             hideAccountAutocomplete();
         }
     });
 
     return {
         view,
+        /** @returns {string} */
         getContent() {
             return view.state.doc.toString();
         },
+        /** @param {string} content */
         setContent(content) {
             view.dispatch({
                 changes: {
                     from: 0,
                     to: view.state.doc.length,
-                    insert: content
-                }
+                    insert: content,
+                },
             });
         },
+        /**
+         * @param {Set<number>} lineNumbers
+         * @param {Map<number, string>} errorMessages
+         */
         highlightErrorLines(lineNumbers, errorMessages = new Map()) {
             // Use requestAnimationFrame to ensure DOM is ready
             requestAnimationFrame(() => {
-                const scroller = container.querySelector('.cm-scroller');
+                const scroller = /** @type {HTMLElement | null} */ (
+                    container.querySelector('.cm-scroller')
+                );
                 if (!scroller) return;
 
                 scroller.querySelectorAll('.cm-line').forEach((line, idx) => {
+                    const lineEl = /** @type {HTMLElement} */ (line);
                     const lineNum = idx + 1;
                     if (lineNumbers.has(lineNum)) {
-                        line.classList.add('cm-error-line');
+                        lineEl.classList.add('cm-error-line');
                         // Store error message as data attribute
                         if (errorMessages.has(lineNum)) {
-                            line.dataset.errorMessage = errorMessages.get(lineNum);
+                            lineEl.dataset.errorMessage = errorMessages.get(lineNum);
                         }
                     } else {
-                        line.classList.remove('cm-error-line');
-                        delete line.dataset.errorMessage;
+                        lineEl.classList.remove('cm-error-line');
+                        delete lineEl.dataset.errorMessage;
                     }
                 });
 
                 // Set up tooltip listeners if not already set
                 if (!scroller.dataset.tooltipInit) {
                     scroller.dataset.tooltipInit = 'true';
+                    /** @type {HTMLElement | null} */
                     let tooltip = null;
 
                     scroller.addEventListener('mouseover', (e) => {
-                        const errorLine = e.target.closest('.cm-error-line');
+                        const target = /** @type {HTMLElement | null} */ (e.target);
+                        const errorLine = /** @type {HTMLElement | null} */ (
+                            target?.closest('.cm-error-line')
+                        );
                         if (errorLine && errorLine.dataset.errorMessage) {
                             // Remove existing tooltip
                             if (tooltip) tooltip.remove();
@@ -518,7 +614,8 @@ export function createEditor(container, initialContent, onChange) {
                     });
 
                     scroller.addEventListener('mouseout', (e) => {
-                        const errorLine = e.target.closest('.cm-error-line');
+                        const target = /** @type {HTMLElement | null} */ (e.target);
+                        const errorLine = target?.closest('.cm-error-line');
                         if (errorLine && tooltip) {
                             tooltip.remove();
                             tooltip = null;
@@ -527,8 +624,9 @@ export function createEditor(container, initialContent, onChange) {
                 }
             });
         },
+        /** @param {Set<string>} accounts */
         setKnownAccounts(accounts) {
             knownAccountsRef = accounts;
-        }
+        },
     };
 }

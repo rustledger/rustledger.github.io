@@ -1,82 +1,82 @@
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+    push:
+        branches: [main]
+    workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+    contents: read
+    pages: write
+    id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+    group: pages
+    cancel-in-progress: false
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Fetch latest WASM from releases
-        run: |
-          # Get the latest release with WASM assets
-          RELEASE_JSON=$(curl -s "https://api.github.com/repos/rustledger/rustledger/releases" | jq '[.[] | select(.assets[]?.name | test("wasm"))] | .[0]')
-          WASM_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name | test("wasm.*\\.tar\\.gz$")) | .browser_download_url')
-          VERSION=$(echo "$RELEASE_JSON" | jq -r '.tag_name')
+            - name: Fetch latest WASM from releases
+              run: |
+                  # Get the latest release with WASM assets
+                  RELEASE_JSON=$(curl -s "https://api.github.com/repos/rustledger/rustledger/releases" | jq '[.[] | select(.assets[]?.name | test("wasm"))] | .[0]')
+                  WASM_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name | test("wasm.*\\.tar\\.gz$")) | .browser_download_url')
+                  VERSION=$(echo "$RELEASE_JSON" | jq -r '.tag_name')
 
-          echo "Downloading WASM from $VERSION: $WASM_URL"
+                  echo "Downloading WASM from $VERSION: $WASM_URL"
 
-          # Download and extract to pkg/
-          curl -sL "$WASM_URL" -o wasm.tar.gz
-          rm -rf pkg
-          mkdir -p pkg
-          tar -xzf wasm.tar.gz -C pkg --strip-components=1
-          rm wasm.tar.gz
+                  # Download and extract to pkg/
+                  curl -sL "$WASM_URL" -o wasm.tar.gz
+                  rm -rf pkg
+                  mkdir -p pkg
+                  tar -xzf wasm.tar.gz -C pkg --strip-components=1
+                  rm wasm.tar.gz
 
-          echo "WASM version: $VERSION"
-          ls -la pkg/
+                  echo "WASM version: $VERSION"
+                  ls -la pkg/
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: npm
 
-      - name: Install dependencies
-        run: npm ci
+            - name: Install dependencies
+              run: npm ci
 
-      - name: Audit dependencies
-        run: npm audit --audit-level=high
+            - name: Audit dependencies
+              run: npm audit --audit-level=high
 
-      - name: Check formatting
-        run: npm run format:check
+            - name: Check formatting
+              run: npm run format:check
 
-      - name: Lint
-        run: npm run lint
+            - name: Lint
+              run: npm run lint
 
-      - name: Type check
-        run: npm run typecheck
+            - name: Type check
+              run: npm run typecheck
 
-      - name: Test
-        run: npm test
+            - name: Test
+              run: npm test
 
-      - name: Build
-        run: npm run build
+            - name: Build
+              run: npm run build
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
+            - name: Upload artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: dist
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    deploy:
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        runs-on: ubuntu-latest
+        needs: build
+        steps:
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4

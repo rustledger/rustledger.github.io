@@ -2,19 +2,38 @@ import { createEditor } from './editor.js';
 import './style.css';
 import LZString from 'lz-string';
 
+/**
+ * @typedef {ReturnType<typeof createEditor>} Editor
+ * @typedef {{ valid: boolean, errors: Array<{line: number, message: string}>, error_count: number }} ValidationResult
+ * @typedef {{ formatted: string | null, error: string | null, errors?: Array<{line: number, message: string}> }} FormatResult
+ * @typedef {{ output: string, error: string | null, rows?: any[][], columns?: string[] }} QueryResult
+ * @typedef {'simple' | 'stocks' | 'crypto' | 'travel' | 'business' | 'errors'} ExampleName
+ * @typedef {{ text: string, category: string }} Completion
+ */
+
 // Global state
+/** @type {Editor | null} */
 let editor = null;
 let wasmReady = false;
+/** @type {ReturnType<typeof setTimeout> | null} */
 let liveValidationTimeout = null;
-let errorLines = new Set();
-let errorMessages = new Map(); // Map<lineNumber, errorMessage> for tooltips
-let knownAccounts = new Set(); // For autocomplete
+/** @type {Set<number>} */
+const errorLines = new Set();
+/** @type {Map<number, string>} Map<lineNumber, errorMessage> for tooltips */
+const errorMessages = new Map();
+/** @type {Set<string>} For autocomplete */
+const knownAccounts = new Set();
 
 // WASM functions (will be set after loading)
+/** @type {((source: string) => ValidationResult) | null} */
 let validate_source = null;
+/** @type {((source: string) => FormatResult) | null} */
 let format = null;
+/** @type {((source: string, query: string, format: string) => QueryResult) | null} */
 let query = null;
+/** @type {(() => string) | null} */
 let get_version = null;
+/** @type {((prefix: string) => Completion[]) | null} */
 let bql_completions = null;
 
 // Example files
@@ -311,12 +330,13 @@ option "title" "Error Examples"
 ; Error 4: Invalid date
 2024-13-01 * "Invalid month"
     Expenses:Food       10.00 USD
-    Assets:Checking`
+    Assets:Checking`,
 };
 
-// Initialize WASM
+/** Initialize WASM */
 async function initWasm() {
     try {
+        // @ts-ignore - Dynamic import for WASM module
         const wasm = await import('/pkg/rustledger_wasm.js');
         await wasm.default();
 
@@ -328,10 +348,12 @@ async function initWasm() {
 
         wasmReady = true;
 
-        const version = get_version();
+        const version = get_version ? get_version() : 'unknown';
         const footerStatus = document.getElementById('footer-status');
-        footerStatus.innerHTML = `<span class="text-green-400">✓ Ready</span> <span class="text-orange-400">(rustledger ${version})</span>`;
-        footerStatus.className = 'text-xs';
+        if (footerStatus) {
+            footerStatus.innerHTML = `<span class="text-green-400">✓ Ready</span> <span class="text-orange-400">(rustledger ${version})</span>`;
+            footerStatus.className = 'text-xs';
+        }
 
         // Run initial validation
         liveValidate();
@@ -341,13 +363,14 @@ async function initWasm() {
         runQueryPreset('BALANCES');
     } catch (e) {
         console.error('Failed to load WASM:', e);
-        document.getElementById('footer-status').textContent = 'WASM failed to load';
+        const footerStatus = document.getElementById('footer-status');
+        if (footerStatus) footerStatus.textContent = 'WASM failed to load';
     }
 }
 
-// Live validation
+/** Live validation */
 function liveValidate() {
-    if (!wasmReady || !editor) return;
+    if (!wasmReady || !editor || !validate_source) return;
 
     const source = editor.getContent();
     const statusTab = document.getElementById('status-tab');
@@ -364,44 +387,60 @@ function liveValidate() {
         extractAccounts(source);
 
         if (result.valid) {
-            statusTab.textContent = '✓ Valid';
-            statusTab.className = 'output-tab text-green-400' + (statusTab.classList.contains('active') ? ' active' : '');
-            showOutput(`<span class="text-green-400">✓ No errors found</span> <span class="text-white/30">(${elapsed}ms)</span>`);
+            if (statusTab) {
+                statusTab.textContent = '✓ Valid';
+                statusTab.className =
+                    'output-tab text-green-400' +
+                    (statusTab.classList.contains('active') ? ' active' : '');
+            }
+            showOutput(
+                `<span class="text-green-400">✓ No errors found</span> <span class="text-white/30">(${elapsed}ms)</span>`
+            );
             // Clear error highlights
-            if (editor && editor.highlightErrorLines) {
+            if (editor.highlightErrorLines) {
                 editor.highlightErrorLines(new Set(), new Map());
             }
         } else {
-            result.errors.forEach(e => {
-                if (e.line) {
-                    errorLines.add(e.line);
-                    errorMessages.set(e.line, e.message);
+            result.errors.forEach((err) => {
+                if (err.line) {
+                    errorLines.add(err.line);
+                    errorMessages.set(err.line, err.message);
                 }
             });
             const errorCount = result.errors.length;
-            statusTab.textContent = `✗ ${errorCount} error${errorCount > 1 ? 's' : ''}`;
-            statusTab.className = 'output-tab text-red-400' + (statusTab.classList.contains('active') ? ' active' : '');
+            if (statusTab) {
+                statusTab.textContent = `✗ ${errorCount} error${errorCount > 1 ? 's' : ''}`;
+                statusTab.className =
+                    'output-tab text-red-400' +
+                    (statusTab.classList.contains('active') ? ' active' : '');
+            }
 
-            const errorHtml = result.errors.map(e =>
-                `<span class="text-red-400">Line ${e.line || '?'}:</span> ${escapeHtml(e.message)}`
-            ).join('\n');
+            const errorHtml = result.errors
+                .map(
+                    (err) =>
+                        `<span class="text-red-400">Line ${err.line || '?'}:</span> ${escapeHtml(err.message)}`
+                )
+                .join('\n');
             showOutput(errorHtml + `\n<span class="text-white/30">(${elapsed}ms)</span>`);
 
             // Highlight error lines in editor with tooltips
-            if (editor && editor.highlightErrorLines) {
+            if (editor.highlightErrorLines) {
                 editor.highlightErrorLines(errorLines, errorMessages);
             }
         }
 
         // Update plugin button states
         updatePluginButtons();
-    } catch (e) {
-        statusTab.textContent = 'Error';
-        console.error('Validation error:', e);
+    } catch (err) {
+        if (statusTab) statusTab.textContent = 'Error';
+        console.error('Validation error:', err);
     }
 }
 
-// Extract accounts from source for autocomplete
+/**
+ * Extract accounts from source for autocomplete
+ * @param {string} source
+ */
 function extractAccounts(source) {
     knownAccounts.clear();
     const accountRegex = /[A-Z][A-Za-z0-9-]*(?::[A-Za-z0-9-]+)+/g;
@@ -415,21 +454,32 @@ function extractAccounts(source) {
     }
 }
 
-// Show output in output tab
+/**
+ * Show output in output tab
+ * @param {string} html
+ */
 function showOutput(html) {
-    document.getElementById('output').innerHTML = html;
+    const output = document.getElementById('output');
+    if (output) output.innerHTML = html;
 }
 
-// Escape HTML
+/**
+ * Escape HTML
+ * @param {string} text
+ * @returns {string}
+ */
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
 
-// Editor content changed
-function onEditorChange(content) {
-    clearTimeout(liveValidationTimeout);
+/**
+ * Editor content changed
+ * @param {string} _content
+ */
+function onEditorChange(_content) {
+    if (liveValidationTimeout) clearTimeout(liveValidationTimeout);
     liveValidationTimeout = setTimeout(() => {
         if (wasmReady) {
             liveValidate();
@@ -437,94 +487,117 @@ function onEditorChange(content) {
     }, 300);
 }
 
-// Load example
-window.loadExample = function(name) {
+/**
+ * Load example
+ * @param {ExampleName} name
+ */
+window.loadExample = function (name) {
     if (!examples[name]) return;
 
     // Update active tab
-    document.querySelectorAll('.example-tab').forEach(tab => {
-        tab.classList.toggle('active', tab.dataset.example === name);
+    document.querySelectorAll('.example-tab').forEach((tab) => {
+        const tabEl = /** @type {HTMLElement} */ (tab);
+        tabEl.classList.toggle('active', tabEl.dataset.example === name);
     });
 
     // Set editor content
-    editor.setContent(examples[name]);
+    if (editor) {
+        editor.setContent(examples[name]);
+    }
 
     // Validate and show query results
     if (wasmReady) {
         liveValidate();
         showTab('query');
-        runQueryPreset('BALANCES');
+        window.runQueryPreset('BALANCES');
     }
 };
 
-// Tab switching
+/**
+ * Tab switching
+ * @param {string} tabName
+ */
 function showTab(tabName) {
     // Update tab buttons
-    document.querySelectorAll('.output-tab').forEach(tab => {
-        tab.classList.toggle('active', tab.dataset.tab === tabName);
+    document.querySelectorAll('.output-tab').forEach((tab) => {
+        const tabEl = /** @type {HTMLElement} */ (tab);
+        tabEl.classList.toggle('active', tabEl.dataset.tab === tabName);
     });
 
     // Show/hide option bars
-    document.getElementById('query-input').classList.add('hidden');
-    document.getElementById('query-options').classList.add('hidden');
-    document.getElementById('plugin-options').classList.add('hidden');
+    const queryInput = document.getElementById('query-input');
+    const queryOptions = document.getElementById('query-options');
+    const pluginOptions = document.getElementById('plugin-options');
+    const output = document.getElementById('output');
+    const queryOutput = document.getElementById('query-output');
+
+    queryInput?.classList.add('hidden');
+    queryOptions?.classList.add('hidden');
+    pluginOptions?.classList.add('hidden');
 
     if (tabName === 'query') {
-        document.getElementById('query-input').classList.remove('hidden');
-        document.getElementById('query-options').classList.remove('hidden');
+        queryInput?.classList.remove('hidden');
+        queryOptions?.classList.remove('hidden');
         updateQueryButtons();
     } else if (tabName === 'plugin') {
-        document.getElementById('plugin-options').classList.remove('hidden');
+        pluginOptions?.classList.remove('hidden');
         updatePluginButtons();
     }
 
     // Show corresponding content (plugin tab shows validation output)
-    document.getElementById('output').classList.add('hidden');
-    document.getElementById('query-output').classList.add('hidden');
+    output?.classList.add('hidden');
+    queryOutput?.classList.add('hidden');
 
     if (tabName === 'query') {
-        document.getElementById('query-output').classList.remove('hidden');
+        queryOutput?.classList.remove('hidden');
     } else {
         // Both 'output' and 'plugin' tabs show the validation output
-        document.getElementById('output').classList.remove('hidden');
+        output?.classList.remove('hidden');
     }
 }
 
 window.switchTab = showTab;
 
-// Format code
-window.runFormat = function() {
-    if (!wasmReady || !editor) return;
+/** Format code */
+window.runFormat = function () {
+    if (!wasmReady || !editor || !format) return;
 
     try {
-        const start = performance.now();
         const result = format(editor.getContent());
-        const elapsed = (performance.now() - start).toFixed(1);
 
         if (result.formatted) {
             editor.setContent(result.formatted);
             liveValidate();
-        } else {
+        } else if (result.errors) {
             showTab('output');
-            const errors = result.errors.map(e =>
-                `<span class="text-red-400">Line ${e.line || '?'}:</span> ${escapeHtml(e.message)}`
-            ).join('\n');
+            const errors = result.errors
+                .map(
+                    (err) =>
+                        `<span class="text-red-400">Line ${err.line || '?'}:</span> ${escapeHtml(err.message)}`
+                )
+                .join('\n');
             showOutput(errors);
         }
-    } catch (e) {
-        console.error('Format error:', e);
+    } catch (err) {
+        console.error('Format error:', err);
     }
 };
 
-// Validate BQL query and update input styling
+/** @type {ReturnType<typeof setTimeout> | null} */
 let queryValidationTimeout = null;
+
+/** Validate BQL query and update input styling */
 function validateQueryInput() {
     const queryContainer = document.getElementById('query-input');
-    const queryInput = document.getElementById('query-text');
+    const queryInput = /** @type {HTMLInputElement | null} */ (
+        document.getElementById('query-text')
+    );
+    if (!queryInput || !queryContainer) return;
+
     const currentQuery = queryInput.value.trim();
 
     // Clear previous timeout
-    clearTimeout(queryValidationTimeout);
+    if (queryValidationTimeout) clearTimeout(queryValidationTimeout);
 
     // Empty query - neutral background
     if (!currentQuery) {
@@ -534,10 +607,11 @@ function validateQueryInput() {
 
     // Debounce validation
     queryValidationTimeout = setTimeout(() => {
-        if (!wasmReady || !editor) return;
+        if (!wasmReady || !editor || !query) return;
 
         try {
-            const result = query(editor.getContent(), currentQuery);
+            const result = query(editor.getContent(), currentQuery, 'text');
+            // @ts-ignore - result structure may vary
             if (result && result.errors && result.errors.length > 0) {
                 // Invalid query - red tint
                 queryContainer.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
@@ -545,7 +619,7 @@ function validateQueryInput() {
                 // Valid query - green tint
                 queryContainer.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
             }
-        } catch (e) {
+        } catch {
             // Error - red tint
             queryContainer.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
         }
@@ -563,7 +637,8 @@ function createAutocompleteDropdown() {
 
     autocompleteDropdown = document.createElement('div');
     autocompleteDropdown.id = 'bql-autocomplete';
-    autocompleteDropdown.className = 'absolute z-50 bg-zinc-900 border border-white/20 rounded-lg shadow-xl max-h-40 overflow-y-auto hidden';
+    autocompleteDropdown.className =
+        'absolute z-50 bg-zinc-900 border border-white/20 rounded-lg shadow-xl max-h-40 overflow-y-auto hidden';
     autocompleteDropdown.style.minWidth = '200px';
 
     // Position it below the query input
@@ -579,9 +654,7 @@ function showAutocomplete(completions, filter = '') {
 
     // Filter completions based on current partial input
     const lowerFilter = filter.toLowerCase();
-    autocompleteItems = completions.filter(c =>
-        c.text.toLowerCase().startsWith(lowerFilter)
-    );
+    autocompleteItems = completions.filter((c) => c.text.toLowerCase().startsWith(lowerFilter));
 
     if (autocompleteItems.length === 0) {
         hideAutocomplete();
@@ -596,19 +669,23 @@ function showAutocomplete(completions, filter = '') {
         function: 'text-yellow-400',
         column: 'text-cyan-400',
         operator: 'text-orange-400',
-        literal: 'text-green-400'
+        literal: 'text-green-400',
     };
 
-    autocompleteDropdown.innerHTML = autocompleteItems.map((item, idx) => `
+    autocompleteDropdown.innerHTML = autocompleteItems
+        .map(
+            (item, idx) => `
         <div class="autocomplete-item px-3 py-2 cursor-pointer hover:bg-white/10 flex items-center gap-2 ${idx === autocompleteSelectedIndex ? 'bg-white/10' : ''}"
              data-index="${idx}">
             <span class="${categoryColors[item.category] || 'text-white'} font-mono text-sm">${escapeHtml(item.text)}</span>
             ${item.description ? `<span class="text-white/40 text-xs">${escapeHtml(item.description)}</span>` : ''}
         </div>
-    `).join('');
+    `
+        )
+        .join('');
 
     // Add click handlers
-    autocompleteDropdown.querySelectorAll('.autocomplete-item').forEach(el => {
+    autocompleteDropdown.querySelectorAll('.autocomplete-item').forEach((el) => {
         el.addEventListener('click', () => {
             const idx = parseInt(el.dataset.index);
             selectAutocompleteItem(idx);
@@ -756,12 +833,14 @@ function initQueryAutocomplete() {
 function updateQueryButtons() {
     const currentQuery = document.getElementById('query-text').value.trim();
 
-    document.querySelectorAll('.query-btn').forEach(btn => {
+    document.querySelectorAll('.query-btn').forEach((btn) => {
         const btnQuery = btn.dataset.query;
         if (currentQuery === btnQuery) {
-            btn.className = 'query-btn px-3 py-1 text-xs rounded transition bg-white/20 text-white hover:bg-white/30';
+            btn.className =
+                'query-btn px-3 py-1 text-xs rounded transition bg-white/20 text-white hover:bg-white/30';
         } else {
-            btn.className = 'query-btn px-3 py-1 text-xs rounded transition bg-white/5 text-white/60 hover:bg-white/10 hover:text-white/80';
+            btn.className =
+                'query-btn px-3 py-1 text-xs rounded transition bg-white/5 text-white/60 hover:bg-white/10 hover:text-white/80';
         }
     });
 
@@ -771,14 +850,14 @@ function updateQueryButtons() {
 window.updateQueryButtons = updateQueryButtons;
 
 // Query presets
-window.runQueryPreset = function(queryStr) {
+window.runQueryPreset = function (queryStr) {
     if (!queryStr || !wasmReady) return;
     document.getElementById('query-text').value = queryStr;
     updateQueryButtons();
     runQuery(queryStr);
 };
 
-window.runQueryFromInput = function() {
+window.runQueryFromInput = function () {
     const queryStr = document.getElementById('query-text').value;
     if (queryStr) runQuery(queryStr);
 };
@@ -798,13 +877,21 @@ function runQuery(queryStr) {
         } else if (result.rows && result.rows.length > 0) {
             const headers = result.columns || Object.keys(result.rows[0]);
             let html = '<table class="w-full text-left">';
-            html += '<thead><tr>' + headers.map(h => `<th class="px-2 py-1 text-white/50 border-b border-white/10">${escapeHtml(String(h))}</th>`).join('') + '</tr></thead>';
+            html +=
+                '<thead><tr>' +
+                headers
+                    .map(
+                        (h) =>
+                            `<th class="px-2 py-1 text-white/50 border-b border-white/10">${escapeHtml(String(h))}</th>`
+                    )
+                    .join('') +
+                '</tr></thead>';
             html += '<tbody>';
-            result.rows.forEach(row => {
+            result.rows.forEach((row) => {
                 html += '<tr class="hover:bg-white/5">';
                 // Handle both array and object row formats
                 if (Array.isArray(row)) {
-                    row.forEach(val => {
+                    row.forEach((val) => {
                         html += `<td class="px-2 py-1 border-b border-white/5">${formatCell(val)}</td>`;
                     });
                 } else {
@@ -823,7 +910,8 @@ function runQuery(queryStr) {
             queryOutput.innerHTML = `<span class="text-white/50">No results (${elapsed}ms)</span>`;
         }
     } catch (e) {
-        document.getElementById('query-output').innerHTML = `<span class="text-red-400">${escapeHtml(e.toString())}</span>`;
+        document.getElementById('query-output').innerHTML =
+            `<span class="text-red-400">${escapeHtml(e.toString())}</span>`;
     }
 }
 
@@ -831,18 +919,20 @@ function runQuery(queryStr) {
 function formatAccount(account) {
     const parts = account.split(':');
     const colors = [
-        'text-cyan-400',      // Root (Assets, Expenses, etc.)
-        'text-teal-300',      // Level 1
-        'text-emerald-300',   // Level 2
-        'text-amber-300',     // Level 3
-        'text-orange-300'     // Level 4+
+        'text-cyan-400', // Root (Assets, Expenses, etc.)
+        'text-teal-300', // Level 1
+        'text-emerald-300', // Level 2
+        'text-amber-300', // Level 3
+        'text-orange-300', // Level 4+
     ];
 
-    return parts.map((part, i) => {
-        const colorClass = colors[Math.min(i, colors.length - 1)];
-        const separator = i < parts.length - 1 ? '<span class="text-white/50">:</span>' : '';
-        return `<span class="${colorClass}">${escapeHtml(part)}</span>${separator}`;
-    }).join('');
+    return parts
+        .map((part, i) => {
+            const colorClass = colors[Math.min(i, colors.length - 1)];
+            const separator = i < parts.length - 1 ? '<span class="text-white/50">:</span>' : '';
+            return `<span class="${colorClass}">${escapeHtml(part)}</span>${separator}`;
+        })
+        .join('');
 }
 
 function formatCell(cell) {
@@ -857,12 +947,14 @@ function formatCell(cell) {
             if (cell.positions.length === 0) {
                 return '<span class="text-white/30">-</span>';
             }
-            return cell.positions.map(p => {
-                if (p.units && p.units.number !== undefined && p.units.currency) {
-                    return `<span class="text-yellow-300">${p.units.number}</span> <span class="text-orange-300">${p.units.currency}</span>`;
-                }
-                return escapeHtml(JSON.stringify(p));
-            }).join('<br>');
+            return cell.positions
+                .map((p) => {
+                    if (p.units && p.units.number !== undefined && p.units.currency) {
+                        return `<span class="text-yellow-300">${p.units.number}</span> <span class="text-orange-300">${p.units.currency}</span>`;
+                    }
+                    return escapeHtml(JSON.stringify(p));
+                })
+                .join('<br>');
         }
         // Handle Position: { units: { number, currency }, cost: ... }
         if (cell.units && cell.units.number !== undefined && cell.units.currency) {
@@ -904,18 +996,20 @@ function updatePluginButtons() {
     const content = editor.getContent();
     const enabled = getEnabledPlugins(content);
 
-    document.querySelectorAll('.plugin-btn').forEach(btn => {
+    document.querySelectorAll('.plugin-btn').forEach((btn) => {
         const plugin = btn.dataset.plugin;
         if (enabled.has(plugin)) {
-            btn.className = 'plugin-btn px-3 py-1 text-xs rounded transition bg-green-900/50 text-green-300 hover:bg-green-800/50';
+            btn.className =
+                'plugin-btn px-3 py-1 text-xs rounded transition bg-green-900/50 text-green-300 hover:bg-green-800/50';
         } else {
-            btn.className = 'plugin-btn px-3 py-1 text-xs rounded transition bg-red-900/30 text-red-300/70 hover:bg-red-800/40';
+            btn.className =
+                'plugin-btn px-3 py-1 text-xs rounded transition bg-red-900/30 text-red-300/70 hover:bg-red-800/40';
         }
     });
 }
 
 // Toggle plugin on/off
-window.togglePlugin = function(pluginName) {
+window.togglePlugin = function (pluginName) {
     if (!pluginName || !editor) return;
 
     const content = editor.getContent();
@@ -924,7 +1018,10 @@ window.togglePlugin = function(pluginName) {
 
     if (regex.test(content)) {
         // Remove the plugin line
-        const newContent = content.replace(regex, '').replace(/\n\n\n+/g, '\n\n').trim();
+        const newContent = content
+            .replace(regex, '')
+            .replace(/\n\n\n+/g, '\n\n')
+            .trim();
         editor.setContent(newContent);
     } else {
         // Add plugin after options/at the start
@@ -951,7 +1048,7 @@ window.togglePlugin = function(pluginName) {
 };
 
 // Copy output
-window.copyOutput = function() {
+window.copyOutput = function () {
     const activeOutput = document.querySelector('#output-panel > :not(.hidden)');
     if (activeOutput) {
         navigator.clipboard.writeText(activeOutput.textContent);
@@ -960,7 +1057,7 @@ window.copyOutput = function() {
 };
 
 // Share URL with lz-string compression
-window.shareUrl = function() {
+window.shareUrl = function () {
     if (!editor) return;
     const content = editor.getContent();
     // Use lz-string for efficient compression
@@ -971,16 +1068,16 @@ window.shareUrl = function() {
 };
 
 // Copy install commands
-window.copyInstall = function(type) {
+window.copyInstall = function (type) {
     const commands = {
         curl: 'curl -sSf https://rustledger.github.io/install.sh | sh',
-        cargo: 'cargo install rustledger'
+        cargo: 'cargo install rustledger',
     };
     navigator.clipboard.writeText(commands[type] || '');
 };
 
 // Download ledger file
-window.downloadLedger = function() {
+window.downloadLedger = function () {
     if (!editor) return;
     const content = editor.getContent();
     const blob = new Blob([content], { type: 'text/plain' });
@@ -995,7 +1092,7 @@ window.downloadLedger = function() {
 };
 
 // Upload ledger file
-window.uploadLedger = function(event) {
+window.uploadLedger = function (event) {
     const file = event.target.files[0];
     if (!file || !editor) return;
 
@@ -1003,7 +1100,7 @@ window.uploadLedger = function(event) {
     reader.onload = (e) => {
         editor.setContent(e.target.result);
         // Clear example tab selection
-        document.querySelectorAll('.example-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.example-tab').forEach((t) => t.classList.remove('active'));
     };
     reader.readAsText(file);
     event.target.value = ''; // Reset input
@@ -1059,7 +1156,7 @@ function loadFromUrl() {
             if (decoded) {
                 editor.setContent(decoded);
                 // Clear all example tabs
-                document.querySelectorAll('.example-tab').forEach(tab => {
+                document.querySelectorAll('.example-tab').forEach((tab) => {
                     tab.classList.remove('active');
                 });
             }
@@ -1079,7 +1176,7 @@ async function fetchGitHubInfo() {
         // Note: /releases/latest returns 404 for repos with only pre-releases
         const [repoResponse, releasesResponse] = await Promise.all([
             fetch('https://api.github.com/repos/rustledger/rustledger'),
-            fetch('https://api.github.com/repos/rustledger/rustledger/releases?per_page=1')
+            fetch('https://api.github.com/repos/rustledger/rustledger/releases?per_page=1'),
         ]);
 
         const repoData = await repoResponse.json();
@@ -1095,7 +1192,7 @@ async function fetchGitHubInfo() {
         if (versionEl && releasesData.length > 0 && releasesData[0].tag_name) {
             versionEl.textContent = releasesData[0].tag_name;
         }
-    } catch (e) {
+    } catch {
         if (starsEl) starsEl.textContent = '-';
         if (versionEl) versionEl.textContent = '';
     }
@@ -1119,18 +1216,21 @@ function initStatsAnimation() {
         requestAnimationFrame(update);
     };
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                document.querySelectorAll('[data-animate-stat]').forEach(el => {
-                    const value = parseInt(el.dataset.animateStat);
-                    const suffix = el.dataset.suffix || '';
-                    animateValue(el, 0, value, 1000, suffix);
-                });
-                observer.disconnect();
-            }
-        });
-    }, { threshold: 0.5 });
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    document.querySelectorAll('[data-animate-stat]').forEach((el) => {
+                        const value = parseInt(el.dataset.animateStat);
+                        const suffix = el.dataset.suffix || '';
+                        animateValue(el, 0, value, 1000, suffix);
+                    });
+                    observer.disconnect();
+                }
+            });
+        },
+        { threshold: 0.5 }
+    );
 
     observer.observe(statsSection);
 }
@@ -1140,29 +1240,32 @@ function initScrollReveal() {
     const revealElements = document.querySelectorAll('.reveal');
     if (!revealElements.length) return;
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                // Also trigger stagger-children if present
-                const staggerContainer = entry.target.querySelector('.stagger-children');
-                if (staggerContainer) {
-                    staggerContainer.classList.add('visible');
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Also trigger stagger-children if present
+                    const staggerContainer = entry.target.querySelector('.stagger-children');
+                    if (staggerContainer) {
+                        staggerContainer.classList.add('visible');
+                    }
+                    // Check if the reveal element itself has stagger-children
+                    if (entry.target.querySelector('.stagger-children')) {
+                        entry.target.querySelectorAll('.stagger-children').forEach((el) => {
+                            el.classList.add('visible');
+                        });
+                    }
                 }
-                // Check if the reveal element itself has stagger-children
-                if (entry.target.querySelector('.stagger-children')) {
-                    entry.target.querySelectorAll('.stagger-children').forEach(el => {
-                        el.classList.add('visible');
-                    });
-                }
-            }
-        });
-    }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    });
+            });
+        },
+        {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px',
+        }
+    );
 
-    revealElements.forEach(el => observer.observe(el));
+    revealElements.forEach((el) => observer.observe(el));
 }
 
 // Toast notification
@@ -1173,7 +1276,8 @@ function showToast(message, duration = 2000) {
 
     const toast = document.createElement('div');
     toast.id = 'toast';
-    toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-2 rounded-lg text-sm z-50 animate-toast';
+    toast.className =
+        'fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-2 rounded-lg text-sm z-50 animate-toast';
     toast.textContent = message;
     document.body.appendChild(toast);
 

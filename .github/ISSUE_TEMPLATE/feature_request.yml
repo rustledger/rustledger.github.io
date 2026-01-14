@@ -1,55 +1,55 @@
 name: Feature Request
 description: Suggest a new feature for the website or playground
-title: "[Feature]: "
-labels: ["enhancement"]
+title: '[Feature]: '
+labels: ['enhancement']
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Thanks for suggesting a feature!
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for suggesting a feature!
 
-        **Note:** For features related to the rustledger CLI or core library, please open an issue in the [main rustledger repo](https://github.com/rustledger/rustledger).
+              **Note:** For features related to the rustledger CLI or core library, please open an issue in the [main rustledger repo](https://github.com/rustledger/rustledger).
 
-  - type: textarea
-    id: problem
-    attributes:
-      label: Problem or Motivation
-      description: What problem does this solve? Why would this be useful?
-      placeholder: I want to be able to...
-    validations:
-      required: true
+    - type: textarea
+      id: problem
+      attributes:
+          label: Problem or Motivation
+          description: What problem does this solve? Why would this be useful?
+          placeholder: I want to be able to...
+      validations:
+          required: true
 
-  - type: textarea
-    id: solution
-    attributes:
-      label: Proposed Solution
-      description: How would you like this to work?
-    validations:
-      required: true
+    - type: textarea
+      id: solution
+      attributes:
+          label: Proposed Solution
+          description: How would you like this to work?
+      validations:
+          required: true
 
-  - type: textarea
-    id: alternatives
-    attributes:
-      label: Alternatives Considered
-      description: Any alternative solutions or workarounds you've considered?
+    - type: textarea
+      id: alternatives
+      attributes:
+          label: Alternatives Considered
+          description: Any alternative solutions or workarounds you've considered?
 
-  - type: dropdown
-    id: area
-    attributes:
-      label: Area
-      description: Which part of the site does this affect?
-      options:
-        - Playground/Editor
-        - Landing Page
-        - Documentation
-        - Mobile Experience
-        - Performance
-        - Other
-    validations:
-      required: true
+    - type: dropdown
+      id: area
+      attributes:
+          label: Area
+          description: Which part of the site does this affect?
+          options:
+              - Playground/Editor
+              - Landing Page
+              - Documentation
+              - Mobile Experience
+              - Performance
+              - Other
+      validations:
+          required: true
 
-  - type: textarea
-    id: additional
-    attributes:
-      label: Additional Context
-      description: Any mockups, screenshots, or examples?
+    - type: textarea
+      id: additional
+      attributes:
+          label: Additional Context
+          description: Any mockups, screenshots, or examples?
