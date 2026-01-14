@@ -91,14 +91,14 @@ get_target() {
     esac
 }
 
-# Get latest version from GitHub
+# Get latest version from GitHub (includes prereleases)
 get_latest_version() {
-    local url="https://api.github.com/repos/${REPO}/releases/latest"
+    local url="https://api.github.com/repos/${REPO}/releases"
 
     if command -v curl >/dev/null 2>&1; then
-        curl -sSf "$url" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/'
+        curl -sSf "$url" | grep -m1 '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/'
     elif command -v wget >/dev/null 2>&1; then
-        wget -qO- "$url" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/'
+        wget -qO- "$url" | grep -m1 '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/'
     else
         error "Neither curl nor wget found. Please install one of them."
     fi
@@ -203,8 +203,9 @@ main() {
     # Create directory if needed
     mkdir -p "$install_dir"
 
-    # Copy all binaries
-    for bin in bean-check bean-format bean-query bean-report rustledger; do
+    # Copy all binaries (14 total: 7 rledger-* + 7 bean-* aliases)
+    for bin in rledger-check rledger-format rledger-query rledger-report rledger-doctor rledger-extract rledger-price \
+               bean-check bean-format bean-query bean-report bean-doctor bean-extract bean-price; do
         if [ -f "$tmpdir/$bin" ] || [ -f "$tmpdir/${bin}.exe" ]; then
             if [ "$os" = "windows" ]; then
                 cp "$tmpdir/${bin}.exe" "$install_dir/"
