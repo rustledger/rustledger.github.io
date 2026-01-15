@@ -89,68 +89,640 @@
                     Accounting in plain text, under your control, forever.
                 </p>
 
-                <div class="flex flex-col gap-3 items-center mb-16">
-                    <div
-                        class="mono inline-flex items-center gap-3 bg-white/5 border border-white/10 px-6 py-3 rounded text-white/80"
-                    >
-                        <span class="text-white/40">$</span>
-                        <span>curl -sSfL rustledger.github.io/i | sh</span>
-                        <button
-                            onclick="
-                                navigator.clipboard
-                                    .writeText('curl -sSfL rustledger.github.io/i | sh')
-                                    .then(() => showToast('Copied!'))
-                            "
-                            class="text-white/40 hover:text-white transition"
-                            title="Copy"
-                            aria-label="Copy install command"
-                        >
-                            <svg
-                                class="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
+                <!-- Installation Section -->
+                <div class="flex flex-col gap-6 items-center mb-16">
+                    <!-- Tabbed Installation Section -->
+                    <div class="install-section" id="install-section">
+                        <div class="install-tabs" role="tablist">
+                            <!-- Cargo -->
+                            <button
+                                class="install-tab"
+                                data-tab="cargo"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panel-cargo"
                             >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                                />
-                            </svg>
-                        </button>
-                    </div>
-                    <div
-                        class="mono inline-flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded text-white/60 text-sm"
-                    >
-                        <span class="text-white/30">or</span>
-                        <span>cargo install rustledger</span>
-                        <button
-                            onclick="
-                                navigator.clipboard
-                                    .writeText('cargo install rustledger')
-                                    .then(() => showToast('Copied!'))
-                            "
-                            class="text-white/40 hover:text-white transition"
-                            title="Copy"
-                            aria-label="Copy cargo install command"
-                        >
-                            <svg
-                                class="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
+                                <svg class="tab-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M23.834 8.101a12.04 12.04 0 0 0-.479-1.407 10.793 10.793 0 0 0-.752-1.535 12.032 12.032 0 0 0-1.068-1.496c-.386-.437-.803-.866-1.245-1.255A12.093 12.093 0 0 0 18.8 1.354a10.973 10.973 0 0 0-1.532-.753 12.04 12.04 0 0 0-1.408-.479A11.867 11.867 0 0 0 12 0c-1.326 0-2.594.215-3.86.122a12.04 12.04 0 0 0-1.407.479 10.793 10.793 0 0 0-1.535.752 12.032 12.032 0 0 0-1.496 1.068c-.437.386-.866.803-1.255 1.245A12.093 12.093 0 0 0 1.354 5.2a10.973 10.973 0 0 0-.753 1.532 12.04 12.04 0 0 0-.479 1.408A11.867 11.867 0 0 0 0 12c0 1.326.215 2.594.122 3.86.135.479.293.95.479 1.407.186.51.423 1.01.752 1.535.286.489.645.99 1.068 1.496.386.437.803.866 1.245 1.255a12.093 12.093 0 0 0 1.49 1.054c.497.278 1.01.553 1.532.753.458.186.929.344 1.408.479A11.867 11.867 0 0 0 12 24c1.326 0 2.594-.215 3.86-.122.479-.135.95-.293 1.407-.479.51-.186 1.01-.423 1.535-.752.489-.286.99-.645 1.496-1.068.437-.386.866-.803 1.255-1.245a12.093 12.093 0 0 0 1.054-1.49c.278-.497.553-1.01.753-1.532.186-.458.344-.929.479-1.408A11.867 11.867 0 0 0 24 12c0-1.326-.215-2.594-.122-3.86a10.793 10.793 0 0 0-.044-.039zM12 20.055c-4.443 0-8.055-3.612-8.055-8.055S7.557 3.945 12 3.945s8.055 3.612 8.055 8.055-3.612 8.055-8.055 8.055zm0-14.3a6.26 6.26 0 0 0-6.245 6.245A6.26 6.26 0 0 0 12 18.245 6.26 6.26 0 0 0 18.245 12 6.26 6.26 0 0 0 12 5.755z"
+                                    />
+                                </svg>
+                                <span>Cargo</span>
+                            </button>
+                            <!-- Homebrew -->
+                            <button
+                                class="install-tab"
+                                data-tab="homebrew"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panel-homebrew"
                             >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
+                                <svg class="tab-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M5.833 5.431A7.727 7.727 0 0 1 12 2.25c2.578 0 4.911 1.26 6.332 3.197a8.41 8.41 0 0 1 3.417 6.803c0 2.066-.74 3.955-1.969 5.426v1.358a3.003 3.003 0 0 1-1.125 2.342l-.25.199a6.75 6.75 0 0 1-4.155 1.425H9.75a6.75 6.75 0 0 1-4.155-1.425l-.25-.199a3.003 3.003 0 0 1-1.125-2.342v-1.358a8.378 8.378 0 0 1-1.97-5.426 8.41 8.41 0 0 1 3.583-6.819zM12 4.5a5.476 5.476 0 0 0-5.039 3.308A6.136 6.136 0 0 1 12 6a6.136 6.136 0 0 1 5.039 2.808A5.476 5.476 0 0 0 12 4.5z"
+                                    />
+                                </svg>
+                                <span>Homebrew</span>
+                            </button>
+                            <!-- Nix -->
+                            <button
+                                class="install-tab"
+                                data-tab="nix"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panel-nix"
+                            >
+                                <svg class="tab-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M7.352 1.592l-1.364.002L5.12 2.94l1.352-.004L5.96 3.99l-.002.156 2.054 3.576-.956 1.632-3.992-.008-2.14 3.728h1.936l.292-.486 1.357-.005.116.208-1.352.004-.948 1.642H0l1.064 1.852h.012l1.366-.002.468.816 1.354-.006.456.792h1.472l-2.472-4.318-.042-.074.012-.022-.012-.032.062-.11 1.844-3.205.252-.432h.012l1.064 1.852.078.14-.6 1.07-.242.4h.012l1.96 3.404h1.916l-2.044-3.558 2.032-3.528.076-.132-.078-.136L7.352 1.592zm.1 1.192l1.364.002.068.122-.882 1.538-2.048-.004-.092-.16.118-.2.156.272 2.056.004.59-1.03h-.016l-.086-.16-.09-.156 1.088-.002-.954-1.652-1.368.002-.086-.156 1.452-.002.98 1.696v.004l-.094.162-.036-.064-.58 1.004-.034-.06-2.044-.004-.048-.084-.096-.168.54-.938.036-.064-.56-.978-.024-.044h.024l-.016-.034z"
+                                    />
+                                </svg>
+                                <span>Nix</span>
+                            </button>
+                            <!-- AUR -->
+                            <button
+                                class="install-tab"
+                                data-tab="aur"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panel-aur"
+                            >
+                                <svg class="tab-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2L2 19h20L12 2zm0 3.5L18.5 17h-13L12 5.5z" />
+                                </svg>
+                                <span>AUR</span>
+                            </button>
+                            <!-- Docker -->
+                            <button
+                                class="install-tab"
+                                data-tab="docker"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panel-docker"
+                            >
+                                <svg class="tab-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M13.983 11.078h2.119a.186.186 0 0 0 .186-.185V9.006a.186.186 0 0 0-.186-.186h-2.119a.185.185 0 0 0-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 0 0 .186-.186V3.574a.186.186 0 0 0-.186-.185h-2.118a.185.185 0 0 0-.185.185v1.888c0 .102.082.185.185.186m0 2.716h2.118a.187.187 0 0 0 .186-.186V6.29a.186.186 0 0 0-.186-.185h-2.118a.185.185 0 0 0-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 0 0 .184-.186V6.29a.185.185 0 0 0-.185-.185H8.1a.185.185 0 0 0-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 0 0 .185-.186V6.29a.185.185 0 0 0-.185-.185H5.136a.186.186 0 0 0-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 0 0 .186-.185V9.006a.186.186 0 0 0-.186-.186h-2.118a.185.185 0 0 0-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 0 0 .184-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.185.185 0 0 0-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 0 0 .185-.185V9.006a.185.185 0 0 0-.185-.186h-2.119a.185.185 0 0 0-.185.185v1.888c0 .102.084.185.185.185m-2.92 0h2.12a.185.185 0 0 0 .184-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.186.186 0 0 0-.185.185v1.888c0 .102.084.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 0 0-.75.748 11.376 11.376 0 0 0 .692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 0 0 3.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288z"
+                                    />
+                                </svg>
+                                <span>Docker</span>
+                            </button>
+                            <!-- npm -->
+                            <button
+                                class="install-tab"
+                                data-tab="npm"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panel-npm"
+                            >
+                                <svg class="tab-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331z"
+                                    />
+                                </svg>
+                                <span>npm</span>
+                            </button>
+                            <!-- Binary -->
+                            <button
+                                class="install-tab"
+                                data-tab="binary"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panel-binary"
+                            >
+                                <svg
+                                    class="tab-icon"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
                                     stroke-width="2"
-                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                                />
-                            </svg>
-                        </button>
+                                >
+                                    <path
+                                        d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"
+                                    />
+                                </svg>
+                                <span>Binary</span>
+                            </button>
+                        </div>
+                        <div class="install-content">
+                            <!-- Cargo Panel -->
+                            <div
+                                class="install-panel"
+                                id="panel-cargo"
+                                role="tabpanel"
+                                aria-labelledby="tab-cargo"
+                            >
+                                <div class="install-command">
+                                    <span class="prompt">$</span>
+                                    <span class="cmd"
+                                        ><span class="keyword">cargo</span>
+                                        <span class="flag">install</span>
+                                        <span class="package">rustledger</span></span
+                                    >
+                                    <button
+                                        class="install-copy-btn"
+                                        onclick="
+                                            copyInstallCommand('cargo install rustledger', this)
+                                        "
+                                        title="Copy"
+                                        aria-label="Copy command"
+                                    >
+                                        <svg
+                                            class="w-5 h-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <p class="install-note">
+                                    <svg
+                                        class="note-icon"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                    </svg>
+                                    Requires
+                                    <a href="https://rustup.rs" target="_blank">Rust toolchain</a>.
+                                    Builds from source.
+                                </p>
+                            </div>
+                            <!-- Homebrew Panel -->
+                            <div
+                                class="install-panel"
+                                id="panel-homebrew"
+                                role="tabpanel"
+                                aria-labelledby="tab-homebrew"
+                            >
+                                <div class="install-command">
+                                    <span class="prompt">$</span>
+                                    <span class="cmd"
+                                        ><span class="keyword">brew</span>
+                                        <span class="flag">install</span>
+                                        <span class="package">rustledger</span></span
+                                    >
+                                    <button
+                                        class="install-copy-btn"
+                                        onclick="
+                                            copyInstallCommand('brew install rustledger', this)
+                                        "
+                                        title="Copy"
+                                        aria-label="Copy command"
+                                    >
+                                        <svg
+                                            class="w-5 h-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <p class="install-note">
+                                    <svg
+                                        class="note-icon"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                    </svg>
+                                    For macOS and Linux via
+                                    <a href="https://brew.sh" target="_blank">Homebrew</a>.
+                                </p>
+                            </div>
+                            <!-- Nix Panel -->
+                            <div
+                                class="install-panel"
+                                id="panel-nix"
+                                role="tabpanel"
+                                aria-labelledby="tab-nix"
+                            >
+                                <div class="install-command">
+                                    <span class="prompt">$</span>
+                                    <span class="cmd"
+                                        ><span class="keyword">nix-shell</span>
+                                        <span class="flag">-p</span>
+                                        <span class="package">rustledger</span></span
+                                    >
+                                    <button
+                                        class="install-copy-btn"
+                                        onclick="
+                                            copyInstallCommand('nix-shell -p rustledger', this)
+                                        "
+                                        title="Copy"
+                                        aria-label="Copy command"
+                                    >
+                                        <svg
+                                            class="w-5 h-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <p class="install-note">
+                                    <svg
+                                        class="note-icon"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                    </svg>
+                                    Available in
+                                    <a
+                                        href="https://search.nixos.org/packages?query=rustledger"
+                                        target="_blank"
+                                        >nixpkgs</a
+                                    >. Also works with
+                                    <code class="mono text-white/60"
+                                        >nix run nixpkgs#rustledger</code
+                                    >.
+                                </p>
+                            </div>
+                            <!-- AUR Panel -->
+                            <div
+                                class="install-panel"
+                                id="panel-aur"
+                                role="tabpanel"
+                                aria-labelledby="tab-aur"
+                            >
+                                <div class="install-command">
+                                    <span class="prompt">$</span>
+                                    <span class="cmd"
+                                        ><span class="keyword">yay</span>
+                                        <span class="flag">-S</span>
+                                        <span class="package">rustledger</span></span
+                                    >
+                                    <button
+                                        class="install-copy-btn"
+                                        onclick="copyInstallCommand('yay -S rustledger', this)"
+                                        title="Copy"
+                                        aria-label="Copy command"
+                                    >
+                                        <svg
+                                            class="w-5 h-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <p class="install-note">
+                                    <svg
+                                        class="note-icon"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                    </svg>
+                                    For Arch Linux via the
+                                    <a
+                                        href="https://aur.archlinux.org/packages/rustledger"
+                                        target="_blank"
+                                        >AUR</a
+                                    >. Use your preferred AUR helper.
+                                </p>
+                            </div>
+                            <!-- Docker Panel -->
+                            <div
+                                class="install-panel"
+                                id="panel-docker"
+                                role="tabpanel"
+                                aria-labelledby="tab-docker"
+                            >
+                                <div class="install-command">
+                                    <span class="prompt">$</span>
+                                    <span class="cmd"
+                                        ><span class="keyword">docker</span>
+                                        <span class="flag">run</span> <span class="flag">-v</span>
+                                        <span class="string">$PWD:/data</span>
+                                        <span class="package"
+                                            >ghcr.io/rustledger/rustledger</span
+                                        ></span
+                                    >
+                                    <button
+                                        class="install-copy-btn"
+                                        onclick="
+                                            copyInstallCommand(
+                                                'docker run -v $PWD:/data ghcr.io/rustledger/rustledger',
+                                                this
+                                            )
+                                        "
+                                        title="Copy"
+                                        aria-label="Copy command"
+                                    >
+                                        <svg
+                                            class="w-5 h-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <p class="install-note">
+                                    <svg
+                                        class="note-icon"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                    </svg>
+                                    Mounts current directory. Works on any platform with
+                                    <a href="https://docker.com" target="_blank">Docker</a>.
+                                </p>
+                            </div>
+                            <!-- npm Panel -->
+                            <div
+                                class="install-panel"
+                                id="panel-npm"
+                                role="tabpanel"
+                                aria-labelledby="tab-npm"
+                            >
+                                <div class="install-command">
+                                    <span class="prompt">$</span>
+                                    <span class="cmd"
+                                        ><span class="keyword">npx</span>
+                                        <span class="package">rustledger</span></span
+                                    >
+                                    <button
+                                        class="install-copy-btn"
+                                        onclick="copyInstallCommand('npx rustledger', this)"
+                                        title="Copy"
+                                        aria-label="Copy command"
+                                    >
+                                        <svg
+                                            class="w-5 h-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <p class="install-note">
+                                    <svg
+                                        class="note-icon"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                    </svg>
+                                    Uses pre-built WASM. Or install globally with
+                                    <code class="mono text-white/60">npm i -g rustledger</code>.
+                                </p>
+                            </div>
+                            <!-- Binary Panel -->
+                            <div
+                                class="install-panel"
+                                id="panel-binary"
+                                role="tabpanel"
+                                aria-labelledby="tab-binary"
+                            >
+                                <div class="install-command">
+                                    <span class="prompt">$</span>
+                                    <span class="cmd"
+                                        ><span class="keyword">curl</span>
+                                        <span class="flag">-sSfL</span>
+                                        <span class="url">rustledger.github.io/i</span>
+                                        <span class="flag">|</span>
+                                        <span class="keyword">sh</span></span
+                                    >
+                                    <button
+                                        class="install-copy-btn"
+                                        onclick="
+                                            copyInstallCommand(
+                                                'curl -sSfL rustledger.github.io/i | sh',
+                                                this
+                                            )
+                                        "
+                                        title="Copy"
+                                        aria-label="Copy command"
+                                    >
+                                        <svg
+                                            class="w-5 h-5"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                            />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="binary-options mt-4">
+                                    <div class="binary-option" data-platform="linux-x64">
+                                        <div class="platform-info">
+                                            <svg
+                                                class="platform-icon"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.529 3.405h.013c.213 0 .396.062.584.198.19.135.33.332.438.533.105.259.158.459.166.724 0-.02.006-.04.006-.06v.105a.086.086 0 01-.004-.021l-.004-.024a1.807 1.807 0 01-.15.706.953.953 0 01-.213.335.71.71 0 00-.088-.042c-.104-.045-.198-.064-.284-.133a1.312 1.312 0 00-.22-.066c.05-.06.146-.133.183-.198.053-.128.082-.264.088-.402v-.02a1.21 1.21 0 00-.061-.4c-.045-.134-.101-.2-.183-.333-.084-.066-.167-.132-.267-.132h-.016c-.093 0-.176.03-.262.132a.8.8 0 00-.205.334 1.18 1.18 0 00-.09.468v.023c.004.133.035.264.085.399.026.052.056.1.089.146a.57.57 0 01-.096.064c-.145.063-.273.135-.4.2.027-.07.05-.138.073-.205.715-2.063 3.038-2.063 3.754 0z"
+                                                />
+                                            </svg>
+                                            <div>
+                                                <div class="platform-name">Linux</div>
+                                                <div class="platform-arch">x86_64</div>
+                                            </div>
+                                        </div>
+                                        <a
+                                            href="https://github.com/rustledger/rustledger/releases/latest"
+                                            target="_blank"
+                                            class="download-btn"
+                                        >
+                                            <svg
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                                />
+                                            </svg>
+                                            Download
+                                        </a>
+                                    </div>
+                                    <div class="binary-option" data-platform="macos-arm">
+                                        <div class="platform-info">
+                                            <svg
+                                                class="platform-icon"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"
+                                                />
+                                            </svg>
+                                            <div>
+                                                <div class="platform-name">macOS</div>
+                                                <div class="platform-arch">Apple Silicon</div>
+                                            </div>
+                                        </div>
+                                        <a
+                                            href="https://github.com/rustledger/rustledger/releases/latest"
+                                            target="_blank"
+                                            class="download-btn"
+                                        >
+                                            <svg
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                                />
+                                            </svg>
+                                            Download
+                                        </a>
+                                    </div>
+                                    <div class="binary-option" data-platform="windows-x64">
+                                        <div class="platform-info">
+                                            <svg
+                                                class="platform-icon"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"
+                                                />
+                                            </svg>
+                                            <div>
+                                                <div class="platform-name">Windows</div>
+                                                <div class="platform-arch">x86_64</div>
+                                            </div>
+                                        </div>
+                                        <a
+                                            href="https://github.com/rustledger/rustledger/releases/latest"
+                                            target="_blank"
+                                            class="download-btn"
+                                        >
+                                            <svg
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                                />
+                                            </svg>
+                                            Download
+                                        </a>
+                                    </div>
+                                </div>
+                                <p class="install-note mt-4">
+                                    <svg
+                                        class="note-icon"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                    </svg>
+                                    See all binaries on
+                                    <a
+                                        href="https://github.com/rustledger/rustledger/releases"
+                                        target="_blank"
+                                        >GitHub Releases</a
+                                    >.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                     <!-- GitHub Star Button -->
                     <a
