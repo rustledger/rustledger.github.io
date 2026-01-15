@@ -378,3 +378,282 @@ body {
 .accent-border {
     border-color: var(--accent) !important;
 }
+
+/* ========================================
+   INSTALL TABS - OS-aware installation
+   ======================================== */
+
+.install-section {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.install-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 0.75rem 0.75rem 0 0;
+    justify-content: center;
+}
+
+@media (min-width: 640px) {
+    .install-tabs {
+        gap: 0.125rem;
+        padding: 0.25rem;
+    }
+}
+
+.install-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    transition: all var(--transition);
+    position: relative;
+    background: transparent;
+    white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+    .install-tab {
+        padding: 0.5rem 0.9rem;
+        font-size: 0.75rem;
+    }
+}
+
+.install-tab:hover {
+    color: rgba(255, 255, 255, 0.8);
+    background: var(--surface-hover);
+}
+
+.install-tab.active {
+    color: white;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--border);
+}
+
+.install-tab .tab-icon {
+    width: 14px;
+    height: 14px;
+    opacity: 0.7;
+    flex-shrink: 0;
+}
+
+.install-tab.active .tab-icon {
+    opacity: 1;
+}
+
+.install-tab .recommended-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--accent);
+    color: white;
+    font-size: 0.5rem;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4);
+}
+
+.install-content {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 0 0 0.75rem 0.75rem;
+    overflow: hidden;
+}
+
+.install-panel {
+    display: none;
+    padding: 1.25rem;
+}
+
+.install-panel.active {
+    display: block;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.install-command {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+}
+
+.install-command .prompt {
+    color: var(--text-muted);
+    user-select: none;
+}
+
+.install-command .cmd {
+    flex: 1;
+    color: rgba(255, 255, 255, 0.9);
+    word-break: break-all;
+}
+
+/* Syntax highlighting */
+.install-command .cmd .keyword {
+    color: #c792ea;
+}
+
+.install-command .cmd .string {
+    color: #c3e88d;
+}
+
+.install-command .cmd .flag {
+    color: #89ddff;
+}
+
+.install-command .cmd .url {
+    color: #82aaff;
+}
+
+.install-command .cmd .package {
+    color: var(--accent);
+}
+
+.install-copy-btn {
+    padding: 0.5rem;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.install-copy-btn:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.install-copy-btn.copied {
+    color: var(--success);
+}
+
+.install-note {
+    margin-top: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.install-note a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+.install-note a:hover {
+    color: white;
+}
+
+.install-note .note-icon {
+    width: 14px;
+    height: 14px;
+    opacity: 0.6;
+}
+
+/* Binary download specific styles */
+.binary-options {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.binary-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    transition: all var(--transition);
+}
+
+.binary-option:hover {
+    background: rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.binary-option .platform-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.binary-option .platform-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+}
+
+.binary-option .platform-name {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.binary-option .platform-arch {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.binary-option .download-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    background: var(--accent);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all var(--transition);
+    text-decoration: none;
+}
+
+.binary-option .download-btn:hover {
+    background: #ea580c;
+    transform: translateY(-1px);
+}
+
+.binary-option .download-btn svg {
+    width: 14px;
+    height: 14px;
+}
