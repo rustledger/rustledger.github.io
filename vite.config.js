@@ -36,6 +36,11 @@ export default defineConfig({
         },
     },
 
+    // Worker config - use ES modules for dynamic imports
+    worker: {
+        format: 'es',
+    },
+
     // Handle WASM files correctly
     assetsInclude: ['**/*.wasm'],
 });
