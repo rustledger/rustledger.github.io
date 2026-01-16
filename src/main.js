@@ -19,7 +19,7 @@ import {
     updateFooterStatus,
     showErrorModal,
 } from './ui.js';
-import { escapeHtml, extractAccounts } from './utils.js';
+import { escapeHtml, extractAccounts, fetchWithRetry } from './utils.js';
 import { queryPresets, plugins } from './presets.js';
 import './style.css';
 import LZString from 'lz-string';
@@ -283,6 +283,85 @@ window.runQueryFromInput = function () {
     }
 };
 
+/** Default page size for query results */
+const QUERY_PAGE_SIZE = 100;
+
+/** @type {{ rows: any[][], headers: string[], elapsed: string } | null} */
+let currentQueryResult = null;
+
+/**
+ * Render a page of query results
+ * @param {number} page - Page number (0-indexed)
+ */
+function renderQueryPage(page) {
+    if (!currentQueryResult) return;
+
+    const { rows, headers, elapsed } = currentQueryResult;
+    const queryOutput = document.getElementById('query-output');
+    if (!queryOutput) return;
+
+    const totalRows = rows.length;
+    const totalPages = Math.ceil(totalRows / QUERY_PAGE_SIZE);
+    const startIdx = page * QUERY_PAGE_SIZE;
+    const endIdx = Math.min(startIdx + QUERY_PAGE_SIZE, totalRows);
+    const pageRows = rows.slice(startIdx, endIdx);
+
+    let html = '<table class="w-full text-left" role="grid">';
+    html +=
+        '<thead><tr>' +
+        headers
+            .map(
+                (h) =>
+                    `<th scope="col" class="px-2 py-1 text-white/50 border-b border-white/10">${escapeHtml(String(h))}</th>`
+            )
+            .join('') +
+        '</tr></thead>';
+    html += '<tbody>';
+    pageRows.forEach((row) => {
+        html += '<tr class="hover:bg-white/5">';
+        if (Array.isArray(row)) {
+            row.forEach((val) => {
+                html += `<td class="px-2 py-1 border-b border-white/5">${formatCell(val)}</td>`;
+            });
+        } else {
+            headers.forEach((h, i) => {
+                const val = row[h] !== undefined ? row[h] : row[i];
+                html += `<td class="px-2 py-1 border-b border-white/5">${formatCell(val)}</td>`;
+            });
+        }
+        html += '</tr>';
+    });
+    html += '</tbody></table>';
+
+    // Stats and pagination controls
+    html += '<div class="mt-3 flex items-center justify-between text-xs">';
+    html += `<span class="text-white/30">Showing ${startIdx + 1}-${endIdx} of ${totalRows} rows (${elapsed}ms)</span>`;
+
+    if (totalPages > 1) {
+        html += '<div class="flex items-center gap-2">';
+        html += `<button onclick="window.goToQueryPage(0)" class="px-2 py-1 rounded ${page === 0 ? 'text-white/20 cursor-not-allowed' : 'text-white/60 hover:text-white hover:bg-white/10'}" ${page === 0 ? 'disabled' : ''} aria-label="First page">«</button>`;
+        html += `<button onclick="window.goToQueryPage(${page - 1})" class="px-2 py-1 rounded ${page === 0 ? 'text-white/20 cursor-not-allowed' : 'text-white/60 hover:text-white hover:bg-white/10'}" ${page === 0 ? 'disabled' : ''} aria-label="Previous page">‹</button>`;
+        html += `<span class="text-white/50 px-2">Page ${page + 1} of ${totalPages}</span>`;
+        html += `<button onclick="window.goToQueryPage(${page + 1})" class="px-2 py-1 rounded ${page >= totalPages - 1 ? 'text-white/20 cursor-not-allowed' : 'text-white/60 hover:text-white hover:bg-white/10'}" ${page >= totalPages - 1 ? 'disabled' : ''} aria-label="Next page">›</button>`;
+        html += `<button onclick="window.goToQueryPage(${totalPages - 1})" class="px-2 py-1 rounded ${page >= totalPages - 1 ? 'text-white/20 cursor-not-allowed' : 'text-white/60 hover:text-white hover:bg-white/10'}" ${page >= totalPages - 1 ? 'disabled' : ''} aria-label="Last page">»</button>`;
+        html += '</div>';
+    }
+
+    html += '</div>';
+    queryOutput.innerHTML = html;
+}
+
+/**
+ * Navigate to a specific query page
+ * @param {number} page
+ */
+window.goToQueryPage = function (page) {
+    if (!currentQueryResult) return;
+    const totalPages = Math.ceil(currentQueryResult.rows.length / QUERY_PAGE_SIZE);
+    if (page < 0 || page >= totalPages) return;
+    renderQueryPage(page);
+};
+
 /**
  * Execute a BQL query
  * @param {string} queryStr
@@ -299,41 +378,22 @@ function runQuery(queryStr) {
         if (!queryOutput || !result) return;
 
         if (result.error) {
+            currentQueryResult = null;
             queryOutput.innerHTML = `<span class="text-red-400">${escapeHtml(result.error)}</span>`;
         } else if (result.rows && result.rows.length > 0) {
             const headers = result.columns || Object.keys(result.rows[0]);
-            let html = '<table class="w-full text-left" role="grid">';
-            html +=
-                '<thead><tr>' +
-                headers
-                    .map(
-                        (h) =>
-                            `<th scope="col" class="px-2 py-1 text-white/50 border-b border-white/10">${escapeHtml(String(h))}</th>`
-                    )
-                    .join('') +
-                '</tr></thead>';
-            html += '<tbody>';
-            result.rows.forEach((row) => {
-                html += '<tr class="hover:bg-white/5">';
-                if (Array.isArray(row)) {
-                    row.forEach((val) => {
-                        html += `<td class="px-2 py-1 border-b border-white/5">${formatCell(val)}</td>`;
-                    });
-                } else {
-                    headers.forEach((h, i) => {
-                        const val = row[h] !== undefined ? row[h] : row[i];
-                        html += `<td class="px-2 py-1 border-b border-white/5">${formatCell(val)}</td>`;
-                    });
-                }
-                html += '</tr>';
-            });
-            html += '</tbody></table>';
-            html += `<div class="mt-2 text-xs text-white/30">${result.rows.length} rows in ${elapsed}ms</div>`;
-            queryOutput.innerHTML = html;
+
+            // Store result for pagination
+            currentQueryResult = { rows: result.rows, headers, elapsed };
+
+            // Render first page
+            renderQueryPage(0);
         } else {
+            currentQueryResult = null;
             queryOutput.innerHTML = `<span class="text-white/50">No results (${elapsed}ms)</span>`;
         }
     } catch (e) {
+        currentQueryResult = null;
         const queryOutput = document.getElementById('query-output');
         if (queryOutput) {
             queryOutput.innerHTML = `<span class="text-red-400">${escapeHtml(String(e))}</span>`;
@@ -537,8 +597,10 @@ async function fetchGitHubInfo() {
 
     try {
         const [repoResponse, releasesResponse] = await Promise.all([
-            fetch('https://api.github.com/repos/rustledger/rustledger'),
-            fetch('https://api.github.com/repos/rustledger/rustledger/releases?per_page=1'),
+            fetchWithRetry('https://api.github.com/repos/rustledger/rustledger'),
+            fetchWithRetry(
+                'https://api.github.com/repos/rustledger/rustledger/releases?per_page=1'
+            ),
         ]);
 
         // Handle rate limiting

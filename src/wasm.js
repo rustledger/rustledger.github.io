@@ -36,7 +36,7 @@ export async function initWasm() {
     }
 
     try {
-        // @ts-ignore - Dynamic import for WASM module
+        // @ts-ignore - Runtime WASM module loaded from /pkg/, not available at build time
         const wasm = await import('/pkg/rustledger_wasm.js');
         await wasm.default();
 

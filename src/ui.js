@@ -1,5 +1,7 @@
 // UI utilities - toast, resizer, scroll effects
 
+import { fetchWithRetry } from './utils.js';
+
 /**
  * Show a toast notification
  * @param {string} message - The message to display
@@ -228,7 +230,9 @@ export async function checkForWasmUpdate() {
     updateFooterStatus('checking');
 
     try {
-        const response = await fetch('https://api.github.com/repos/rustledger/rustledger/releases');
+        const response = await fetchWithRetry(
+            'https://api.github.com/repos/rustledger/rustledger/releases'
+        );
         if (!response.ok) {
             throw new Error('Failed to fetch releases');
         }
