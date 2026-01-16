@@ -278,7 +278,7 @@ export function validateQueryInput() {
             const editorContent = queryInput.dataset.editorContent || '';
             if (!editorContent) return;
 
-            const result = executeQuery(editorContent, currentQuery, 'text');
+            const result = executeQuery(editorContent, currentQuery);
             // @ts-ignore - result structure may vary
             if (result && result.errors && result.errors.length > 0) {
                 // Invalid query - red tint

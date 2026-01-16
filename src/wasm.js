@@ -9,11 +9,11 @@
 
 /**
  * @typedef {Object} WasmModule
- * @property {(source: string) => ValidationResult} validate_source
+ * @property {(source: string) => ValidationResult} validateSource
  * @property {(source: string) => FormatResult} format
- * @property {(source: string, query: string, format?: string) => QueryResult} query
+ * @property {(source: string, query: string) => QueryResult} query
  * @property {() => string} version
- * @property {(prefix: string, cursorPos: number) => { completions: Completion[] }} bql_completions
+ * @property {(prefix: string, cursorPos: number) => { completions: Completion[] }} bqlCompletions
  */
 
 /** @type {WasmModule | null} */
@@ -41,11 +41,11 @@ export async function initWasm() {
         await wasm.default();
 
         wasmModule = {
-            validate_source: wasm.validate_source,
+            validateSource: wasm.validateSource,
             format: wasm.format,
             query: wasm.query,
             version: wasm.version,
-            bql_completions: wasm.bql_completions,
+            bqlCompletions: wasm.bqlCompletions,
         };
 
         wasmReady = true;
@@ -128,7 +128,7 @@ export function getVersion() {
  */
 export function validateSource(source) {
     if (!wasmModule) return null;
-    return wasmModule.validate_source(source);
+    return wasmModule.validateSource(source);
 }
 
 /**
@@ -145,12 +145,11 @@ export function formatSource(source) {
  * Execute a BQL query
  * @param {string} source
  * @param {string} queryStr
- * @param {string} [format]
  * @returns {QueryResult | null}
  */
-export function executeQuery(source, queryStr, format) {
+export function executeQuery(source, queryStr) {
     if (!wasmModule) return null;
-    return wasmModule.query(source, queryStr, format);
+    return wasmModule.query(source, queryStr);
 }
 
 /**
@@ -161,5 +160,5 @@ export function executeQuery(source, queryStr, format) {
  */
 export function getBqlCompletions(text, cursorPos) {
     if (!wasmModule) return null;
-    return wasmModule.bql_completions(text, cursorPos);
+    return wasmModule.bqlCompletions(text, cursorPos);
 }
