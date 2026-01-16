@@ -49,9 +49,9 @@ const errorMessages = new Map();
 const knownAccounts = new Set();
 
 /**
- * Live validation of editor content
+ * Live validation of editor content (async - runs in Web Worker)
  */
-function liveValidate() {
+async function liveValidate() {
     if (!isWasmReady() || !editor) return;
 
     const source = editor.getContent();
@@ -59,7 +59,7 @@ function liveValidate() {
 
     try {
         const start = performance.now();
-        const result = validateSource(source);
+        const result = await validateSource(source);
         const elapsed = (performance.now() - start).toFixed(1);
 
         if (!result) return;
@@ -160,7 +160,7 @@ function onEditorChange(_content) {
  * Load an example file
  * @param {ExampleName} name
  */
-window.loadExample = function (name) {
+window.loadExample = async function (name) {
     if (!examples[name]) return;
 
     // Update active tab and aria-selected
@@ -178,9 +178,9 @@ window.loadExample = function (name) {
 
     // Validate and show query results
     if (isWasmReady()) {
-        liveValidate();
+        await liveValidate();
         showTab('query');
-        window.runQueryPreset('BALANCES');
+        await window.runQueryPreset('BALANCES');
     }
 };
 
@@ -231,18 +231,18 @@ function showTab(tabName) {
 window.switchTab = showTab;
 
 /**
- * Format the editor content
+ * Format the editor content (async - runs in Web Worker)
  */
-window.runFormat = function () {
+window.runFormat = async function () {
     if (!isWasmReady() || !editor) return;
 
     try {
-        const result = formatSource(editor.getContent());
+        const result = await formatSource(editor.getContent());
         if (!result) return;
 
         if (result.formatted) {
             editor.setContent(result.formatted);
-            liveValidate();
+            await liveValidate();
         } else if (result.errors) {
             showTab('output');
             const errors = result.errors
@@ -262,7 +262,7 @@ window.runFormat = function () {
  * Run a query preset
  * @param {string} queryStr
  */
-window.runQueryPreset = function (queryStr) {
+window.runQueryPreset = async function (queryStr) {
     if (!queryStr || !isWasmReady()) return;
     const queryInput = /** @type {HTMLInputElement | null} */ (
         document.getElementById('query-text')
@@ -271,18 +271,18 @@ window.runQueryPreset = function (queryStr) {
         queryInput.value = queryStr;
     }
     updateQueryButtons();
-    runQuery(queryStr);
+    await runQuery(queryStr);
 };
 
 /**
  * Run query from input field
  */
-window.runQueryFromInput = function () {
+window.runQueryFromInput = async function () {
     const queryInput = /** @type {HTMLInputElement | null} */ (
         document.getElementById('query-text')
     );
     if (queryInput && queryInput.value) {
-        runQuery(queryInput.value);
+        await runQuery(queryInput.value);
     }
 };
 
@@ -366,15 +366,15 @@ window.goToQueryPage = function (page) {
 };
 
 /**
- * Execute a BQL query
+ * Execute a BQL query (async - runs in Web Worker)
  * @param {string} queryStr
  */
-function runQuery(queryStr) {
+async function runQuery(queryStr) {
     if (!isWasmReady() || !editor) return;
 
     try {
         const start = performance.now();
-        const result = executeQuery(editor.getContent(), queryStr);
+        const result = await executeQuery(editor.getContent(), queryStr);
         const elapsed = (performance.now() - start).toFixed(1);
 
         const queryOutput = document.getElementById('query-output');
@@ -408,7 +408,7 @@ function runQuery(queryStr) {
  * Toggle a plugin
  * @param {string} pluginName
  */
-window.togglePlugin = function (pluginName) {
+window.togglePlugin = async function (pluginName) {
     if (!pluginName || !editor) return;
 
     const newContent = togglePluginInContent(pluginName, editor.getContent());
@@ -416,7 +416,7 @@ window.togglePlugin = function (pluginName) {
     updatePluginButtons(newContent);
 
     if (isWasmReady()) {
-        liveValidate();
+        await liveValidate();
     }
 };
 
@@ -613,11 +613,11 @@ async function init() {
         updateFooterStatus('ready', version);
 
         // Run initial validation
-        liveValidate();
+        await liveValidate();
 
         // Show query tab and run default query
         showTab('query');
-        window.runQueryPreset('BALANCES');
+        await window.runQueryPreset('BALANCES');
     } catch (e) {
         const errorMessage = e instanceof Error ? e.message : 'Failed to load WASM module';
         updateFooterStatus('error', undefined, 'WASM failed');

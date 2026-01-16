@@ -1,13 +1,15 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 // Mock the WASM module since it's not available in tests
+// All WASM functions are now async (run in Web Worker)
 vi.mock('./wasm.js', () => ({
     initWasm: vi.fn().mockResolvedValue({}),
     isWasmReady: vi.fn().mockReturnValue(false),
     getVersion: vi.fn().mockReturnValue('test'),
-    validateSource: vi.fn().mockReturnValue({ valid: true, errors: [] }),
-    formatSource: vi.fn().mockReturnValue({ formatted: '' }),
-    executeQuery: vi.fn().mockReturnValue({ rows: [], columns: [] }),
+    validateSource: vi.fn().mockResolvedValue({ valid: true, errors: [] }),
+    formatSource: vi.fn().mockResolvedValue({ formatted: '' }),
+    executeQuery: vi.fn().mockResolvedValue({ rows: [], columns: [] }),
+    getBqlCompletions: vi.fn().mockResolvedValue({ completions: [] }),
 }));
 
 // Import after mocking

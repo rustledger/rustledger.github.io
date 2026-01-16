@@ -1,4 +1,4 @@
-// WASM loading and initialization
+// WASM loading and initialization via Web Worker
 
 /**
  * @typedef {{ valid: boolean, errors: Array<{line: number, message: string}>, error_count: number }} ValidationResult
@@ -7,17 +7,8 @@
  * @typedef {{ text: string, category: string }} Completion
  */
 
-/**
- * @typedef {Object} WasmModule
- * @property {(source: string) => ValidationResult} validateSource
- * @property {(source: string) => FormatResult} format
- * @property {(source: string, query: string) => QueryResult} query
- * @property {() => string} version
- * @property {(prefix: string, cursorPos: number) => { completions: Completion[] }} bqlCompletions
- */
-
-/** @type {WasmModule | null} */
-let wasmModule = null;
+/** @type {Worker | null} */
+let worker = null;
 
 /** @type {boolean} */
 let wasmReady = false;
@@ -25,57 +16,137 @@ let wasmReady = false;
 /** @type {string | null} */
 let wasmError = null;
 
+/** @type {string} */
+let wasmVersion = 'unknown';
+
+/** @type {number} */
+let messageId = 0;
+
+/** @type {Map<number, { resolve: Function, reject: Function }>} */
+const pendingRequests = new Map();
+
 /**
- * Initialize the WASM module
- * @returns {Promise<WasmModule>}
+ * Send a message to the worker and wait for response
+ * @template T
+ * @param {string} action
+ * @param {object} payload
+ * @returns {Promise<T>}
+ */
+function sendMessage(action, payload = {}) {
+    return new Promise((resolve, reject) => {
+        if (!worker) {
+            reject(new Error('Worker not initialized'));
+            return;
+        }
+
+        const id = messageId++;
+        pendingRequests.set(id, { resolve, reject });
+        worker.postMessage({ id, action, payload });
+    });
+}
+
+/**
+ * Handle messages from the worker
+ * @param {MessageEvent} event
+ */
+function handleWorkerMessage(event) {
+    const { id, type, result, error, version } = event.data;
+
+    if (type === 'ready') {
+        wasmReady = true;
+        wasmVersion = version || 'unknown';
+        wasmError = null;
+        return;
+    }
+
+    if (type === 'error' && id === undefined) {
+        // Initialization error
+        wasmReady = false;
+        wasmError = error;
+        return;
+    }
+
+    const pending = pendingRequests.get(id);
+    if (pending) {
+        pendingRequests.delete(id);
+        if (type === 'error') {
+            pending.reject(new Error(error));
+        } else {
+            pending.resolve(result);
+        }
+    }
+}
+
+/**
+ * Initialize the WASM module via Web Worker
+ * @returns {Promise<void>}
  * @throws {Error} If WASM fails to load
  */
 export async function initWasm() {
-    if (wasmModule) {
-        return wasmModule;
+    if (worker && wasmReady) {
+        return;
     }
 
-    try {
-        // @ts-ignore - Runtime WASM module loaded from /pkg/, not available at build time
-        const wasm = await import('/pkg/rustledger_wasm.js');
-        await wasm.default();
+    return new Promise((resolve, reject) => {
+        try {
+            // Create worker
+            worker = new Worker(new URL('./wasm.worker.js', import.meta.url), {
+                type: 'module',
+            });
 
-        wasmModule = {
-            validateSource: wasm.validateSource,
-            format: wasm.format,
-            query: wasm.query,
-            version: wasm.version,
-            bqlCompletions: wasm.bqlCompletions,
-        };
+            const timeout = setTimeout(() => {
+                reject(new Error('WASM initialization timed out'));
+            }, 30000);
 
-        wasmReady = true;
-        wasmError = null;
+            worker.onmessage = (event) => {
+                handleWorkerMessage(event);
 
-        return wasmModule;
-    } catch (e) {
-        wasmReady = false;
-        wasmError = e instanceof Error ? e.message : String(e);
+                if (event.data.type === 'ready') {
+                    clearTimeout(timeout);
+                    resolve();
+                } else if (event.data.type === 'error' && event.data.id === undefined) {
+                    clearTimeout(timeout);
+                    const errorMsg = formatWasmError(event.data.error);
+                    reject(new Error(errorMsg));
+                }
+            };
 
-        // Provide user-friendly error messages
-        let userMessage = 'Failed to load the WASM module. ';
-
-        if (wasmError.includes('Failed to fetch') || wasmError.includes('NetworkError')) {
-            userMessage += 'Please check your internet connection and try refreshing the page.';
-        } else if (wasmError.includes('CompileError') || wasmError.includes('instantiate')) {
-            userMessage +=
-                'Your browser may not support WebAssembly. Please try using a modern browser like Chrome, Firefox, Safari, or Edge.';
-        } else if (wasmError.includes('Out of memory') || wasmError.includes('OOM')) {
-            userMessage +=
-                'Your device ran out of memory. Please close some browser tabs and try again.';
-        } else {
-            userMessage +=
-                'Please try refreshing the page. If the problem persists, try a different browser.';
+            worker.onerror = (event) => {
+                clearTimeout(timeout);
+                wasmReady = false;
+                wasmError = event.message;
+                reject(new Error(formatWasmError(event.message)));
+            };
+        } catch (e) {
+            wasmReady = false;
+            wasmError = e instanceof Error ? e.message : String(e);
+            reject(new Error(formatWasmError(wasmError)));
         }
+    });
+}
 
-        const error = new Error(userMessage);
-        error.cause = e;
-        throw error;
+/**
+ * Format WASM error into user-friendly message
+ * @param {string} error
+ * @returns {string}
+ */
+function formatWasmError(error) {
+    let userMessage = 'Failed to load the WASM module. ';
+
+    if (error.includes('Failed to fetch') || error.includes('NetworkError')) {
+        userMessage += 'Please check your internet connection and try refreshing the page.';
+    } else if (error.includes('CompileError') || error.includes('instantiate')) {
+        userMessage +=
+            'Your browser may not support WebAssembly. Please try using a modern browser like Chrome, Firefox, Safari, or Edge.';
+    } else if (error.includes('Out of memory') || error.includes('OOM')) {
+        userMessage +=
+            'Your device ran out of memory. Please close some browser tabs and try again.';
+    } else {
+        userMessage +=
+            'Please try refreshing the page. If the problem persists, try a different browser.';
     }
+
+    return userMessage;
 }
 
 /**
@@ -84,18 +155,6 @@ export async function initWasm() {
  */
 export function isWasmReady() {
     return wasmReady;
-}
-
-/**
- * Get the WASM module (throws if not initialized)
- * @returns {WasmModule}
- * @throws {Error} If WASM is not initialized
- */
-export function getWasm() {
-    if (!wasmModule) {
-        throw new Error('WASM module not initialized. Call initWasm() first.');
-    }
-    return wasmModule;
 }
 
 /**
@@ -111,54 +170,74 @@ export function getWasmError() {
  * @returns {string}
  */
 export function getVersion() {
-    if (!wasmModule) {
-        return 'unknown';
-    }
+    return wasmVersion;
+}
+
+/**
+ * Validate beancount source (async)
+ * @param {string} source
+ * @returns {Promise<ValidationResult | null>}
+ */
+export async function validateSource(source) {
+    if (!wasmReady) return null;
     try {
-        return wasmModule.version();
+        return await sendMessage('validateSource', { source });
     } catch {
-        return 'unknown';
+        return null;
     }
 }
 
 /**
- * Validate beancount source
+ * Format beancount source (async)
  * @param {string} source
- * @returns {ValidationResult | null}
+ * @returns {Promise<FormatResult | null>}
  */
-export function validateSource(source) {
-    if (!wasmModule) return null;
-    return wasmModule.validateSource(source);
+export async function formatSource(source) {
+    if (!wasmReady) return null;
+    try {
+        return await sendMessage('format', { source });
+    } catch {
+        return null;
+    }
 }
 
 /**
- * Format beancount source
- * @param {string} source
- * @returns {FormatResult | null}
- */
-export function formatSource(source) {
-    if (!wasmModule) return null;
-    return wasmModule.format(source);
-}
-
-/**
- * Execute a BQL query
+ * Execute a BQL query (async)
  * @param {string} source
  * @param {string} queryStr
- * @returns {QueryResult | null}
+ * @returns {Promise<QueryResult | null>}
  */
-export function executeQuery(source, queryStr) {
-    if (!wasmModule) return null;
-    return wasmModule.query(source, queryStr);
+export async function executeQuery(source, queryStr) {
+    if (!wasmReady) return null;
+    try {
+        return await sendMessage('query', { source, queryStr });
+    } catch {
+        return null;
+    }
 }
 
 /**
- * Get BQL completions
+ * Get BQL completions (async)
  * @param {string} text
  * @param {number} cursorPos
- * @returns {{ completions: Completion[] } | null}
+ * @returns {Promise<{ completions: Completion[] } | null>}
  */
-export function getBqlCompletions(text, cursorPos) {
-    if (!wasmModule) return null;
-    return wasmModule.bqlCompletions(text, cursorPos);
+export async function getBqlCompletions(text, cursorPos) {
+    if (!wasmReady) return null;
+    try {
+        return await sendMessage('bqlCompletions', { text, cursorPos });
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Terminate the worker (for cleanup)
+ */
+export function terminateWorker() {
+    if (worker) {
+        worker.terminate();
+        worker = null;
+        wasmReady = false;
+    }
 }

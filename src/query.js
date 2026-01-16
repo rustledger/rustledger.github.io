@@ -210,18 +210,18 @@ export function handleQueryInputKeydown(e) {
 }
 
 /**
- * Handle input events for autocomplete
+ * Handle input events for autocomplete (async - uses Web Worker)
  * @param {Event} e
  */
-export function handleQueryInput(e) {
+export async function handleQueryInput(e) {
     if (!isWasmReady()) return;
 
     const queryInput = /** @type {HTMLInputElement} */ (e.target);
     const value = queryInput.value;
     const cursorPos = queryInput.selectionStart || 0;
 
-    // Get completions from WASM
-    const result = getBqlCompletions(value, cursorPos);
+    // Get completions from WASM (async)
+    const result = await getBqlCompletions(value, cursorPos);
 
     if (result && result.completions && result.completions.length > 0) {
         // Find current partial token for filtering
@@ -249,7 +249,7 @@ export function handleQueryInput(e) {
 }
 
 /**
- * Validate the BQL query input and update styling
+ * Validate the BQL query input and update styling (async - uses Web Worker)
  */
 export function validateQueryInput() {
     const queryContainer = document.getElementById('query-input');
@@ -269,8 +269,8 @@ export function validateQueryInput() {
         return;
     }
 
-    // Debounce validation
-    queryValidationTimeout = setTimeout(() => {
+    // Debounce validation (async execution inside timeout)
+    queryValidationTimeout = setTimeout(async () => {
         if (!isWasmReady()) return;
 
         try {
@@ -278,7 +278,7 @@ export function validateQueryInput() {
             const editorContent = queryInput.dataset.editorContent || '';
             if (!editorContent) return;
 
-            const result = executeQuery(editorContent, currentQuery);
+            const result = await executeQuery(editorContent, currentQuery);
             // @ts-ignore - result structure may vary
             if (result && result.errors && result.errors.length > 0) {
                 // Invalid query - red tint
