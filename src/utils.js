@@ -29,6 +29,54 @@ export function extractAccounts(source) {
 // Note: getEnabledPlugins is in plugins.js to avoid duplication
 
 /**
+ * Count transactions in beancount source
+ * Matches date-prefixed entries with transaction indicators (*, !, txn, or payee)
+ * @param {string} source
+ * @returns {number}
+ */
+export function countTransactions(source) {
+    // Match lines starting with date followed by transaction marker or payee
+    // Examples: 2024-01-01 * "Payee", 2024-01-01 txn "Payee", 2024-01-01 ! "Payee"
+    const txnRegex = /^\d{4}-\d{2}-\d{2}\s+(?:\*|!|txn)\s/gm;
+    const matches = source.match(txnRegex);
+    return matches ? matches.length : 0;
+}
+
+/**
+ * Extract ledger statistics from beancount source
+ * @param {string} source
+ * @param {Set<string>} accounts - Pre-extracted accounts (for efficiency)
+ * @param {Set<string>} plugins - Pre-extracted plugins (for efficiency)
+ * @returns {{ accounts: number, transactions: number, plugins: number }}
+ */
+export function extractLedgerStats(source, accounts, plugins) {
+    return {
+        accounts: accounts.size,
+        transactions: countTransactions(source),
+        plugins: plugins.size,
+    };
+}
+
+/**
+ * Format ledger stats for display
+ * @param {{ accounts: number, transactions: number, plugins: number }} stats
+ * @returns {string}
+ */
+export function formatLedgerStats(stats) {
+    const parts = [];
+    if (stats.accounts > 0) {
+        parts.push(`${stats.accounts} account${stats.accounts !== 1 ? 's' : ''}`);
+    }
+    if (stats.transactions > 0) {
+        parts.push(`${stats.transactions} transaction${stats.transactions !== 1 ? 's' : ''}`);
+    }
+    if (stats.plugins > 0) {
+        parts.push(`${stats.plugins} plugin${stats.plugins !== 1 ? 's' : ''}`);
+    }
+    return parts.join(' · ');
+}
+
+/**
  * Format a number with thousands separators
  * @param {number} num
  * @returns {string}

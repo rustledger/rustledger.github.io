@@ -10,7 +10,11 @@ import {
     executeQuery,
 } from './wasm.js';
 import { initQueryAutocomplete, updateQueryButtons, formatCell } from './query.js';
-import { updatePluginButtons, togglePlugin as togglePluginInContent } from './plugins.js';
+import {
+    updatePluginButtons,
+    togglePlugin as togglePluginInContent,
+    getEnabledPlugins,
+} from './plugins.js';
 import {
     showToast,
     initResizer,
@@ -19,7 +23,7 @@ import {
     updateFooterStatus,
     showErrorModal,
 } from './ui.js';
-import { escapeHtml, extractAccounts } from './utils.js';
+import { escapeHtml, extractAccounts, extractLedgerStats, formatLedgerStats } from './utils.js';
 import { queryPresets, plugins } from './presets.js';
 import { fetchGitHubInfo } from './github.js';
 import { initInstallTabs, copyInstallCommand } from './install.js';
@@ -90,9 +94,18 @@ async function liveValidate() {
                     'output-tab text-green-400' +
                     (statusTab.classList.contains('active') ? ' active' : '');
             }
-            showOutput(
-                `<span class="text-green-400">✓ No errors found</span> <span class="text-white/30">(${elapsed}ms)</span>`
-            );
+
+            // Calculate and display stats
+            const enabledPlugins = getEnabledPlugins(source);
+            const stats = extractLedgerStats(source, accounts, enabledPlugins);
+            const statsText = formatLedgerStats(stats);
+
+            let outputHtml = `<span class="text-green-400">✓ No errors found</span> <span class="text-white/30">(${elapsed}ms)</span>`;
+            if (statsText) {
+                outputHtml += `\n<span class="text-white/50">${statsText}</span>`;
+            }
+            showOutput(outputHtml);
+
             // Clear error highlights
             if (editor.highlightErrorLines) {
                 editor.highlightErrorLines(new Set(), new Map());

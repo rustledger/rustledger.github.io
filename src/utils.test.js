@@ -1,5 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { escapeHtml, extractAccounts, formatNumber, fetchWithRetry } from './utils.js';
+import {
+    escapeHtml,
+    extractAccounts,
+    formatNumber,
+    fetchWithRetry,
+    countTransactions,
+    extractLedgerStats,
+    formatLedgerStats,
+} from './utils.js';
 
 // Note: getEnabledPlugins tests are in plugins.test.js
 
@@ -184,5 +192,120 @@ describe('fetchWithRetry', () => {
 
         expect(result).toBe(mockSuccess);
         expect(globalThis.fetch).toHaveBeenCalledTimes(3);
+    });
+});
+
+describe('countTransactions', () => {
+    it('counts transactions with * marker', () => {
+        const source = `
+2024-01-01 * "Payee" "Description"
+  Assets:Bank  -100 USD
+  Expenses:Food  100 USD
+
+2024-01-02 * "Another"
+  Assets:Bank  -50 USD
+  Expenses:Coffee  50 USD
+        `;
+        expect(countTransactions(source)).toBe(2);
+    });
+
+    it('counts transactions with ! marker', () => {
+        const source = `
+2024-01-01 ! "Pending transaction"
+  Assets:Bank  -100 USD
+  Expenses:Food  100 USD
+        `;
+        expect(countTransactions(source)).toBe(1);
+    });
+
+    it('counts transactions with txn keyword', () => {
+        const source = `
+2024-01-01 txn "Payee" "Description"
+  Assets:Bank  -100 USD
+  Expenses:Food  100 USD
+        `;
+        expect(countTransactions(source)).toBe(1);
+    });
+
+    it('does not count non-transaction entries', () => {
+        const source = `
+2024-01-01 open Assets:Bank USD
+2024-01-01 balance Assets:Bank 1000 USD
+2024-01-01 note Assets:Bank "A note"
+2024-01-01 pad Assets:Bank Equity:Opening
+        `;
+        expect(countTransactions(source)).toBe(0);
+    });
+
+    it('returns 0 for empty source', () => {
+        expect(countTransactions('')).toBe(0);
+    });
+
+    it('handles mixed content', () => {
+        const source = `
+option "title" "Test"
+2024-01-01 open Assets:Bank USD
+2024-01-01 * "Grocery Store"
+  Assets:Bank  -50 USD
+  Expenses:Food  50 USD
+2024-01-02 balance Assets:Bank 950 USD
+2024-01-03 ! "Pending"
+  Assets:Bank  -25 USD
+  Expenses:Coffee  25 USD
+        `;
+        expect(countTransactions(source)).toBe(2);
+    });
+});
+
+describe('extractLedgerStats', () => {
+    it('returns counts from provided sets', () => {
+        const accounts = new Set(['Assets:Bank', 'Expenses:Food', 'Expenses:Coffee']);
+        const plugins = new Set(['noduplicates']);
+        const source = `
+2024-01-01 * "Test"
+  Assets:Bank  -100 USD
+  Expenses:Food  100 USD
+        `;
+
+        const stats = extractLedgerStats(source, accounts, plugins);
+
+        expect(stats.accounts).toBe(3);
+        expect(stats.transactions).toBe(1);
+        expect(stats.plugins).toBe(1);
+    });
+
+    it('handles empty source', () => {
+        const stats = extractLedgerStats('', new Set(), new Set());
+
+        expect(stats.accounts).toBe(0);
+        expect(stats.transactions).toBe(0);
+        expect(stats.plugins).toBe(0);
+    });
+});
+
+describe('formatLedgerStats', () => {
+    it('formats all stats', () => {
+        const result = formatLedgerStats({ accounts: 5, transactions: 10, plugins: 2 });
+        expect(result).toBe('5 accounts · 10 transactions · 2 plugins');
+    });
+
+    it('uses singular form for 1', () => {
+        const result = formatLedgerStats({ accounts: 1, transactions: 1, plugins: 1 });
+        expect(result).toBe('1 account · 1 transaction · 1 plugin');
+    });
+
+    it('omits zero values', () => {
+        const result = formatLedgerStats({ accounts: 3, transactions: 0, plugins: 0 });
+        expect(result).toBe('3 accounts');
+    });
+
+    it('returns empty string for all zeros', () => {
+        const result = formatLedgerStats({ accounts: 0, transactions: 0, plugins: 0 });
+        expect(result).toBe('');
+    });
+
+    it('handles accounts and transactions only', () => {
+        const result = formatLedgerStats({ accounts: 2, transactions: 5, plugins: 0 });
+        expect(result).toBe('2 accounts · 5 transactions');
     });
 });
