@@ -28,12 +28,40 @@
         <!-- Preconnect to external resources -->
         <link rel="preconnect" href="https://api.github.com" />
 
+        <!-- Canonical URL -->
+        <link rel="canonical" href="https://rustledger.github.io/" />
+
         <!-- Favicon -->
         <link
             rel="icon"
             type="image/svg+xml"
             href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0a0a'/%3E%3Ctext x='50' y='68' font-size='50' font-family='system-ui' font-weight='bold' text-anchor='middle'%3E%3Ctspan fill='%23f97316'%3Er%3C/tspan%3E%3Ctspan fill='white'%3El%3C/tspan%3E%3C/text%3E%3C/svg%3E"
         />
+
+        <!-- Structured Data -->
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "SoftwareApplication",
+                "name": "rustledger",
+                "applicationCategory": "FinanceApplication",
+                "operatingSystem": "Windows, macOS, Linux",
+                "description": "Drop in Rust replacement for Beancount. Plain text accounting that's 10x faster.",
+                "url": "https://rustledger.github.io/",
+                "downloadUrl": "https://github.com/rustledger/rustledger/releases",
+                "softwareVersion": "latest",
+                "author": {
+                    "@type": "Organization",
+                    "name": "rustledger",
+                    "url": "https://github.com/rustledger"
+                },
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "USD"
+                }
+            }
+        </script>
     </head>
     <body class="bg-black text-white antialiased">
         <!-- Skip to main content for accessibility -->
@@ -53,7 +81,20 @@
                     href="/"
                     class="flex items-center gap-2 text-base sm:text-lg font-semibold tracking-tight shrink-0"
                 >
-                    <img src="/icon.png" alt="rl" class="w-6 h-6 rounded" />
+                    <img
+                        src="/icon.png"
+                        alt="rl"
+                        class="w-6 h-6 rounded"
+                        onerror="
+                            this.style.display = 'none';
+                            this.nextElementSibling.style.display = 'flex';
+                        "
+                    />
+                    <span
+                        class="w-6 h-6 rounded bg-zinc-900 items-center justify-center text-xs font-bold hidden"
+                        aria-hidden="true"
+                        ><span class="text-accent">r</span>l</span
+                    >
                     <span><span class="text-accent">rust</span>ledger</span>
                 </a>
                 <div class="flex items-center gap-3 sm:gap-8 text-xs sm:text-sm">
@@ -756,49 +797,67 @@
 
                 <div class="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
                     <!-- Example Tabs -->
-                    <div class="example-tabs">
-                        <div
+                    <div class="example-tabs" role="tablist" aria-label="Example ledger files">
+                        <button
                             class="example-tab active"
                             data-example="simple"
                             onclick="loadExample('simple')"
+                            role="tab"
+                            aria-selected="true"
+                            aria-controls="editor-panel"
                         >
                             Budget
-                        </div>
-                        <div
+                        </button>
+                        <button
                             class="example-tab"
                             data-example="stocks"
                             onclick="loadExample('stocks')"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="editor-panel"
                         >
                             Stocks
-                        </div>
-                        <div
+                        </button>
+                        <button
                             class="example-tab"
                             data-example="crypto"
                             onclick="loadExample('crypto')"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="editor-panel"
                         >
                             Crypto
-                        </div>
-                        <div
+                        </button>
+                        <button
                             class="example-tab"
                             data-example="travel"
                             onclick="loadExample('travel')"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="editor-panel"
                         >
                             Travel
-                        </div>
-                        <div
+                        </button>
+                        <button
                             class="example-tab"
                             data-example="business"
                             onclick="loadExample('business')"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="editor-panel"
                         >
                             Business
-                        </div>
-                        <div
+                        </button>
+                        <button
                             class="example-tab"
                             data-example="errors"
                             onclick="loadExample('errors')"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="editor-panel"
                         >
                             Errors
-                        </div>
+                        </button>
                         <div class="flex-1"></div>
                         <button
                             onclick="runFormat()"
@@ -851,7 +910,7 @@
                                 type="file"
                                 accept=".beancount,.bean,.txt"
                                 onchange="uploadLedger(event)"
-                                class="hidden"
+                                class="sr-only"
                                 aria-label="Upload beancount file"
                             />
                         </label>
@@ -881,40 +940,64 @@
                     <!-- Editor (CodeMirror will mount here) -->
                     <div
                         id="editor-panel"
-                        class="overflow-hidden bg-black/30"
+                        class="overflow-hidden bg-black/30 relative"
                         style="height: 280px"
-                    ></div>
+                        role="tabpanel"
+                        aria-label="Beancount ledger editor"
+                    >
+                        <!-- Loading skeleton (hidden once editor loads) -->
+                        <div id="editor-skeleton" class="absolute inset-0 p-3 space-y-2">
+                            <div class="skeleton h-4 w-3/4"></div>
+                            <div class="skeleton h-4 w-1/2"></div>
+                            <div class="skeleton h-4 w-5/6"></div>
+                            <div class="skeleton h-4 w-2/3"></div>
+                            <div class="skeleton h-4 w-4/5"></div>
+                            <div class="skeleton h-4 w-1/2"></div>
+                            <div class="skeleton h-4 w-3/5"></div>
+                            <div class="skeleton h-4 w-2/3"></div>
+                        </div>
+                    </div>
 
                     <!-- Resizer -->
                     <div class="resizer" id="resizer"></div>
 
                     <!-- Output Header -->
-                    <div class="output-tabs-container">
-                        <div
+                    <div class="output-tabs-container" role="tablist" aria-label="Output panels">
+                        <button
                             class="output-tab active"
                             data-tab="query"
                             onclick="switchTab('query')"
+                            role="tab"
+                            aria-selected="true"
+                            aria-controls="query-output"
                         >
                             Query
-                        </div>
+                        </button>
                         <div class="flex-1"></div>
-                        <div
+                        <button
                             class="output-tab text-yellow-400"
                             style="border-left: 1px solid rgba(255, 255, 255, 0.15)"
                             data-tab="plugin"
                             onclick="switchTab('plugin')"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="plugin-options"
                         >
-                            ⚡ Plugins
-                        </div>
-                        <div
+                            <span aria-hidden="true">⚡</span> Plugins
+                        </button>
+                        <button
                             id="status-tab"
                             class="output-tab text-green-400"
                             style="border-left: 1px solid rgba(255, 255, 255, 0.15)"
                             data-tab="output"
                             onclick="switchTab('output')"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="output"
+                            aria-live="polite"
                         >
-                            ✓ Valid
-                        </div>
+                            <span aria-hidden="true">✓</span> Valid
+                        </button>
                         <button
                             onclick="copyOutput()"
                             class="p-2 text-white/30 hover:text-white transition"
@@ -952,277 +1035,44 @@
                         />
                     </div>
 
-                    <!-- Query preset buttons (shown when Query tab active) -->
+                    <!-- Query preset buttons (rendered dynamically from presets.js) -->
                     <div
                         id="query-options"
                         class="px-3 py-2 border-b border-white/10 bg-white/5 flex gap-2 flex-wrap"
-                    >
-                        <!-- Basic queries -->
-                        <button
-                            onclick="runQueryPreset('BALANCES')"
-                            data-query="BALANCES"
-                            class="query-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            Balances
-                        </button>
-                        <button
-                            onclick="runQueryPreset('JOURNAL &quot;Assets&quot;')"
-                            data-query='JOURNAL "Assets"'
-                            class="query-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            Journal
-                        </button>
-                        <button
-                            onclick="runQueryPreset('PRINT')"
-                            data-query="PRINT"
-                            class="query-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            Print
-                        </button>
-                        <!-- Account type filters -->
-                        <button
-                            onclick="
-                                runQueryPreset(
-                                    'SELECT account, SUM(position) WHERE account ~ &quot;Expenses&quot; GROUP BY account ORDER BY SUM(position) DESC'
-                                )
-                            "
-                            data-query='SELECT account, SUM(position) WHERE account ~ "Expenses" GROUP BY account ORDER BY SUM(position) DESC'
-                            class="query-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            Expenses
-                        </button>
-                        <button
-                            onclick="
-                                runQueryPreset(
-                                    'SELECT account, SUM(position) WHERE account ~ &quot;Income&quot; GROUP BY account'
-                                )
-                            "
-                            data-query='SELECT account, SUM(position) WHERE account ~ "Income" GROUP BY account'
-                            class="query-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            Income
-                        </button>
-                        <button
-                            onclick="
-                                runQueryPreset(
-                                    'SELECT account, SUM(position) WHERE account ~ &quot;Assets&quot; GROUP BY account'
-                                )
-                            "
-                            data-query='SELECT account, SUM(position) WHERE account ~ "Assets" GROUP BY account'
-                            class="query-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            Assets
-                        </button>
-                        <!-- Aggregations -->
-                        <button
-                            onclick="
-                                runQueryPreset(
-                                    'SELECT account, SUM(position) GROUP BY account ORDER BY account'
-                                )
-                            "
-                            data-query="SELECT account, SUM(position) GROUP BY account ORDER BY account"
-                            class="query-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            By Account
-                        </button>
-                        <button
-                            onclick="
-                                runQueryPreset(
-                                    'SELECT narration, SUM(position) WHERE account ~ &quot;Expenses&quot; GROUP BY narration ORDER BY SUM(position) DESC LIMIT 10'
-                                )
-                            "
-                            data-query='SELECT narration, SUM(position) WHERE account ~ "Expenses" GROUP BY narration ORDER BY SUM(position) DESC LIMIT 10'
-                            class="query-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            Top Expenses
-                        </button>
-                        <button
-                            onclick="
-                                runQueryPreset(
-                                    'SELECT payee, SUM(position) WHERE account ~ &quot;Expenses&quot; GROUP BY payee ORDER BY SUM(position) DESC'
-                                )
-                            "
-                            data-query='SELECT payee, SUM(position) WHERE account ~ "Expenses" GROUP BY payee ORDER BY SUM(position) DESC'
-                            class="query-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            By Payee
-                        </button>
-                        <button
-                            onclick="
-                                runQueryPreset(
-                                    'SELECT YEAR(date), MONTH(date), account, SUM(position) WHERE account ~ &quot;Expenses&quot; GROUP BY YEAR(date), MONTH(date), account ORDER BY YEAR(date), MONTH(date)'
-                                )
-                            "
-                            data-query='SELECT YEAR(date), MONTH(date), account, SUM(position) WHERE account ~ "Expenses" GROUP BY YEAR(date), MONTH(date), account ORDER BY YEAR(date), MONTH(date)'
-                            class="query-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            Monthly
-                        </button>
-                        <!-- Detail views -->
-                        <button
-                            onclick="
-                                runQueryPreset(
-                                    'SELECT date, payee, narration, account, position ORDER BY date DESC LIMIT 20'
-                                )
-                            "
-                            data-query="SELECT date, payee, narration, account, position ORDER BY date DESC LIMIT 20"
-                            class="query-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            Recent
-                        </button>
-                        <button
-                            onclick="
-                                runQueryPreset(
-                                    'SELECT date, account, position, balance ORDER BY date, account'
-                                )
-                            "
-                            data-query="SELECT date, account, position, balance ORDER BY date, account"
-                            class="query-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            Ledger
-                        </button>
-                        <!-- Analysis -->
-                        <button
-                            onclick="
-                                runQueryPreset(
-                                    'SELECT date, narration, account, position WHERE number(position) > 500 ORDER BY date DESC'
-                                )
-                            "
-                            data-query="SELECT date, narration, account, position WHERE number(position) > 500 ORDER BY date DESC"
-                            class="query-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            Large
-                        </button>
-                        <button
-                            onclick="
-                                runQueryPreset('SELECT * WHERE account ~ &quot;Liabilities&quot;')
-                            "
-                            data-query='SELECT * WHERE account ~ "Liabilities"'
-                            class="query-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            Liabilities
-                        </button>
-                        <button
-                            onclick="runQueryPreset('SELECT DISTINCT payee ORDER BY payee')"
-                            data-query="SELECT DISTINCT payee ORDER BY payee"
-                            class="query-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            Payees
-                        </button>
-                    </div>
+                        role="group"
+                        aria-label="Query presets"
+                    ></div>
 
-                    <!-- Plugin options (shown when Plugin tab active) -->
+                    <!-- Plugin options (rendered dynamically from presets.js) -->
                     <div
                         id="plugin-options"
                         class="hidden px-3 py-2 border-b border-white/10 bg-white/5 flex gap-2 flex-wrap"
-                    >
-                        <button
-                            onclick="togglePlugin('implicit_prices')"
-                            data-plugin="implicit_prices"
-                            class="plugin-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            implicit_prices
-                        </button>
-                        <button
-                            onclick="togglePlugin('auto_accounts')"
-                            data-plugin="auto_accounts"
-                            class="plugin-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            auto_accounts
-                        </button>
-                        <button
-                            onclick="togglePlugin('check_commodity')"
-                            data-plugin="check_commodity"
-                            class="plugin-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            check_commodity
-                        </button>
-                        <button
-                            onclick="togglePlugin('auto_tag')"
-                            data-plugin="auto_tag"
-                            class="plugin-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            auto_tag
-                        </button>
-                        <button
-                            onclick="togglePlugin('leafonly')"
-                            data-plugin="leafonly"
-                            class="plugin-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            leafonly
-                        </button>
-                        <button
-                            onclick="togglePlugin('noduplicates')"
-                            data-plugin="noduplicates"
-                            class="plugin-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            noduplicates
-                        </button>
-                        <button
-                            onclick="togglePlugin('onecommodity')"
-                            data-plugin="onecommodity"
-                            class="plugin-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            onecommodity
-                        </button>
-                        <button
-                            onclick="togglePlugin('unique_prices')"
-                            data-plugin="unique_prices"
-                            class="plugin-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            unique_prices
-                        </button>
-                        <button
-                            onclick="togglePlugin('check_closing')"
-                            data-plugin="check_closing"
-                            class="plugin-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            check_closing
-                        </button>
-                        <button
-                            onclick="togglePlugin('close_tree')"
-                            data-plugin="close_tree"
-                            class="plugin-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            close_tree
-                        </button>
-                        <button
-                            onclick="togglePlugin('coherent_cost')"
-                            data-plugin="coherent_cost"
-                            class="plugin-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            coherent_cost
-                        </button>
-                        <button
-                            onclick="togglePlugin('sellgains')"
-                            data-plugin="sellgains"
-                            class="plugin-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            sellgains
-                        </button>
-                        <button
-                            onclick="togglePlugin('pedantic')"
-                            data-plugin="pedantic"
-                            class="plugin-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            pedantic
-                        </button>
-                        <button
-                            onclick="togglePlugin('unrealized')"
-                            data-plugin="unrealized"
-                            class="plugin-btn px-3 py-1 text-xs rounded transition"
-                        >
-                            unrealized
-                        </button>
-                    </div>
+                        role="group"
+                        aria-label="Plugin toggles"
+                    ></div>
 
                     <!-- Output Content -->
-                    <div id="output-panel" class="overflow-auto bg-black/20" style="height: 160px">
+                    <div
+                        id="output-panel"
+                        class="overflow-auto bg-black/20"
+                        style="height: 160px"
+                        role="region"
+                        aria-label="Output panel"
+                    >
                         <pre
                             id="output"
                             class="mono text-sm text-white/70 p-3 leading-relaxed"
+                            role="log"
+                            aria-live="polite"
+                            aria-label="Validation output"
                         ><span class="text-white/30">Ready</span></pre>
-                        <div id="query-output" class="text-sm p-3 hidden overflow-x-auto"></div>
+                        <div
+                            id="query-output"
+                            class="text-sm p-3 hidden overflow-x-auto"
+                            role="region"
+                            aria-label="Query results"
+                            aria-live="polite"
+                        ></div>
                     </div>
 
                     <!-- Footer -->
@@ -1599,6 +1449,63 @@
                 </div>
             </div>
         </footer>
+
+        <!-- Keyboard Shortcuts Modal -->
+        <div
+            id="shortcuts-modal"
+            class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="shortcuts-title"
+        >
+            <div
+                class="bg-zinc-900 border border-white/20 rounded-lg p-6 max-w-md w-full mx-4 shadow-2xl"
+            >
+                <div class="flex justify-between items-center mb-4">
+                    <h2 id="shortcuts-title" class="text-lg font-semibold">Keyboard Shortcuts</h2>
+                    <button
+                        onclick="hideShortcutsModal()"
+                        class="text-white/40 hover:text-white transition"
+                        aria-label="Close"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                    </button>
+                </div>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Show this help</span>
+                        <kbd class="kbd">?</kbd>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Format code</span>
+                        <div>
+                            <kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">Shift</kbd> +
+                            <kbd class="kbd">F</kbd>
+                        </div>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Run query</span>
+                        <kbd class="kbd">Enter</kbd>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Close modal</span>
+                        <kbd class="kbd">Esc</kbd>
+                    </div>
+                    <hr class="border-white/10 my-3" />
+                    <p class="text-white/40 text-xs">
+                        Press <kbd class="kbd text-xs">Tab</kbd> to navigate,
+                        <kbd class="kbd text-xs">Enter</kbd> to activate
+                    </p>
+                </div>
+            </div>
+        </div>
 
         <script type="module" src="/src/main.js"></script>
     </body>

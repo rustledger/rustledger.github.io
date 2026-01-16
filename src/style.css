@@ -8,8 +8,8 @@
     /* Colors */
     --bg: #0a0a0a;
     --text: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.6);
-    --text-muted: rgba(255, 255, 255, 0.4);
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --text-muted: rgba(255, 255, 255, 0.55); /* Improved contrast (WCAG AA) */
     --border: rgba(255, 255, 255, 0.1);
     --surface: rgba(255, 255, 255, 0.03);
     --surface-hover: rgba(255, 255, 255, 0.05);
@@ -656,4 +656,93 @@ body {
 .binary-option .download-btn svg {
     width: 14px;
     height: 14px;
+}
+
+/* ========================================
+   LOADING SKELETON
+   ======================================== */
+
+@keyframes skeleton-pulse {
+    0%,
+    100% {
+        opacity: 0.1;
+    }
+    50% {
+        opacity: 0.2;
+    }
+}
+
+.skeleton {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* ========================================
+   KEYBOARD SHORTCUT KEYS
+   ======================================== */
+
+.kbd {
+    display: inline-block;
+    padding: 0.15rem 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: var(--text-secondary);
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+    /* Hide interactive elements */
+    nav,
+    .example-tabs,
+    .output-tabs-container,
+    #query-input,
+    #query-options,
+    #plugin-options,
+    .resizer,
+    button,
+    #toast,
+    a[href='#playground'],
+    footer {
+        display: none !important;
+    }
+
+    /* Reset backgrounds for printing */
+    body {
+        background: white !important;
+        color: black !important;
+    }
+
+    /* Show editor content */
+    #editor-panel {
+        height: auto !important;
+        overflow: visible !important;
+        background: white !important;
+        border: 1px solid #ccc;
+    }
+
+    /* Show output */
+    #output-panel {
+        height: auto !important;
+        overflow: visible !important;
+        background: white !important;
+    }
+
+    /* Improve text contrast */
+    .cm-content,
+    #output,
+    #query-output {
+        color: black !important;
+    }
+
+    /* Page breaks */
+    section {
+        page-break-inside: avoid;
+    }
 }

@@ -26,21 +26,7 @@ export function extractAccounts(source) {
     return accounts;
 }
 
-/**
- * Get enabled plugins from beancount source
- * @param {string} content
- * @returns {Set<string>}
- */
-export function getEnabledPlugins(content) {
-    const plugins = new Set();
-    // Match plugin directives, allowing leading whitespace but not comments
-    const regex = /^\s*plugin\s+"([^"]+)"/gm;
-    let match;
-    while ((match = regex.exec(content)) !== null) {
-        plugins.add(match[1]);
-    }
-    return plugins;
-}
+// Note: getEnabledPlugins is in plugins.js to avoid duplication
 
 /**
  * Format a number with thousands separators

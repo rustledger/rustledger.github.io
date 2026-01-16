@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { escapeHtml, extractAccounts, getEnabledPlugins, formatNumber } from './utils.js';
+import { escapeHtml, extractAccounts, formatNumber } from './utils.js';
+
+// Note: getEnabledPlugins tests are in plugins.test.js
 
 describe('escapeHtml', () => {
     it('escapes HTML special characters', () => {
@@ -47,34 +49,6 @@ describe('extractAccounts', () => {
     it('returns empty set for no accounts', () => {
         const accounts = extractAccounts('option "title" "Test"');
         expect(accounts.size).toBe(0);
-    });
-});
-
-describe('getEnabledPlugins', () => {
-    it('extracts plugin names', () => {
-        const content = `
-            plugin "noduplicates"
-            plugin "implicit_prices"
-        `;
-        const plugins = getEnabledPlugins(content);
-        expect(plugins.has('noduplicates')).toBe(true);
-        expect(plugins.has('implicit_prices')).toBe(true);
-        expect(plugins.size).toBe(2);
-    });
-
-    it('ignores commented plugins', () => {
-        const content = `
-            plugin "active"
-            ; plugin "commented"
-        `;
-        const plugins = getEnabledPlugins(content);
-        expect(plugins.has('active')).toBe(true);
-        expect(plugins.has('commented')).toBe(false);
-    });
-
-    it('returns empty set for no plugins', () => {
-        const plugins = getEnabledPlugins('option "title" "Test"');
-        expect(plugins.size).toBe(0);
     });
 });
 

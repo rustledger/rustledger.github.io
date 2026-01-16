@@ -526,8 +526,9 @@ export function createEditor(container, initialContent, onChange) {
         parent: container,
     });
 
-    // Hide autocomplete when clicking outside
-    document.addEventListener('click', (e) => {
+    // Hide autocomplete when clicking outside - store reference for cleanup
+    /** @param {MouseEvent} e */
+    const handleClickOutside = (e) => {
         const target = /** @type {Node | null} */ (e.target);
         if (
             accountAutocomplete.dropdown &&
@@ -536,7 +537,8 @@ export function createEditor(container, initialContent, onChange) {
         ) {
             hideAccountAutocomplete();
         }
-    });
+    };
+    document.addEventListener('click', handleClickOutside);
 
     return {
         view,
@@ -627,6 +629,17 @@ export function createEditor(container, initialContent, onChange) {
         /** @param {Set<string>} accounts */
         setKnownAccounts(accounts) {
             knownAccountsRef = accounts;
+        },
+        /**
+         * Clean up editor resources and event listeners
+         */
+        destroy() {
+            document.removeEventListener('click', handleClickOutside);
+            if (accountAutocomplete.dropdown) {
+                accountAutocomplete.dropdown.remove();
+                accountAutocomplete.dropdown = null;
+            }
+            view.destroy();
         },
     };
 }

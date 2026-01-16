@@ -1,0 +1,243 @@
+// UI utilities - toast, resizer, scroll effects
+
+/**
+ * Show a toast notification
+ * @param {string} message - The message to display
+ * @param {number} [duration=2000] - Duration in milliseconds
+ */
+export function showToast(message, duration = 2000) {
+    // Remove existing toast
+    const existing = document.getElementById('toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.className =
+        'fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-2 rounded-lg text-sm z-50 animate-toast';
+    toast.textContent = message;
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('animate-toast-out');
+        setTimeout(() => toast.remove(), 200);
+    }, duration);
+}
+
+/**
+ * Initialize the panel resizer
+ * @param {string} resizerId - ID of the resizer element
+ * @param {string} topPanelId - ID of the top panel
+ * @param {string} bottomPanelId - ID of the bottom panel
+ */
+export function initResizer(resizerId, topPanelId, bottomPanelId) {
+    const resizer = document.getElementById(resizerId);
+    const topPanel = document.getElementById(topPanelId);
+    const bottomPanel = document.getElementById(bottomPanelId);
+
+    if (!resizer || !topPanel || !bottomPanel) return;
+
+    let startY = 0;
+    let startTopHeight = 0;
+    let startBottomHeight = 0;
+
+    /** @param {MouseEvent} e */
+    const onMouseMove = (e) => {
+        const delta = e.clientY - startY;
+        const newTopHeight = Math.max(100, startTopHeight + delta);
+        const newBottomHeight = Math.max(80, startBottomHeight - delta);
+        topPanel.style.height = newTopHeight + 'px';
+        bottomPanel.style.height = newBottomHeight + 'px';
+    };
+
+    const onMouseUp = () => {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+    };
+
+    resizer.addEventListener('mousedown', (e) => {
+        startY = e.clientY;
+        startTopHeight = topPanel.offsetHeight;
+        startBottomHeight = bottomPanel.offsetHeight;
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+        document.body.style.cursor = 'row-resize';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+    });
+}
+
+/**
+ * Initialize stats counter animation on scroll
+ * @param {string} sectionId - ID of the stats section
+ */
+export function initStatsAnimation(sectionId) {
+    const statsSection = document.getElementById(sectionId);
+    if (!statsSection) return;
+
+    /**
+     * @param {HTMLElement} el
+     * @param {number} start
+     * @param {number} end
+     * @param {number} duration
+     * @param {string} suffix
+     */
+    const animateValue = (el, start, end, duration, suffix = '') => {
+        const startTime = performance.now();
+        /** @param {number} currentTime */
+        const update = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+            const current = Math.floor(start + (end - start) * easeOut);
+            el.textContent = current + suffix;
+            if (progress < 1) requestAnimationFrame(update);
+        };
+        requestAnimationFrame(update);
+    };
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    document.querySelectorAll('[data-animate-stat]').forEach((el) => {
+                        const htmlEl = /** @type {HTMLElement} */ (el);
+                        const value = parseInt(htmlEl.dataset.animateStat || '0');
+                        const suffix = htmlEl.dataset.suffix || '';
+                        animateValue(htmlEl, 0, value, 1000, suffix);
+                    });
+                    observer.disconnect();
+                }
+            });
+        },
+        { threshold: 0.5 }
+    );
+
+    observer.observe(statsSection);
+}
+
+/**
+ * Initialize scroll reveal animations
+ */
+export function initScrollReveal() {
+    const revealElements = document.querySelectorAll('.reveal');
+    if (!revealElements.length) return;
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Also trigger stagger-children if present
+                    entry.target.querySelectorAll('.stagger-children').forEach((el) => {
+                        el.classList.add('visible');
+                    });
+                }
+            });
+        },
+        {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px',
+        }
+    );
+
+    revealElements.forEach((el) => observer.observe(el));
+}
+
+/**
+ * Update footer status element
+ * @param {'loading' | 'ready' | 'error'} status
+ * @param {string} [version]
+ * @param {string} [errorMessage]
+ */
+export function updateFooterStatus(status, version, errorMessage) {
+    const footerStatus = document.getElementById('footer-status');
+    if (!footerStatus) return;
+
+    switch (status) {
+        case 'loading':
+            footerStatus.innerHTML = '<span class="text-white/30">Loading...</span>';
+            break;
+        case 'ready':
+            footerStatus.innerHTML = `<span class="text-green-400">✓ Ready</span> <span class="text-orange-400">(rustledger ${version || 'unknown'})</span>`;
+            footerStatus.className = 'text-xs';
+            break;
+        case 'error':
+            footerStatus.innerHTML = `<span class="text-red-400">✗ ${errorMessage || 'Failed to load'}</span>`;
+            footerStatus.className = 'text-xs';
+            break;
+    }
+}
+
+/**
+ * Show an error modal for critical failures
+ * @param {string} title
+ * @param {string} message
+ */
+export function showErrorModal(title, message) {
+    // Remove existing modal
+    const existing = document.getElementById('error-modal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'error-modal';
+    modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4';
+    modal.setAttribute('role', 'alertdialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'error-modal-title');
+    modal.setAttribute('aria-describedby', 'error-modal-desc');
+
+    modal.innerHTML = `
+        <div class="bg-zinc-900 border border-red-500/30 rounded-lg max-w-md w-full p-6 shadow-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <svg class="w-6 h-6 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <h2 id="error-modal-title" class="text-lg font-semibold text-white">${escapeHtmlSimple(title)}</h2>
+            </div>
+            <p id="error-modal-desc" class="text-white/70 text-sm mb-6">${escapeHtmlSimple(message)}</p>
+            <div class="flex gap-3">
+                <button
+                    onclick="location.reload()"
+                    class="flex-1 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded transition text-sm"
+                >
+                    Refresh Page
+                </button>
+                <button
+                    onclick="document.getElementById('error-modal').remove()"
+                    class="px-4 py-2 text-white/60 hover:text-white transition text-sm"
+                >
+                    Dismiss
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Focus the refresh button
+    const refreshBtn = modal.querySelector('button');
+    if (refreshBtn) refreshBtn.focus();
+}
+
+/**
+ * Simple HTML escape (doesn't require DOM)
+ * @param {string} text
+ * @returns {string}
+ */
+function escapeHtmlSimple(text) {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+// Make showToast available globally for inline handlers
+if (typeof window !== 'undefined') {
+    window.showToast = showToast;
+}
