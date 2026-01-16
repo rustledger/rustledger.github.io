@@ -591,7 +591,7 @@ async function fetchGitHubInfo() {
                 if (pattern) {
                     const asset = assets.find(
                         (/** @type {{ name: string; browser_download_url: string }} */ a) =>
-                            a.name.endsWith(pattern)
+                            a.name.includes(pattern)
                     );
                     if (asset && asset.browser_download_url) {
                         link.href = asset.browser_download_url;
