@@ -520,7 +520,7 @@ async function fetchGitHubInfo() {
     const starsEl = document.getElementById('github-stars');
     const versionEl = document.getElementById('footer-version');
 
-    // Try to use cached data first
+    // Use cached data for immediate display (but still fetch for binary links)
     const cached = getCachedGitHubInfo();
     if (cached) {
         if (starsEl) {
@@ -532,7 +532,7 @@ async function fetchGitHubInfo() {
         if (versionEl && cached.version) {
             versionEl.textContent = cached.version;
         }
-        return;
+        // Don't return - still need to fetch releases for binary download links
     }
 
     try {
