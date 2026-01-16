@@ -584,11 +584,15 @@ async function fetchGitHubInfo() {
 
             // Update binary download links with direct asset URLs
             const assets = releasesData[0].assets || [];
+            /** @type {NodeListOf<HTMLAnchorElement>} */
             const binaryLinks = document.querySelectorAll('.binary-option[data-asset-pattern]');
             binaryLinks.forEach((link) => {
                 const pattern = link.dataset.assetPattern;
                 if (pattern) {
-                    const asset = assets.find((a) => a.name.endsWith(pattern));
+                    const asset = assets.find(
+                        (/** @type {{ name: string; browser_download_url: string }} */ a) =>
+                            a.name.endsWith(pattern)
+                    );
                     if (asset && asset.browser_download_url) {
                         link.href = asset.browser_download_url;
                     }
