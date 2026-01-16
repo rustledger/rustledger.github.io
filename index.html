@@ -1460,92 +1460,99 @@
             </div>
         </section>
 
-        <!-- Why Switch / Comparison -->
+        <!-- Comparison -->
         <section class="py-20 px-6 border-t border-white/10">
-            <div class="max-w-4xl mx-auto reveal">
-                <h2 class="text-2xl font-bold mb-4 text-center">Why switch from Beancount?</h2>
+            <div class="max-w-5xl mx-auto reveal">
+                <h2 class="text-2xl font-bold mb-4 text-center">How does rustledger compare?</h2>
                 <p class="text-white/50 text-center mb-12">
-                    Same syntax, same workflow, better tooling
+                    Plain text accounting tools at a glance
                 </p>
 
-                <!-- Desktop table -->
-                <div class="hidden sm:block space-y-4">
-                    <div
-                        class="grid grid-cols-3 gap-4 text-sm text-white/40 pb-2 border-b border-white/10"
-                    >
-                        <div></div>
-                        <div class="text-center">Beancount</div>
-                        <div class="text-center text-white">
-                            <span class="text-accent">rust</span>ledger
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-3 gap-4 py-3 items-center">
-                        <div class="text-white/70">Installation</div>
-                        <div class="text-center text-white/40">Python + pip + deps</div>
-                        <div class="text-center text-white">Single binary</div>
-                    </div>
-
-                    <div
-                        class="grid grid-cols-3 gap-4 py-3 items-center bg-white/[0.02] rounded-lg px-4 -mx-4"
-                    >
-                        <div class="text-white/70">Parse 10k transactions</div>
-                        <div class="text-center text-white/40">~900ms</div>
-                        <div class="text-center text-white">~35ms</div>
-                    </div>
-
-                    <div class="grid grid-cols-3 gap-4 py-3 items-center">
-                        <div class="text-white/70">Browser/WASM</div>
-                        <div class="text-center text-white/40">Not possible</div>
-                        <div class="text-center text-white">Full support</div>
-                    </div>
-
-                    <div
-                        class="grid grid-cols-3 gap-4 py-3 items-center bg-white/[0.02] rounded-lg px-4 -mx-4"
-                    >
-                        <div class="text-white/70">Plugin system</div>
-                        <div class="text-center text-white/40">Python only</div>
-                        <div class="text-center text-white">Native Rust + Python</div>
-                    </div>
-                </div>
-
-                <!-- Mobile cards -->
-                <div class="sm:hidden space-y-4">
-                    <div class="bg-white/[0.02] rounded-lg p-4">
-                        <div class="text-white/50 text-sm mb-2">Installation</div>
-                        <div class="flex justify-between items-center">
-                            <div class="text-white/40 text-sm">
-                                Beancount<br /><span class="text-white/30">Python + pip</span>
-                            </div>
-                            <div class="text-white text-sm text-right">
-                                <span class="text-accent">rust</span>ledger<br /><span
-                                    class="text-white/70"
-                                    >Single binary</span
-                                >
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white/[0.02] rounded-lg p-4">
-                        <div class="text-white/50 text-sm mb-2">Parse 10k transactions</div>
-                        <div class="flex justify-between items-center">
-                            <div class="text-white/40 text-sm">~900ms</div>
-                            <div class="text-white text-sm">~35ms</div>
-                        </div>
-                    </div>
-                    <div class="bg-white/[0.02] rounded-lg p-4">
-                        <div class="text-white/50 text-sm mb-2">Browser/WASM</div>
-                        <div class="flex justify-between items-center">
-                            <div class="text-white/40 text-sm">Not possible</div>
-                            <div class="text-white text-sm">Full support</div>
-                        </div>
-                    </div>
-                    <div class="bg-white/[0.02] rounded-lg p-4">
-                        <div class="text-white/50 text-sm mb-2">Plugin system</div>
-                        <div class="flex justify-between items-center">
-                            <div class="text-white/40 text-sm">Python only</div>
-                            <div class="text-white text-sm">Native Rust + Python</div>
-                        </div>
-                    </div>
+                <!-- Comparison table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-white/10">
+                                <th class="text-left py-3 pr-4 text-white/40 font-normal"></th>
+                                <th class="text-center py-3 px-4 text-white/40 font-normal">
+                                    Ledger
+                                </th>
+                                <th class="text-center py-3 px-4 text-white/40 font-normal">
+                                    hledger
+                                </th>
+                                <th class="text-center py-3 px-4 text-white/40 font-normal">
+                                    Beancount
+                                </th>
+                                <th class="text-center py-3 pl-4 text-white font-medium">
+                                    <span class="text-accent">rust</span>ledger
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="py-3 pr-4 text-white/70">Language</td>
+                                <td class="text-center py-3 px-4 text-white/40">C++</td>
+                                <td class="text-center py-3 px-4 text-white/40">Haskell</td>
+                                <td class="text-center py-3 px-4 text-white/40">Python</td>
+                                <td class="text-center py-3 pl-4 text-white">Rust</td>
+                            </tr>
+                            <tr class="bg-white/[0.02]">
+                                <td class="py-3 pr-4 text-white/70 rounded-l-lg">Syntax</td>
+                                <td class="text-center py-3 px-4 text-white/40">Ledger</td>
+                                <td class="text-center py-3 px-4 text-white/40">Ledger</td>
+                                <td class="text-center py-3 px-4 text-white/40">Beancount</td>
+                                <td class="text-center py-3 pl-4 text-white rounded-r-lg">
+                                    Beancount
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 pr-4 text-white/70">Validation</td>
+                                <td class="text-center py-3 px-4 text-white/40">Optional</td>
+                                <td class="text-center py-3 px-4 text-white/40">Optional</td>
+                                <td class="text-center py-3 px-4 text-white/40">Strict</td>
+                                <td class="text-center py-3 pl-4 text-white">Strict</td>
+                            </tr>
+                            <tr class="bg-white/[0.02]">
+                                <td class="py-3 pr-4 text-white/70 rounded-l-lg">
+                                    Speed (10k txns)
+                                </td>
+                                <td class="text-center py-3 px-4 text-white/40">?</td>
+                                <td class="text-center py-3 px-4 text-white/40">?</td>
+                                <td class="text-center py-3 px-4 text-white/40">~900ms</td>
+                                <td class="text-center py-3 pl-4 text-white rounded-r-lg">~35ms</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 pr-4 text-white/70">Dependencies</td>
+                                <td class="text-center py-3 px-4 text-white/40">None</td>
+                                <td class="text-center py-3 px-4 text-white/40">GHC runtime</td>
+                                <td class="text-center py-3 px-4 text-white/40">Python + pip</td>
+                                <td class="text-center py-3 pl-4 text-white">None</td>
+                            </tr>
+                            <tr class="bg-white/[0.02]">
+                                <td class="py-3 pr-4 text-white/70 rounded-l-lg">
+                                    Booking methods
+                                </td>
+                                <td class="text-center py-3 px-4 text-white/40">Manual</td>
+                                <td class="text-center py-3 px-4 text-white/40">Manual</td>
+                                <td class="text-center py-3 px-4 text-white/40">7</td>
+                                <td class="text-center py-3 pl-4 text-white rounded-r-lg">7</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 pr-4 text-white/70">Plugins</td>
+                                <td class="text-center py-3 px-4 text-white/40">No</td>
+                                <td class="text-center py-3 px-4 text-white/40">No</td>
+                                <td class="text-center py-3 px-4 text-white/40">Python</td>
+                                <td class="text-center py-3 pl-4 text-white">20 + Python</td>
+                            </tr>
+                            <tr class="bg-white/[0.02]">
+                                <td class="py-3 pr-4 text-white/70 rounded-l-lg">WebAssembly</td>
+                                <td class="text-center py-3 px-4 text-white/40">No</td>
+                                <td class="text-center py-3 px-4 text-white/40">No</td>
+                                <td class="text-center py-3 px-4 text-white/40">No</td>
+                                <td class="text-center py-3 pl-4 text-white rounded-r-lg">Yes</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <p class="text-center text-white/40 text-sm mt-10">
