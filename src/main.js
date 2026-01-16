@@ -581,6 +581,19 @@ async function fetchGitHubInfo() {
             if (versionEl) {
                 versionEl.textContent = version;
             }
+
+            // Update binary download links with direct asset URLs
+            const assets = releasesData[0].assets || [];
+            const binaryLinks = document.querySelectorAll('.binary-option[data-asset-pattern]');
+            binaryLinks.forEach((link) => {
+                const pattern = link.dataset.assetPattern;
+                if (pattern) {
+                    const asset = assets.find((a) => a.name.endsWith(pattern));
+                    if (asset && asset.browser_download_url) {
+                        link.href = asset.browser_download_url;
+                    }
+                }
+            });
         }
 
         // Cache the results

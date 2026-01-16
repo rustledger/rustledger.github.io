@@ -861,6 +861,8 @@
                                         href="https://github.com/rustledger/rustledger/releases/latest"
                                         target="_blank"
                                         class="binary-option"
+                                        data-platform="linux"
+                                        data-asset-pattern="x86_64-unknown-linux-gnu.tar.gz"
                                     >
                                         <svg
                                             class="platform-icon"
@@ -878,6 +880,8 @@
                                         href="https://github.com/rustledger/rustledger/releases/latest"
                                         target="_blank"
                                         class="binary-option"
+                                        data-platform="macos"
+                                        data-asset-pattern="aarch64-apple-darwin.tar.gz"
                                     >
                                         <svg
                                             class="platform-icon"
@@ -895,6 +899,8 @@
                                         href="https://github.com/rustledger/rustledger/releases/latest"
                                         target="_blank"
                                         class="binary-option"
+                                        data-platform="windows"
+                                        data-asset-pattern="x86_64-pc-windows-msvc.zip"
                                     >
                                         <svg
                                             class="platform-icon"
@@ -1377,87 +1383,81 @@
                 </p>
 
                 <!-- Comparison table -->
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
+                <div class="overflow-x-auto -mx-6 px-6">
+                    <table class="w-full text-sm min-w-[500px]">
                         <thead>
                             <tr class="border-b border-white/10">
-                                <th class="text-left py-3 pr-4 text-white/40 font-normal"></th>
-                                <th class="text-center py-3 px-4 text-white/40 font-normal">
-                                    Ledger
+                                <th class="text-left py-3 pl-4 pr-4 text-white/40 font-normal"></th>
+                                <th class="text-center py-3 px-3 text-white font-medium">
+                                    <span class="text-accent">rust</span>ledger
                                 </th>
-                                <th class="text-center py-3 px-4 text-white/40 font-normal">
-                                    hledger
-                                </th>
-                                <th class="text-center py-3 px-4 text-white/40 font-normal">
+                                <th class="text-center py-3 px-3 text-white/40 font-normal">
                                     Beancount
                                 </th>
-                                <th class="text-center py-3 pl-4 text-white font-medium">
-                                    <span class="text-accent">rust</span>ledger
+                                <th class="text-center py-3 px-3 text-white/40 font-normal">
+                                    Ledger
+                                </th>
+                                <th class="text-center py-3 px-3 text-white/40 font-normal">
+                                    hledger
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="py-3 pr-4 text-white/70">Language</td>
-                                <td class="text-center py-3 px-4 text-white/40">C++</td>
-                                <td class="text-center py-3 px-4 text-white/40">Haskell</td>
-                                <td class="text-center py-3 px-4 text-white/40">Python</td>
-                                <td class="text-center py-3 pl-4 text-white">Rust</td>
+                                <td class="py-3 pl-4 pr-4 text-white font-medium">Language</td>
+                                <td class="text-center py-3 px-3 text-white">Rust</td>
+                                <td class="text-center py-3 px-3 text-white/40">Python</td>
+                                <td class="text-center py-3 px-3 text-white/40">C++</td>
+                                <td class="text-center py-3 px-3 text-white/40">Haskell</td>
                             </tr>
                             <tr class="bg-white/[0.02]">
-                                <td class="py-3 pr-4 text-white/70 rounded-l-lg">Syntax</td>
-                                <td class="text-center py-3 px-4 text-white/40">Ledger</td>
-                                <td class="text-center py-3 px-4 text-white/40">Ledger</td>
-                                <td class="text-center py-3 px-4 text-white/40">Beancount</td>
-                                <td class="text-center py-3 pl-4 text-white rounded-r-lg">
-                                    Beancount
-                                </td>
+                                <td class="py-3 pl-4 pr-4 text-white font-medium rounded-l-lg">Syntax</td>
+                                <td class="text-center py-3 px-3 text-white">Beancount</td>
+                                <td class="text-center py-3 px-3 text-white/40">Beancount</td>
+                                <td class="text-center py-3 px-3 text-white/40">Ledger</td>
+                                <td class="text-center py-3 px-3 text-white/40 rounded-r-lg">Ledger</td>
                             </tr>
                             <tr>
-                                <td class="py-3 pr-4 text-white/70">Validation</td>
-                                <td class="text-center py-3 px-4 text-white/40">Optional</td>
-                                <td class="text-center py-3 px-4 text-white/40">Optional</td>
-                                <td class="text-center py-3 px-4 text-white/40">Strict</td>
-                                <td class="text-center py-3 pl-4 text-white">Strict</td>
+                                <td class="py-3 pl-4 pr-4 text-white font-medium">Validation</td>
+                                <td class="text-center py-3 px-3 text-white">Strict</td>
+                                <td class="text-center py-3 px-3 text-white/40">Strict</td>
+                                <td class="text-center py-3 px-3 text-white/40">Optional</td>
+                                <td class="text-center py-3 px-3 text-white/40">Optional</td>
                             </tr>
                             <tr class="bg-white/[0.02]">
-                                <td class="py-3 pr-4 text-white/70 rounded-l-lg">
-                                    Speed (10k txns)
-                                </td>
-                                <td class="text-center py-3 px-4 text-white/40">?</td>
-                                <td class="text-center py-3 px-4 text-white/40">?</td>
-                                <td class="text-center py-3 px-4 text-white/40">~900ms</td>
-                                <td class="text-center py-3 pl-4 text-white rounded-r-lg">~35ms</td>
+                                <td class="py-3 pl-4 pr-4 text-white font-medium rounded-l-lg">Speed (10k txns)</td>
+                                <td class="text-center py-3 px-3 text-white">~35ms</td>
+                                <td class="text-center py-3 px-3 text-white/40">~900ms</td>
+                                <td class="text-center py-3 px-3 text-white/40">?</td>
+                                <td class="text-center py-3 px-3 text-white/40 rounded-r-lg">?</td>
                             </tr>
                             <tr>
-                                <td class="py-3 pr-4 text-white/70">Dependencies</td>
-                                <td class="text-center py-3 px-4 text-white/40">None</td>
-                                <td class="text-center py-3 px-4 text-white/40">GHC runtime</td>
-                                <td class="text-center py-3 px-4 text-white/40">Python + pip</td>
-                                <td class="text-center py-3 pl-4 text-white">None</td>
+                                <td class="py-3 pl-4 pr-4 text-white font-medium">Dependencies</td>
+                                <td class="text-center py-3 px-3 text-white">None</td>
+                                <td class="text-center py-3 px-3 text-white/40">Python + pip</td>
+                                <td class="text-center py-3 px-3 text-white/40">None</td>
+                                <td class="text-center py-3 px-3 text-white/40">GHC runtime</td>
                             </tr>
                             <tr class="bg-white/[0.02]">
-                                <td class="py-3 pr-4 text-white/70 rounded-l-lg">
-                                    Booking methods
-                                </td>
-                                <td class="text-center py-3 px-4 text-white/40">Manual</td>
-                                <td class="text-center py-3 px-4 text-white/40">Manual</td>
-                                <td class="text-center py-3 px-4 text-white/40">7</td>
-                                <td class="text-center py-3 pl-4 text-white rounded-r-lg">7</td>
+                                <td class="py-3 pl-4 pr-4 text-white font-medium rounded-l-lg">Booking methods</td>
+                                <td class="text-center py-3 px-3 text-white">7</td>
+                                <td class="text-center py-3 px-3 text-white/40">7</td>
+                                <td class="text-center py-3 px-3 text-white/40">Manual</td>
+                                <td class="text-center py-3 px-3 text-white/40 rounded-r-lg">Manual</td>
                             </tr>
                             <tr>
-                                <td class="py-3 pr-4 text-white/70">Plugins</td>
-                                <td class="text-center py-3 px-4 text-white/40">No</td>
-                                <td class="text-center py-3 px-4 text-white/40">No</td>
-                                <td class="text-center py-3 px-4 text-white/40">Python</td>
-                                <td class="text-center py-3 pl-4 text-white">20 + Python</td>
+                                <td class="py-3 pl-4 pr-4 text-white font-medium">Plugins</td>
+                                <td class="text-center py-3 px-3 text-white">20 + Python</td>
+                                <td class="text-center py-3 px-3 text-white/40">Python</td>
+                                <td class="text-center py-3 px-3 text-white/40">No</td>
+                                <td class="text-center py-3 px-3 text-white/40">No</td>
                             </tr>
                             <tr class="bg-white/[0.02]">
-                                <td class="py-3 pr-4 text-white/70 rounded-l-lg">WebAssembly</td>
-                                <td class="text-center py-3 px-4 text-white/40">No</td>
-                                <td class="text-center py-3 px-4 text-white/40">No</td>
-                                <td class="text-center py-3 px-4 text-white/40">No</td>
-                                <td class="text-center py-3 pl-4 text-white rounded-r-lg">Yes</td>
+                                <td class="py-3 pl-4 pr-4 text-white font-medium rounded-l-lg">WebAssembly</td>
+                                <td class="text-center py-3 px-3 text-white">Yes</td>
+                                <td class="text-center py-3 px-3 text-white/40">No</td>
+                                <td class="text-center py-3 px-3 text-white/40">No</td>
+                                <td class="text-center py-3 px-3 text-white/40 rounded-r-lg">No</td>
                             </tr>
                         </tbody>
                     </table>
