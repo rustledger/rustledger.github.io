@@ -10,6 +10,7 @@ pkg/
 # Nix
 result
 .direnv/
+.envrc
 
 # Editor
 *.swp
