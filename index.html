@@ -314,12 +314,17 @@
                                     <span class="cmd"
                                         ><span class="keyword">brew</span>
                                         <span class="flag">install</span>
-                                        <span class="package">rustledger</span></span
+                                        <span class="package"
+                                            >rustledger/rustledger/rustledger</span
+                                        ></span
                                     >
                                     <button
                                         class="install-copy-btn"
                                         onclick="
-                                            copyInstallCommand('brew install rustledger', this)
+                                            copyInstallCommand(
+                                                'brew install rustledger/rustledger/rustledger',
+                                                this
+                                            )
                                         "
                                         title="Copy"
                                         aria-label="Copy command"
@@ -367,14 +372,19 @@
                                 <div class="install-command">
                                     <span class="prompt">$</span>
                                     <span class="cmd"
-                                        ><span class="keyword">nix-shell</span>
-                                        <span class="flag">-p</span>
-                                        <span class="package">rustledger</span></span
+                                        ><span class="keyword">nix</span>
+                                        <span class="flag">run</span>
+                                        <span class="package"
+                                            >github:rustledger/rustledger</span
+                                        ></span
                                     >
                                     <button
                                         class="install-copy-btn"
                                         onclick="
-                                            copyInstallCommand('nix-shell -p rustledger', this)
+                                            copyInstallCommand(
+                                                'nix run github:rustledger/rustledger',
+                                                this
+                                            )
                                         "
                                         title="Copy"
                                         aria-label="Copy command"
@@ -547,12 +557,15 @@
                                 <div class="install-command">
                                     <span class="prompt">$</span>
                                     <span class="cmd"
-                                        ><span class="keyword">npx</span>
-                                        <span class="package">rustledger</span></span
+                                        ><span class="keyword">npm</span>
+                                        <span class="flag">install</span>
+                                        <span class="package">@rustledger/wasm</span></span
                                     >
                                     <button
                                         class="install-copy-btn"
-                                        onclick="copyInstallCommand('npx rustledger', this)"
+                                        onclick="
+                                            copyInstallCommand('npm install @rustledger/wasm', this)
+                                        "
                                         title="Copy"
                                         aria-label="Copy command"
                                     >
@@ -585,8 +598,7 @@
                                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                         />
                                     </svg>
-                                    Uses pre-built WASM. Or install globally with
-                                    <code class="mono text-white/60">npm i -g rustledger</code>.
+                                    WASM bindings for Node.js and browser usage.
                                 </p>
                             </div>
                             <!-- Binary Panel -->
@@ -1178,17 +1190,17 @@
                         <div class="text-4xl font-bold mb-2">
                             <span
                                 class="stat-number gradient-text-orange"
-                                data-animate-stat="10"
+                                data-animate-stat="25"
                                 data-suffix="x"
-                                >10x</span
+                                >25x</span
                             >
                         </div>
                         <div class="text-white/40 text-sm">Faster</div>
                     </div>
                     <div>
                         <div class="text-4xl font-bold mb-2">
-                            <span class="stat-number gradient-text-orange" data-animate-stat="14"
-                                >14</span
+                            <span class="stat-number gradient-text-orange" data-animate-stat="20"
+                                >20</span
                             >
                         </div>
                         <div class="text-white/40 text-sm">Built-in plugins</div>
@@ -1246,8 +1258,8 @@
                         class="grid grid-cols-3 gap-4 py-3 items-center bg-white/[0.02] rounded-lg px-4 -mx-4"
                     >
                         <div class="text-white/70">Parse 10k transactions</div>
-                        <div class="text-center text-white/40">~2.5s</div>
-                        <div class="text-center text-white">~0.25s</div>
+                        <div class="text-center text-white/40">~900ms</div>
+                        <div class="text-center text-white">~35ms</div>
                     </div>
 
                     <div class="grid grid-cols-3 gap-4 py-3 items-center">
@@ -1284,8 +1296,8 @@
                     <div class="bg-white/[0.02] rounded-lg p-4">
                         <div class="text-white/50 text-sm mb-2">Parse 10k transactions</div>
                         <div class="flex justify-between items-center">
-                            <div class="text-white/40 text-sm">~2.5s</div>
-                            <div class="text-white text-sm">~0.25s</div>
+                            <div class="text-white/40 text-sm">~900ms</div>
+                            <div class="text-white text-sm">~35ms</div>
                         </div>
                     </div>
                     <div class="bg-white/[0.02] rounded-lg p-4">
@@ -1377,7 +1389,7 @@
                         </div>
                     </div>
                     <div>
-                        <div class="font-medium mb-1">14 built-in plugins</div>
+                        <div class="font-medium mb-1">20 built-in plugins</div>
                         <div class="text-sm text-white/50">
                             implicit_prices, auto_accounts, pedantic, and more
                         </div>
