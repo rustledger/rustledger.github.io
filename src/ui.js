@@ -147,9 +147,12 @@ export function initScrollReveal() {
     revealElements.forEach((el) => observer.observe(el));
 }
 
+/** @type {string | null} */
+let currentWasmVersion = null;
+
 /**
  * Update footer status element
- * @param {'loading' | 'ready' | 'error'} status
+ * @param {'loading' | 'ready' | 'error' | 'checking' | 'update-available'} status
  * @param {string} [version]
  * @param {string} [errorMessage]
  */
@@ -157,18 +160,110 @@ export function updateFooterStatus(status, version, errorMessage) {
     const footerStatus = document.getElementById('footer-status');
     if (!footerStatus) return;
 
+    if (version) {
+        currentWasmVersion = version;
+    }
+
+    const refreshButton = `<button id="check-update-btn" class="ml-2 text-white/40 hover:text-white/70 transition" title="Check for updates" aria-label="Check for updates">
+        <svg class="w-3.5 h-3.5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+    </button>`;
+
+    const spinningIcon = `<svg class="w-3.5 h-3.5 inline-block animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+    </svg>`;
+
     switch (status) {
         case 'loading':
             footerStatus.innerHTML = '<span class="text-white/30">Loading...</span>';
             break;
         case 'ready':
-            footerStatus.innerHTML = `<span class="text-green-400">✓ Ready</span> <span class="text-orange-400">(rustledger ${version || 'unknown'})</span>`;
+            footerStatus.innerHTML = `<span class="text-green-400">✓ Ready</span> <span class="text-orange-400">(rustledger ${currentWasmVersion || 'unknown'})</span>${refreshButton}`;
             footerStatus.className = 'text-xs';
+            attachUpdateCheckHandler();
+            break;
+        case 'checking':
+            footerStatus.innerHTML = `<span class="text-green-400">✓ Ready</span> <span class="text-orange-400">(rustledger ${currentWasmVersion || 'unknown'})</span> <span class="ml-2 text-white/40">${spinningIcon}</span>`;
+            footerStatus.className = 'text-xs';
+            break;
+        case 'update-available':
+            footerStatus.innerHTML = `<span class="text-green-400">✓ Ready</span> <span class="text-orange-400">(rustledger ${currentWasmVersion || 'unknown'})</span> <button id="reload-btn" class="ml-2 text-yellow-400 hover:text-yellow-300 transition text-xs underline">Update to ${errorMessage}</button>`;
+            footerStatus.className = 'text-xs';
+            attachReloadHandler();
             break;
         case 'error':
             footerStatus.innerHTML = `<span class="text-red-400">✗ ${errorMessage || 'Failed to load'}</span>`;
             footerStatus.className = 'text-xs';
             break;
+    }
+}
+
+/**
+ * Attach click handler for the update check button
+ */
+function attachUpdateCheckHandler() {
+    const btn = document.getElementById('check-update-btn');
+    if (btn) {
+        btn.addEventListener('click', checkForWasmUpdate);
+    }
+}
+
+/**
+ * Attach click handler for the reload button
+ */
+function attachReloadHandler() {
+    const btn = document.getElementById('reload-btn');
+    if (btn) {
+        btn.addEventListener('click', () => {
+            window.location.reload();
+        });
+    }
+}
+
+/**
+ * Check GitHub for a newer WASM version
+ */
+export async function checkForWasmUpdate() {
+    updateFooterStatus('checking');
+
+    try {
+        const response = await fetch('https://api.github.com/repos/rustledger/rustledger/releases');
+        if (!response.ok) {
+            throw new Error('Failed to fetch releases');
+        }
+
+        const releases = await response.json();
+        // Find the latest release with WASM assets
+        const wasmRelease = releases.find((/** @type {{ assets: Array<{ name: string }> }} */ r) =>
+            r.assets?.some((/** @type {{ name: string }} */ a) => a.name.includes('wasm'))
+        );
+
+        if (!wasmRelease) {
+            updateFooterStatus('ready');
+            return;
+        }
+
+        const latestVersion = wasmRelease.tag_name?.replace(/^v/, '') || '';
+        const currentVersion = currentWasmVersion?.replace(/^v/, '') || '';
+
+        if (latestVersion && latestVersion !== currentVersion) {
+            updateFooterStatus('update-available', undefined, wasmRelease.tag_name);
+        } else {
+            updateFooterStatus('ready');
+            // Show brief "up to date" feedback
+            const footerStatus = document.getElementById('footer-status');
+            if (footerStatus) {
+                const btn = document.getElementById('check-update-btn');
+                if (btn) {
+                    btn.classList.add('text-green-400');
+                    setTimeout(() => btn.classList.remove('text-green-400'), 1500);
+                }
+            }
+        }
+    } catch {
+        // Silently fail and restore ready state
+        updateFooterStatus('ready');
     }
 }
 
