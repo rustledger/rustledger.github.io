@@ -426,9 +426,8 @@ option "operating_currency" "CAD"
   Assets:Cash                    -434.92 USD
 
 2008-04-02 * "Gilbert paid back for iPhone"
-  Assets:Cash                     440.00 CAD
+  Assets:Cash                     431.92 USD
   Assets:AccountsReceivable      -431.92 USD
-  Assets:Cash
 
 2008-02-01 balance Assets:BestBank:Checking   661.49 USD
 
