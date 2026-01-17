@@ -3,6 +3,28 @@
 import { showToast } from './ui.js';
 
 /**
+ * Create an SVG element with a checkmark icon
+ * @param {string} className - CSS classes for the SVG
+ * @returns {SVGSVGElement}
+ */
+function createCheckIcon(className) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', className);
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('viewBox', '0 0 24 24');
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('stroke-linejoin', 'round');
+    path.setAttribute('stroke-width', '2');
+    path.setAttribute('d', 'M5 13l4 4L19 7');
+
+    svg.appendChild(path);
+    return svg;
+}
+
+/**
  * Detect user's operating system and recommend best install method
  * @returns {{ os: string, recommendedTab: string }}
  */
@@ -149,16 +171,17 @@ export function copyInstallCommand(command, button) {
     navigator.clipboard.writeText(command).then(() => {
         // Show success state
         button.classList.add('copied');
-        const originalHTML = button.innerHTML;
-        button.innerHTML =
-            '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+
+        // Store original children and replace with check icon
+        const originalChildren = Array.from(button.childNodes).map((node) => node.cloneNode(true));
+        button.replaceChildren(createCheckIcon('w-5 h-5'));
 
         showToast('Copied to clipboard!');
 
         // Revert after delay
         setTimeout(() => {
             button.classList.remove('copied');
-            button.innerHTML = originalHTML;
+            button.replaceChildren(...originalChildren);
         }, 2000);
     });
 }

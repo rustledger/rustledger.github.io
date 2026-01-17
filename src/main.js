@@ -1,4 +1,5 @@
 // Main application entry point
+import { MAX_FILE_SIZE, MAX_URL_CONTENT_SIZE } from './config.js';
 import { createEditor } from './editor.js';
 import {
     examples,
@@ -14,6 +15,7 @@ import {
     validateSource,
     formatSource,
     executeQuery,
+    terminateWorker,
 } from './wasm.js';
 import { initQueryAutocomplete, updateQueryButtons, formatCell } from './query.js';
 import {
@@ -58,11 +60,20 @@ const errorMessages = new Map();
 /** @type {Set<string>} For autocomplete */
 const knownAccounts = new Set();
 
+/** @type {number} Validation version counter to prevent race conditions */
+let validationVersion = 0;
+
+/** @type {number} Query version counter to prevent race conditions */
+let queryVersion = 0;
+
 /**
  * Live validation of editor content (async - runs in Web Worker)
  */
 async function liveValidate() {
     if (!isWasmReady() || !editor) return;
+
+    // Increment version to track this validation request
+    const thisVersion = ++validationVersion;
 
     const source = editor.getContent();
     const statusTab = document.getElementById('status-tab');
@@ -71,6 +82,9 @@ async function liveValidate() {
         const start = performance.now();
         const result = await validateSource(source);
         const elapsed = (performance.now() - start).toFixed(1);
+
+        // Check if a newer validation was started while we were waiting
+        if (thisVersion !== validationVersion) return;
 
         if (!result) return;
 
@@ -475,10 +489,16 @@ window.goToQueryPage = function (page) {
 async function runQuery(queryStr) {
     if (!isWasmReady() || !editor) return;
 
+    // Increment version to track this query request
+    const thisVersion = ++queryVersion;
+
     try {
         const start = performance.now();
         const result = await executeQuery(editor.getContent(), queryStr);
         const elapsed = (performance.now() - start).toFixed(1);
+
+        // Check if a newer query was started while we were waiting
+        if (thisVersion !== queryVersion) return;
 
         const queryOutput = document.getElementById('query-output');
         if (!queryOutput || !result) return;
@@ -563,9 +583,6 @@ window.downloadLedger = function () {
     URL.revokeObjectURL(url);
 };
 
-/** Maximum file size for upload (10MB) */
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
-
 /**
  * Upload ledger file
  * @param {Event} event
@@ -600,9 +617,6 @@ window.uploadLedger = function (event) {
     reader.readAsText(file);
     target.value = ''; // Reset input
 };
-
-/** Maximum allowed decoded content size (1MB) */
-const MAX_URL_CONTENT_SIZE = 1024 * 1024;
 
 /**
  * Load state from URL
@@ -819,3 +833,15 @@ window.addEventListener('unhandledrejection', (event) => {
 
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', init);
+
+// Cleanup on page unload
+window.addEventListener('pagehide', () => {
+    // Destroy editor to free CodeMirror resources
+    if (editor && typeof editor.destroy === 'function') {
+        editor.destroy();
+        editor = null;
+    }
+
+    // Terminate WASM worker
+    terminateWorker();
+});

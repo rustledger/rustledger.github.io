@@ -18,6 +18,9 @@ let autocompleteContext = null;
 /** @type {ReturnType<typeof setTimeout> | null} */
 let queryValidationTimeout = null;
 
+/** @type {boolean} Initialization guard */
+let queryAutocompleteInitialized = false;
+
 /**
  * Create the BQL autocomplete dropdown
  */
@@ -325,6 +328,9 @@ export function updateQueryButtons() {
  * Initialize query autocomplete
  */
 export function initQueryAutocomplete() {
+    // Prevent duplicate initialization
+    if (queryAutocompleteInitialized) return;
+
     const queryInput = document.getElementById('query-text');
     if (!queryInput) return;
 
@@ -337,6 +343,7 @@ export function initQueryAutocomplete() {
     queryInput.addEventListener('focus', handleQueryInput);
 
     createAutocompleteDropdown();
+    queryAutocompleteInitialized = true;
 }
 
 /** Empty/null placeholder */

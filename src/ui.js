@@ -1,13 +1,66 @@
 // UI utilities - toast, resizer, scroll effects
 
+import { TOAST_DURATION } from './config.js';
 import { fetchWithRetry } from './utils.js';
+
+/**
+ * Create an SVG element with the refresh icon path
+ * @param {string} className - CSS classes for the SVG
+ * @param {boolean} [animate=false] - Whether to add spin animation
+ * @returns {SVGSVGElement}
+ */
+function createRefreshIcon(className, animate = false) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', `${className}${animate ? ' animate-spin' : ''}`);
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('viewBox', '0 0 24 24');
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('stroke-linejoin', 'round');
+    path.setAttribute('stroke-width', '2');
+    path.setAttribute(
+        'd',
+        'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
+    );
+
+    svg.appendChild(path);
+    return svg;
+}
+
+/**
+ * Create an SVG element with the warning icon path
+ * @param {string} className - CSS classes for the SVG
+ * @returns {SVGSVGElement}
+ */
+function createWarningIcon(className) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', className);
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('aria-hidden', 'true');
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('stroke-linejoin', 'round');
+    path.setAttribute('stroke-width', '2');
+    path.setAttribute(
+        'd',
+        'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
+    );
+
+    svg.appendChild(path);
+    return svg;
+}
 
 /**
  * Show a toast notification
  * @param {string} message - The message to display
- * @param {number} [duration=2000] - Duration in milliseconds
+ * @param {number} [duration] - Duration in milliseconds
  */
-export function showToast(message, duration = 2000) {
+export function showToast(message, duration = TOAST_DURATION) {
     // Remove existing toast
     const existing = document.getElementById('toast');
     if (existing) existing.remove();
@@ -166,11 +219,19 @@ export function updateFooterStatus(status, version, errorMessage) {
         currentWasmVersion = version;
     }
 
-    const refreshButton = `<button id="check-update-btn" class="ml-2 text-white/40 hover:text-white/70 transition" title="Check for updates" aria-label="Check for updates">
-        <svg class="w-3.5 h-3.5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-        </svg>
-    </button>`;
+    /**
+     * Create a refresh button with icon
+     * @returns {HTMLButtonElement}
+     */
+    const createRefreshButton = () => {
+        const btn = document.createElement('button');
+        btn.id = 'check-update-btn';
+        btn.className = 'ml-2 text-white/40 hover:text-white/70 transition';
+        btn.title = 'Check for updates';
+        btn.setAttribute('aria-label', 'Check for updates');
+        btn.appendChild(createRefreshIcon('w-3.5 h-3.5 inline-block'));
+        return btn;
+    };
 
     // Helper to create a span with class and text
     const createSpan = (/** @type {string} */ className, /** @type {string} */ text) => {
@@ -194,10 +255,8 @@ export function updateFooterStatus(status, version, errorMessage) {
             footerStatus.appendChild(
                 createSpan('text-orange-400', `(rustledger ${currentWasmVersion || 'unknown'})`)
             );
-            // Add refresh button (safe static HTML)
-            const refreshContainer = document.createElement('span');
-            refreshContainer.innerHTML = refreshButton;
-            footerStatus.appendChild(refreshContainer);
+            // Add refresh button
+            footerStatus.appendChild(createRefreshButton());
             attachUpdateCheckHandler();
             break;
         }
@@ -209,8 +268,7 @@ export function updateFooterStatus(status, version, errorMessage) {
             );
             const spinnerSpan = document.createElement('span');
             spinnerSpan.className = 'ml-2 text-white/40';
-            spinnerSpan.innerHTML =
-                '<svg class="w-3.5 h-3.5 inline-block animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>';
+            spinnerSpan.appendChild(createRefreshIcon('w-3.5 h-3.5 inline-block', true));
             footerStatus.appendChild(spinnerSpan);
             break;
         }
@@ -332,9 +390,7 @@ export function showErrorModal(title, message) {
 
     const header = document.createElement('div');
     header.className = 'flex items-center gap-3 mb-4';
-    header.innerHTML = `<svg class="w-6 h-6 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-    </svg>`;
+    header.appendChild(createWarningIcon('w-6 h-6 text-red-400 flex-shrink-0'));
 
     const titleEl = document.createElement('h2');
     titleEl.id = 'error-modal-title';

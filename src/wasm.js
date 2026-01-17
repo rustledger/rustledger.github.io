@@ -1,5 +1,7 @@
 // WASM loading and initialization via Web Worker
 
+import { WASM_MAX_RETRIES, WASM_BASE_DELAY } from './config.js';
+
 /**
  * @typedef {{ valid: boolean, errors: Array<{line: number, message: string}>, error_count: number }} ValidationResult
  * @typedef {{ formatted: string | null, error: string | null, errors?: Array<{line: number, message: string}> }} FormatResult
@@ -128,12 +130,12 @@ function attemptWasmInit() {
 
 /**
  * Initialize the WASM module via Web Worker with retry logic
- * @param {number} [maxRetries=3] - Maximum number of retry attempts
- * @param {number} [baseDelay=1000] - Base delay between retries in ms
+ * @param {number} [maxRetries] - Maximum number of retry attempts
+ * @param {number} [baseDelay] - Base delay between retries in ms
  * @returns {Promise<void>}
  * @throws {Error} If WASM fails to load after all retries
  */
-export async function initWasm(maxRetries = 3, baseDelay = 1000) {
+export async function initWasm(maxRetries = WASM_MAX_RETRIES, baseDelay = WASM_BASE_DELAY) {
     if (worker && wasmReady) {
         return;
     }

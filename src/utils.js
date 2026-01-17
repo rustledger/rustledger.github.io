@@ -1,5 +1,7 @@
 // Utility functions extracted for testability
 
+import { FETCH_MAX_RETRIES, FETCH_BASE_DELAY, FETCH_TIMEOUT } from './config.js';
+
 /**
  * Escape HTML special characters using regex (no DOM required)
  * @param {string} text
@@ -128,14 +130,19 @@ function getRetryDelay(response, attempt, baseDelay) {
  * Respects Retry-After and GitHub X-RateLimit headers
  * @param {string} url - URL to fetch
  * @param {object} [options] - Fetch options
- * @param {number} [options.maxRetries=3] - Maximum number of retries
- * @param {number} [options.baseDelay=1000] - Base delay in ms (doubles each retry)
- * @param {number} [options.timeout=10000] - Request timeout in ms
+ * @param {number} [options.maxRetries] - Maximum number of retries
+ * @param {number} [options.baseDelay] - Base delay in ms (doubles each retry)
+ * @param {number} [options.timeout] - Request timeout in ms
  * @param {RequestInit} [options.fetchOptions] - Options to pass to fetch
  * @returns {Promise<Response>}
  */
 export async function fetchWithRetry(url, options = {}) {
-    const { maxRetries = 3, baseDelay = 1000, timeout = 10000, fetchOptions = {} } = options;
+    const {
+        maxRetries = FETCH_MAX_RETRIES,
+        baseDelay = FETCH_BASE_DELAY,
+        timeout = FETCH_TIMEOUT,
+        fetchOptions = {},
+    } = options;
 
     let lastError;
 
