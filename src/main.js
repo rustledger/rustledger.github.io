@@ -601,6 +601,9 @@ window.uploadLedger = function (event) {
     target.value = ''; // Reset input
 };
 
+/** Maximum allowed decoded content size (1MB) */
+const MAX_URL_CONTENT_SIZE = 1024 * 1024;
+
 /**
  * Load state from URL
  */
@@ -617,6 +620,12 @@ function loadFromUrl() {
             // Fallback to legacy base64 format
             if (!decoded) {
                 decoded = decodeURIComponent(atob(code));
+            }
+
+            // Validate decoded content size to prevent DoS
+            if (decoded && decoded.length > MAX_URL_CONTENT_SIZE) {
+                showToast('Shared content is too large to load');
+                return;
             }
 
             if (decoded) {

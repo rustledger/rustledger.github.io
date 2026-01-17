@@ -78,17 +78,18 @@ function handleWorkerMessage(event) {
 }
 
 /**
- * Initialize the WASM module via Web Worker
+ * Attempt a single WASM initialization
  * @returns {Promise<void>}
- * @throws {Error} If WASM fails to load
  */
-export async function initWasm() {
-    if (worker && wasmReady) {
-        return;
-    }
-
+function attemptWasmInit() {
     return new Promise((resolve, reject) => {
         try {
+            // Terminate existing worker if any
+            if (worker) {
+                worker.terminate();
+                worker = null;
+            }
+
             // Create worker
             worker = new Worker(new URL('./wasm.worker.js', import.meta.url), {
                 type: 'module',
@@ -123,6 +124,45 @@ export async function initWasm() {
             reject(new Error(formatWasmError(wasmError)));
         }
     });
+}
+
+/**
+ * Initialize the WASM module via Web Worker with retry logic
+ * @param {number} [maxRetries=3] - Maximum number of retry attempts
+ * @param {number} [baseDelay=1000] - Base delay between retries in ms
+ * @returns {Promise<void>}
+ * @throws {Error} If WASM fails to load after all retries
+ */
+export async function initWasm(maxRetries = 3, baseDelay = 1000) {
+    if (worker && wasmReady) {
+        return;
+    }
+
+    let lastError;
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+            await attemptWasmInit();
+            return; // Success
+        } catch (e) {
+            lastError = e;
+            wasmReady = false;
+
+            // Don't retry on non-recoverable errors
+            const errorMsg = e instanceof Error ? e.message : String(e);
+            if (errorMsg.includes('CompileError') || errorMsg.includes('not support WebAssembly')) {
+                throw e;
+            }
+
+            // Retry with exponential backoff
+            if (attempt < maxRetries) {
+                const delay = baseDelay * Math.pow(2, attempt);
+                await new Promise((resolve) => setTimeout(resolve, delay));
+            }
+        }
+    }
+
+    throw lastError || new Error('Failed to initialize WASM after retries');
 }
 
 /**

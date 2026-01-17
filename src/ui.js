@@ -325,51 +325,54 @@ export function showErrorModal(title, message) {
     modal.setAttribute('aria-labelledby', 'error-modal-title');
     modal.setAttribute('aria-describedby', 'error-modal-desc');
 
-    modal.innerHTML = `
-        <div class="bg-zinc-900 border border-red-500/30 rounded-lg max-w-md w-full p-6 shadow-2xl">
-            <div class="flex items-center gap-3 mb-4">
-                <svg class="w-6 h-6 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                </svg>
-                <h2 id="error-modal-title" class="text-lg font-semibold text-white">${escapeHtmlSimple(title)}</h2>
-            </div>
-            <p id="error-modal-desc" class="text-white/70 text-sm mb-6">${escapeHtmlSimple(message)}</p>
-            <div class="flex gap-3">
-                <button
-                    onclick="location.reload()"
-                    class="flex-1 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded transition text-sm"
-                >
-                    Refresh Page
-                </button>
-                <button
-                    onclick="document.getElementById('error-modal').remove()"
-                    class="px-4 py-2 text-white/60 hover:text-white transition text-sm"
-                >
-                    Dismiss
-                </button>
-            </div>
-        </div>
-    `;
+    // Build modal content using DOM API
+    const content = document.createElement('div');
+    content.className =
+        'bg-zinc-900 border border-red-500/30 rounded-lg max-w-md w-full p-6 shadow-2xl';
+
+    const header = document.createElement('div');
+    header.className = 'flex items-center gap-3 mb-4';
+    header.innerHTML = `<svg class="w-6 h-6 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+    </svg>`;
+
+    const titleEl = document.createElement('h2');
+    titleEl.id = 'error-modal-title';
+    titleEl.className = 'text-lg font-semibold text-white';
+    titleEl.textContent = title;
+    header.appendChild(titleEl);
+
+    const desc = document.createElement('p');
+    desc.id = 'error-modal-desc';
+    desc.className = 'text-white/70 text-sm mb-6';
+    desc.textContent = message;
+
+    const buttons = document.createElement('div');
+    buttons.className = 'flex gap-3';
+
+    const refreshBtn = document.createElement('button');
+    refreshBtn.className =
+        'flex-1 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded transition text-sm';
+    refreshBtn.textContent = 'Refresh Page';
+    refreshBtn.addEventListener('click', () => location.reload());
+
+    const dismissBtn = document.createElement('button');
+    dismissBtn.className = 'px-4 py-2 text-white/60 hover:text-white transition text-sm';
+    dismissBtn.textContent = 'Dismiss';
+    dismissBtn.addEventListener('click', () => modal.remove());
+
+    buttons.appendChild(refreshBtn);
+    buttons.appendChild(dismissBtn);
+
+    content.appendChild(header);
+    content.appendChild(desc);
+    content.appendChild(buttons);
+    modal.appendChild(content);
 
     document.body.appendChild(modal);
 
     // Focus the refresh button
-    const refreshBtn = modal.querySelector('button');
-    if (refreshBtn) refreshBtn.focus();
-}
-
-/**
- * Simple HTML escape (doesn't require DOM)
- * @param {string} text
- * @returns {string}
- */
-function escapeHtmlSimple(text) {
-    return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
+    refreshBtn.focus();
 }
 
 // Make showToast available globally for inline handlers

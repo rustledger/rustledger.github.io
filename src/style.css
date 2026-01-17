@@ -272,6 +272,37 @@ body {
     background: var(--surface);
 }
 
+/* Horizontal scroll container with visual hints */
+.table-scroll-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+/* Scroll shadow hints on mobile */
+@media (max-width: 768px) {
+    .table-scroll-container {
+        position: relative;
+    }
+
+    .table-scroll-container::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 24px;
+        background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.4));
+        pointer-events: none;
+    }
+
+    /* Hide hint when scrolled to end */
+    .table-scroll-container.scrolled-end::after {
+        opacity: 0;
+    }
+}
+
 /* ========================================
    TOAST NOTIFICATIONS
    ======================================== */

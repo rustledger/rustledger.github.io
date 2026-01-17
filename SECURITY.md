@@ -70,3 +70,48 @@ The site has minimal runtime dependencies:
 - rustledger WASM module
 
 All dependencies are bundled and served from the same origin.
+
+## Recommended HTTP Headers
+
+When self-hosting or deploying to platforms other than GitHub Pages, configure these HTTP security headers:
+
+```
+# Strict Transport Security (force HTTPS)
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+# Prevent MIME type sniffing
+X-Content-Type-Options: nosniff
+
+# Prevent clickjacking
+X-Frame-Options: DENY
+
+# XSS protection (legacy browsers)
+X-XSS-Protection: 1; mode=block
+
+# Referrer policy (limit data leakage)
+Referrer-Policy: strict-origin-when-cross-origin
+
+# Permissions policy (disable unused features)
+Permissions-Policy: geolocation=(), microphone=(), camera=()
+```
+
+**Note**: GitHub Pages automatically provides some of these headers.
+
+## CSP Violation Reporting
+
+To monitor CSP violations in production, consider adding a `report-uri` or `report-to` directive:
+
+```html
+<meta
+    http-equiv="Content-Security-Policy"
+    content="...; report-uri /csp-report"
+/>
+```
+
+This allows you to detect and respond to potential security issues. Note that the reporting endpoint must be configured on your server.
+
+## URL Content Size Limits
+
+Shared URLs are limited to prevent denial-of-service via excessively large payloads:
+- Maximum decoded content: 1MB
+- Larger content is rejected with an error message

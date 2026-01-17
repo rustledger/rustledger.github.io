@@ -16,7 +16,7 @@ describe('formatCell', () => {
 
     it('escapes HTML in string values', () => {
         expect(formatCell('<script>alert("xss")</script>')).toBe(
-            '&lt;script&gt;alert("xss")&lt;/script&gt;'
+            '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;'
         );
     });
 
