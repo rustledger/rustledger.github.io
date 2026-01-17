@@ -71,9 +71,7 @@ self.addEventListener('fetch', (event) => {
                     if (isWasmFile && !(await isValidWasm(cachedResponse))) {
                         console.warn('Cached WASM file failed validation, fetching fresh copy');
                         // Delete invalid cached response and fetch fresh
-                        await caches.open(CACHE_NAME).then((cache) =>
-                            cache.delete(event.request)
-                        );
+                        await caches.open(CACHE_NAME).then((cache) => cache.delete(event.request));
                     } else {
                         return cachedResponse;
                     }
@@ -94,12 +92,15 @@ self.addEventListener('fetch', (event) => {
 
                         // Clone and cache the response
                         const responseToCache = response.clone();
-                        caches.open(CACHE_NAME).then((cache) => {
-                            cache.put(event.request, responseToCache);
-                        }).catch((err) => {
-                            // Handle quota exceeded or other cache errors
-                            console.warn('Failed to cache response:', err.message || err);
-                        });
+                        caches
+                            .open(CACHE_NAME)
+                            .then((cache) => {
+                                cache.put(event.request, responseToCache);
+                            })
+                            .catch((err) => {
+                                // Handle quota exceeded or other cache errors
+                                console.warn('Failed to cache response:', err.message || err);
+                            });
 
                         return response;
                     })
