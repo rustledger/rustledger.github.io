@@ -9,7 +9,7 @@
     --bg: #0a0a0a;
     --text: #ffffff;
     --text-secondary: rgba(255, 255, 255, 0.7);
-    --text-muted: rgba(255, 255, 255, 0.55); /* Improved contrast (WCAG AA) */
+    --text-muted: rgba(255, 255, 255, 0.6); /* Improved contrast (WCAG AA) */
     --border: rgba(255, 255, 255, 0.1);
     --surface: rgba(255, 255, 255, 0.03);
     --surface-hover: rgba(255, 255, 255, 0.05);
@@ -216,6 +216,15 @@ body {
     cursor: row-resize;
     position: relative;
     flex-shrink: 0;
+    /* Improve touch target on mobile */
+    touch-action: none;
+}
+
+/* Larger touch target on mobile */
+@media (pointer: coarse) {
+    .resizer {
+        height: 24px;
+    }
 }
 
 .resizer::after {
@@ -232,6 +241,7 @@ body {
 }
 
 .resizer:hover::after,
+.resizer:active::after,
 .resizer.dragging::after {
     background: rgba(255, 255, 255, 0.4);
 }

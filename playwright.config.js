@@ -22,5 +22,21 @@ export default defineConfig({
             name: 'chromium',
             use: { browserName: 'chromium' },
         },
+        {
+            name: 'firefox',
+            use: { browserName: 'firefox' },
+        },
+        {
+            name: 'webkit',
+            use: { browserName: 'webkit' },
+        },
+        {
+            name: 'mobile-chrome',
+            use: {
+                browserName: 'chromium',
+                viewport: { width: 375, height: 667 },
+                isMobile: true,
+            },
+        },
     ],
 });

@@ -1,5 +1,6 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
 
 test.describe('Playground', () => {
     test.beforeEach(async ({ page }) => {
@@ -17,7 +18,7 @@ test.describe('Playground', () => {
 
     test('shows example tabs', async ({ page }) => {
         const tabs = page.locator('.example-tab');
-        await expect(tabs).toHaveCount(6);
+        await expect(tabs).toHaveCount(7);
 
         // Check tab labels
         await expect(tabs.nth(0)).toContainText('Budget');
@@ -186,13 +187,28 @@ test.describe('Accessibility', () => {
     test('has no automatically detectable a11y issues on load', async ({ page }) => {
         await page.goto('/');
 
-        // Check for basic accessibility
-        const mainContent = page.locator('main, #playground');
-        await expect(mainContent).toBeVisible();
+        // Wait for page to be fully loaded
+        await page.waitForLoadState('networkidle');
 
-        // Check skip link exists
-        const skipLink = page.locator('a[href="#playground"]');
-        await expect(skipLink).toBeAttached();
+        // Run axe accessibility scan
+        const accessibilityScanResults = await new AxeBuilder({ page })
+            .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+            .exclude('.cm-editor') // Exclude CodeMirror (has its own a11y)
+            .analyze();
+
+        expect(accessibilityScanResults.violations).toEqual([]);
+    });
+
+    test('playground section passes a11y checks', async ({ page }) => {
+        await page.goto('/#playground');
+        await page.waitForLoadState('networkidle');
+
+        const accessibilityScanResults = await new AxeBuilder({ page })
+            .include('#playground')
+            .exclude('.cm-editor')
+            .analyze();
+
+        expect(accessibilityScanResults.violations).toEqual([]);
     });
 
     test('all images have alt text', async ({ page }) => {
@@ -215,6 +231,17 @@ test.describe('Accessibility', () => {
         const buttons = page.locator('button:visible').first();
         await buttons.focus();
         await expect(buttons).toBeFocused();
+    });
+
+    test('skip link exists and works', async ({ page }) => {
+        await page.goto('/');
+
+        const skipLink = page.locator('a[href="#playground"]');
+        await expect(skipLink).toBeAttached();
+
+        // Focus and use skip link
+        await page.keyboard.press('Tab');
+        await expect(skipLink).toBeFocused();
     });
 });
 

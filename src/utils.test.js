@@ -240,6 +240,38 @@ describe('fetchWithRetry', () => {
         expect(result).toBe(mockSuccess);
         expect(globalThis.fetch).toHaveBeenCalledTimes(2);
     });
+
+    it('passes abort signal to fetch for timeout support', async () => {
+        const mockSuccess = createMockResponse(200, true);
+        globalThis.fetch = vi.fn().mockResolvedValue(mockSuccess);
+
+        await fetchWithRetry('https://example.com', { timeout: 5000 });
+
+        expect(globalThis.fetch).toHaveBeenCalledWith(
+            'https://example.com',
+            expect.objectContaining({
+                signal: expect.any(AbortSignal),
+            })
+        );
+    });
+
+    it('converts AbortError to timeout message', async () => {
+        vi.useRealTimers();
+
+        // Create a fetch that immediately aborts
+        globalThis.fetch = vi.fn().mockImplementation(() => {
+            const error = new Error('Aborted');
+            error.name = 'AbortError';
+            return Promise.reject(error);
+        });
+
+        await expect(
+            fetchWithRetry('https://example.com', {
+                maxRetries: 0,
+                timeout: 100,
+            })
+        ).rejects.toThrow('Request timed out after 100ms');
+    });
 });
 
 describe('countTransactions', () => {

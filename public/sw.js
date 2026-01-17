@@ -96,6 +96,9 @@ self.addEventListener('fetch', (event) => {
                         const responseToCache = response.clone();
                         caches.open(CACHE_NAME).then((cache) => {
                             cache.put(event.request, responseToCache);
+                        }).catch((err) => {
+                            // Handle quota exceeded or other cache errors
+                            console.warn('Failed to cache response:', err.message || err);
                         });
 
                         return response;

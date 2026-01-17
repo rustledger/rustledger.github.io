@@ -127,17 +127,26 @@ function getRetryDelay(response, attempt, baseDelay) {
  * @param {object} [options] - Fetch options
  * @param {number} [options.maxRetries=3] - Maximum number of retries
  * @param {number} [options.baseDelay=1000] - Base delay in ms (doubles each retry)
+ * @param {number} [options.timeout=10000] - Request timeout in ms
  * @param {RequestInit} [options.fetchOptions] - Options to pass to fetch
  * @returns {Promise<Response>}
  */
 export async function fetchWithRetry(url, options = {}) {
-    const { maxRetries = 3, baseDelay = 1000, fetchOptions = {} } = options;
+    const { maxRetries = 3, baseDelay = 1000, timeout = 10000, fetchOptions = {} } = options;
 
     let lastError;
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        // Create abort controller for timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
+
         try {
-            const response = await fetch(url, fetchOptions);
+            const response = await fetch(url, {
+                ...fetchOptions,
+                signal: controller.signal,
+            });
+            clearTimeout(timeoutId);
 
             // Check if we're approaching GitHub rate limit
             const remaining = response.headers.get('X-RateLimit-Remaining');
@@ -166,9 +175,15 @@ export async function fetchWithRetry(url, options = {}) {
 
             return response;
         } catch (err) {
+            clearTimeout(timeoutId);
             lastError = err;
 
-            // Retry on network errors
+            // Convert abort error to timeout error for clarity
+            if (err instanceof Error && err.name === 'AbortError') {
+                lastError = new Error(`Request timed out after ${timeout}ms`);
+            }
+
+            // Retry on network errors and timeouts
             if (attempt < maxRetries) {
                 const delay = baseDelay * Math.pow(2, attempt);
                 await new Promise((resolve) => setTimeout(resolve, delay));
