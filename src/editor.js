@@ -1,5 +1,6 @@
 // @ts-check
 import { EditorState, RangeSetBuilder } from '@codemirror/state';
+import { escapeHtml } from './utils.js';
 import {
     EditorView,
     keymap,
@@ -313,7 +314,7 @@ function showAccountAutocomplete(view, accounts, filter, startPos) {
                 .map((part, i) => {
                     const colors = ['#22d3ee', '#5eead4', '#6ee7b7', '#fcd34d', '#fdba74'];
                     const color = colors[Math.min(i, colors.length - 1)];
-                    return `<span style="color: ${color}">${part}</span>`;
+                    return `<span style="color: ${color}">${escapeHtml(part)}</span>`;
                 })
                 .join('<span style="color: rgba(255,255,255,0.5)">:</span>');
 

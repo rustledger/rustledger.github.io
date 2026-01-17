@@ -356,7 +356,7 @@ const EMPTY_CELL = '<span class="text-white/30">-</span>';
  * @returns {string}
  */
 function formatAmount(num, currency) {
-    return `<span class="text-yellow-300">${num}</span> <span class="text-orange-300">${currency}</span>`;
+    return `<span class="text-yellow-300">${num}</span> <span class="text-orange-300">${escapeHtml(currency)}</span>`;
 }
 
 /**
@@ -387,7 +387,7 @@ function formatInventory(positions) {
 function formatPosition(units, cost) {
     let result = formatAmount(units.number, units.currency);
     if (cost) {
-        result += ` <span class="text-white/40">{${cost.number} ${cost.currency}}</span>`;
+        result += ` <span class="text-white/40">{${cost.number} ${escapeHtml(cost.currency)}}</span>`;
     }
     return result;
 }
