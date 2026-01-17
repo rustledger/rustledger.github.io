@@ -1,6 +1,6 @@
 // Example ledger files for the playground
 
-/** @typedef {'simple' | 'stocks' | 'crypto' | 'travel' | 'business' | 'errors' | 'beancount'} ExampleName */
+/** @typedef {'simple' | 'stocks' | 'crypto' | 'travel' | 'business' | 'errors' | 'beancount-example'} ExampleName */
 
 /** @type {Record<ExampleName, string>} */
 export const examples = {
@@ -298,7 +298,7 @@ option "title" "Error Examples"
     Expenses:Food       10.00 USD
     Assets:Checking`,
 
-    beancount: `;;; -*- mode: org; mode: beancount; coding: utf-8; -*-
+    'beancount-example': `;;; -*- mode: org; mode: beancount; coding: utf-8; -*-
 #+STARTUP: showall
 ;;;
 ;;; This is a basic example demo file, with some example accounts and
@@ -951,5 +951,5 @@ export const exampleNames = [
     'travel',
     'business',
     'errors',
-    'beancount',
+    'beancount-example',
 ];
