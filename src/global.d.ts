@@ -1,6 +1,13 @@
 // Global type declarations
 
-type ExampleName = 'simple' | 'stocks' | 'crypto' | 'travel' | 'business' | 'errors';
+type ExampleName =
+    | 'simple'
+    | 'stocks'
+    | 'crypto'
+    | 'travel'
+    | 'business'
+    | 'errors'
+    | 'beancount-example';
 
 declare global {
     interface Window {
@@ -17,7 +24,6 @@ declare global {
         showToast: (message: string, duration?: number) => void;
         showShortcutsModal: () => void;
         hideShortcutsModal: () => void;
-        copyInstallCommand: (command: string, button: HTMLElement) => void;
     }
 }
 

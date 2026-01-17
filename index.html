@@ -302,9 +302,7 @@
                                     >
                                     <button
                                         class="install-copy-btn"
-                                        onclick="
-                                            copyInstallCommand('cargo install rustledger', this)
-                                        "
+                                        data-command="cargo install rustledger"
                                         title="Copy"
                                         aria-label="Copy command"
                                     >
@@ -368,12 +366,7 @@
                                     >
                                     <button
                                         class="install-copy-btn"
-                                        onclick="
-                                            copyInstallCommand(
-                                                'brew install rustledger/rustledger/rustledger',
-                                                this
-                                            )
-                                        "
+                                        data-command="brew install rustledger/rustledger/rustledger"
                                         title="Copy"
                                         aria-label="Copy command"
                                     >
@@ -433,12 +426,7 @@
                                     >
                                     <button
                                         class="install-copy-btn"
-                                        onclick="
-                                            copyInstallCommand(
-                                                'nix run github:rustledger/rustledger',
-                                                this
-                                            )
-                                        "
+                                        data-command="nix run github:rustledger/rustledger"
                                         title="Copy"
                                         aria-label="Copy command"
                                     >
@@ -500,12 +488,7 @@
                                     >
                                     <button
                                         class="install-copy-btn"
-                                        onclick="
-                                            copyInstallCommand(
-                                                'sudo dnf copr enable rustledger/rustledger && sudo dnf install rustledger',
-                                                this
-                                            )
-                                        "
+                                        data-command="sudo dnf copr enable rustledger/rustledger && sudo dnf install rustledger"
                                         title="Copy"
                                         aria-label="Copy command"
                                     >
@@ -560,12 +543,7 @@
                                     >
                                     <button
                                         class="install-copy-btn"
-                                        onclick="
-                                            copyInstallCommand(
-                                                'scoop bucket add rustledger https://github.com/rustledger/scoop-rustledger && scoop install rustledger',
-                                                this
-                                            )
-                                        "
+                                        data-command="scoop bucket add rustledger https://github.com/rustledger/scoop-rustledger && scoop install rustledger"
                                         title="Copy"
                                         aria-label="Copy command"
                                     >
@@ -629,12 +607,7 @@
                                     >
                                     <button
                                         class="install-copy-btn"
-                                        onclick="
-                                            copyInstallCommand(
-                                                'docker run -v $PWD:/data ghcr.io/rustledger/rustledger',
-                                                this
-                                            )
-                                        "
+                                        data-command="docker run -v $PWD:/data ghcr.io/rustledger/rustledger"
                                         title="Copy"
                                         aria-label="Copy command"
                                     >
@@ -692,9 +665,7 @@
                                     >
                                     <button
                                         class="install-copy-btn"
-                                        onclick="
-                                            copyInstallCommand('npm install @rustledger/wasm', this)
-                                        "
+                                        data-command="npm install @rustledger/wasm"
                                         title="Copy"
                                         aria-label="Copy command"
                                     >
@@ -844,7 +815,6 @@
                         <button
                             class="example-tab active"
                             data-example="simple"
-                            onclick="loadExample('simple')"
                             role="tab"
                             aria-selected="true"
                             aria-controls="editor-panel"
@@ -854,7 +824,6 @@
                         <button
                             class="example-tab"
                             data-example="stocks"
-                            onclick="loadExample('stocks')"
                             role="tab"
                             aria-selected="false"
                             aria-controls="editor-panel"
@@ -864,7 +833,6 @@
                         <button
                             class="example-tab"
                             data-example="crypto"
-                            onclick="loadExample('crypto')"
                             role="tab"
                             aria-selected="false"
                             aria-controls="editor-panel"
@@ -874,7 +842,6 @@
                         <button
                             class="example-tab"
                             data-example="travel"
-                            onclick="loadExample('travel')"
                             role="tab"
                             aria-selected="false"
                             aria-controls="editor-panel"
@@ -884,7 +851,6 @@
                         <button
                             class="example-tab"
                             data-example="business"
-                            onclick="loadExample('business')"
                             role="tab"
                             aria-selected="false"
                             aria-controls="editor-panel"
@@ -894,7 +860,6 @@
                         <button
                             class="example-tab"
                             data-example="errors"
-                            onclick="loadExample('errors')"
                             role="tab"
                             aria-selected="false"
                             aria-controls="editor-panel"
@@ -904,7 +869,6 @@
                         <button
                             class="example-tab"
                             data-example="beancount-example"
-                            onclick="loadExample('beancount-example')"
                             role="tab"
                             aria-selected="false"
                             aria-controls="editor-panel"
@@ -913,14 +877,14 @@
                         </button>
                         <div class="flex-1"></div>
                         <button
-                            onclick="runFormat()"
+                            id="format-btn"
                             class="px-3 py-1.5 text-xs text-white/60 hover:text-white hover:bg-white/10 rounded transition"
                             title="Format code"
                         >
                             Format
                         </button>
                         <button
-                            onclick="downloadLedger()"
+                            id="download-btn"
                             class="px-2 py-1.5 text-white/40 hover:text-white transition"
                             title="Download .beancount file"
                             aria-label="Download beancount file"
@@ -968,7 +932,7 @@
                             />
                         </label>
                         <button
-                            onclick="shareUrl()"
+                            id="share-btn"
                             class="px-2 py-1.5 mr-2 text-white/40 hover:text-white transition"
                             title="Share"
                             aria-label="Share URL"
@@ -1019,7 +983,6 @@
                         <button
                             class="output-tab active"
                             data-tab="query"
-                            onclick="switchTab('query')"
                             role="tab"
                             aria-selected="true"
                             aria-controls="query-output"
@@ -1031,7 +994,6 @@
                             class="output-tab text-yellow-400"
                             style="border-left: 1px solid rgba(255, 255, 255, 0.15)"
                             data-tab="plugin"
-                            onclick="switchTab('plugin')"
                             role="tab"
                             aria-selected="false"
                             aria-controls="plugin-options"
@@ -1043,7 +1005,6 @@
                             class="output-tab text-green-400"
                             style="border-left: 1px solid rgba(255, 255, 255, 0.15)"
                             data-tab="output"
-                            onclick="switchTab('output')"
                             role="tab"
                             aria-selected="false"
                             aria-controls="output"
@@ -1052,7 +1013,7 @@
                             <span aria-hidden="true">✓</span> Valid
                         </button>
                         <button
-                            onclick="copyOutput()"
+                            id="copy-output-btn"
                             class="p-2 text-white/30 hover:text-white transition"
                             title="Copy"
                             aria-label="Copy output"
@@ -1619,7 +1580,7 @@
                 <div class="flex justify-between items-center mb-4">
                     <h2 id="shortcuts-title" class="text-lg font-semibold">Keyboard Shortcuts</h2>
                     <button
-                        onclick="hideShortcutsModal()"
+                        id="close-shortcuts-btn"
                         class="text-white/40 hover:text-white transition"
                         aria-label="Close"
                     >

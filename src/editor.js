@@ -601,17 +601,22 @@ export function createEditor(container, initialContent, onChange) {
                             tooltip = document.createElement('div');
                             tooltip.className = 'error-tooltip';
                             tooltip.textContent = errorLine.dataset.errorMessage;
+
+                            // Position offscreen first to measure height without layout thrashing
+                            tooltip.style.visibility = 'hidden';
+                            tooltip.style.top = '-9999px';
                             document.body.appendChild(tooltip);
 
-                            // Position tooltip above the line
+                            // Batch all DOM reads together
                             const rect = errorLine.getBoundingClientRect();
-                            tooltip.style.left = `${rect.left + 20}px`;
-                            tooltip.style.top = `${rect.top - tooltip.offsetHeight - 8}px`;
+                            const tooltipHeight = tooltip.offsetHeight;
 
-                            // If tooltip goes off top, show below
-                            if (parseFloat(tooltip.style.top) < 0) {
-                                tooltip.style.top = `${rect.bottom + 8}px`;
-                            }
+                            // Now do all DOM writes
+                            const topPosition = rect.top - tooltipHeight - 8;
+                            tooltip.style.left = `${rect.left + 20}px`;
+                            tooltip.style.top =
+                                topPosition < 0 ? `${rect.bottom + 8}px` : `${topPosition}px`;
+                            tooltip.style.visibility = 'visible';
                         }
                     });
 

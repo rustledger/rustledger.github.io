@@ -167,7 +167,7 @@ export function initInstallTabs() {
  * @param {string} command - The command to copy
  * @param {HTMLElement} button - The button element that was clicked
  */
-export function copyInstallCommand(command, button) {
+function copyInstallCommand(command, button) {
     navigator.clipboard.writeText(command).then(() => {
         // Show success state
         button.classList.add('copied');
@@ -183,5 +183,17 @@ export function copyInstallCommand(command, button) {
             button.classList.remove('copied');
             button.replaceChildren(...originalChildren);
         }, 2000);
+    });
+}
+
+/**
+ * Initialize copy button event listeners using event delegation
+ */
+export function initCopyButtons() {
+    document.addEventListener('click', (e) => {
+        const button = /** @type {HTMLElement | null} */ (e.target)?.closest('.install-copy-btn');
+        if (button && button instanceof HTMLElement && button.dataset.command) {
+            copyInstallCommand(button.dataset.command, button);
+        }
     });
 }

@@ -34,14 +34,13 @@ import {
 import { escapeHtml, extractAccounts, extractLedgerStats, formatLedgerStats } from './utils.js';
 import { queryPresets, plugins } from './presets.js';
 import { fetchGitHubInfo, fetchBenchmarkStats } from './github.js';
-import { initInstallTabs, copyInstallCommand } from './install.js';
+import { initInstallTabs, initCopyButtons } from './install.js';
 import { initKeyboardShortcuts, showShortcutsModal, hideShortcutsModal } from './shortcuts.js';
 import './style.css';
 import LZString from 'lz-string';
 
 /**
  * @typedef {ReturnType<typeof createEditor>} Editor
- * @typedef {'simple' | 'stocks' | 'crypto' | 'travel' | 'business' | 'errors'} ExampleName
  */
 
 // Global state
@@ -718,7 +717,6 @@ function renderPluginButtons() {
 // Expose shortcuts functions to window for inline handlers
 window.showShortcutsModal = showShortcutsModal;
 window.hideShortcutsModal = hideShortcutsModal;
-window.copyInstallCommand = copyInstallCommand;
 
 /**
  * Initialize the application
@@ -785,6 +783,7 @@ async function init() {
 
     // Initialize install tabs with OS detection
     initInstallTabs();
+    initCopyButtons();
 
     // Initialize keyboard shortcuts
     initKeyboardShortcuts({
@@ -794,6 +793,57 @@ async function init() {
     // Set initial active states
     document.querySelector('.example-tab[data-example="simple"]')?.classList.add('active');
     document.querySelector('.output-tab[data-tab="output"]')?.classList.add('active');
+
+    // Set up event listeners for buttons (replacing inline onclick handlers)
+    initButtonListeners();
+}
+
+/**
+ * Initialize button event listeners (replaces inline onclick handlers)
+ */
+function initButtonListeners() {
+    // Example tabs - use event delegation
+    document.querySelector('.example-tabs')?.addEventListener('click', (e) => {
+        const target = /** @type {HTMLElement | null} */ (e.target);
+        const tab = /** @type {HTMLElement | null} */ (target?.closest('.example-tab'));
+        if (tab && tab.dataset.example) {
+            window.loadExample(/** @type {ExampleName} */ (tab.dataset.example));
+        }
+    });
+
+    // Output tabs - use event delegation
+    document.querySelector('.output-tabs-container')?.addEventListener('click', (e) => {
+        const target = /** @type {HTMLElement | null} */ (e.target);
+        const tab = /** @type {HTMLElement | null} */ (target?.closest('.output-tab'));
+        if (tab && tab.dataset.tab) {
+            window.switchTab(tab.dataset.tab);
+        }
+    });
+
+    // Format button
+    document.getElementById('format-btn')?.addEventListener('click', () => {
+        window.runFormat();
+    });
+
+    // Download button
+    document.getElementById('download-btn')?.addEventListener('click', () => {
+        window.downloadLedger();
+    });
+
+    // Share button
+    document.getElementById('share-btn')?.addEventListener('click', () => {
+        window.shareUrl();
+    });
+
+    // Copy output button
+    document.getElementById('copy-output-btn')?.addEventListener('click', () => {
+        window.copyOutput();
+    });
+
+    // Close shortcuts modal button
+    document.getElementById('close-shortcuts-btn')?.addEventListener('click', () => {
+        hideShortcutsModal();
+    });
 }
 
 // Register service worker for WASM caching
