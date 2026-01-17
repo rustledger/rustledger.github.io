@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { examples, exampleNames } from './examples.js';
+import { examples, exampleNames, isLazyExample } from './examples.js';
 
 describe('examples', () => {
     it('has all expected example names', () => {
@@ -9,14 +9,21 @@ describe('examples', () => {
         expect(exampleNames).toContain('travel');
         expect(exampleNames).toContain('business');
         expect(exampleNames).toContain('errors');
+        expect(exampleNames).toContain('beancount-example');
     });
 
-    it('has corresponding example content for each name', () => {
+    it('has corresponding example content for each inline name', () => {
         for (const name of exampleNames) {
+            if (isLazyExample(name)) continue; // Skip lazy examples
             expect(examples[name]).toBeDefined();
             expect(typeof examples[name]).toBe('string');
             expect(examples[name].length).toBeGreaterThan(0);
         }
+    });
+
+    it('identifies lazy examples correctly', () => {
+        expect(isLazyExample('beancount-example')).toBe(true);
+        expect(isLazyExample('simple')).toBe(false);
     });
 
     describe('simple example', () => {

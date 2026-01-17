@@ -1,6 +1,12 @@
 // Main application entry point
 import { createEditor } from './editor.js';
-import { examples } from './examples.js';
+import {
+    examples,
+    getExample,
+    isLazyExample,
+    loadLazyExample,
+    preloadLazyExamples,
+} from './examples.js';
 import {
     initWasm,
     isWasmReady,
@@ -174,8 +180,6 @@ function onEditorChange(_content) {
  * @param {ExampleName} name
  */
 window.loadExample = async function (name) {
-    if (!examples[name]) return;
-
     // Update active tab and aria-selected
     document.querySelectorAll('.example-tab').forEach((tab) => {
         const tabEl = /** @type {HTMLElement} */ (tab);
@@ -184,9 +188,31 @@ window.loadExample = async function (name) {
         tabEl.setAttribute('aria-selected', String(isActive));
     });
 
+    // Get the example content (sync for inline, async for lazy)
+    let content = getExample(name);
+
+    if (content === null && isLazyExample(name)) {
+        // Show loading state
+        if (editor) {
+            editor.setContent('; Loading example...');
+        }
+
+        try {
+            content = await loadLazyExample(name);
+        } catch (err) {
+            console.error('Failed to load example:', err);
+            if (editor) {
+                editor.setContent('; Failed to load example. Please try again.');
+            }
+            return;
+        }
+    }
+
+    if (!content) return;
+
     // Set editor content
     if (editor) {
-        editor.setContent(examples[name]);
+        editor.setContent(content);
     }
 
     // Validate and show query results
@@ -640,6 +666,9 @@ async function init() {
         // Show query tab and run default query
         showTab('query');
         await window.runQueryPreset('BALANCES');
+
+        // Preload lazy examples in the background
+        preloadLazyExamples();
     } catch (e) {
         const errorMessage = e instanceof Error ? e.message : 'Failed to load WASM module';
         updateFooterStatus('error', undefined, 'WASM failed');
