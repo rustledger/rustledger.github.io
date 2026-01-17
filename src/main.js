@@ -25,7 +25,7 @@ import {
 } from './ui.js';
 import { escapeHtml, extractAccounts, extractLedgerStats, formatLedgerStats } from './utils.js';
 import { queryPresets, plugins } from './presets.js';
-import { fetchGitHubInfo } from './github.js';
+import { fetchGitHubInfo, fetchBenchmarkStats } from './github.js';
 import { initInstallTabs, copyInstallCommand } from './install.js';
 import { initKeyboardShortcuts, showShortcutsModal, hideShortcutsModal } from './shortcuts.js';
 import './style.css';
@@ -641,8 +641,9 @@ async function init() {
     // Load from URL
     loadFromUrl();
 
-    // Fetch GitHub info
+    // Fetch GitHub info and benchmark stats
     fetchGitHubInfo();
+    fetchBenchmarkStats();
 
     // Initialize animations
     initStatsAnimation('stats-section');
