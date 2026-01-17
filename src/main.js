@@ -549,18 +549,27 @@ function renderQueryPresets() {
     const container = document.getElementById('query-options');
     if (!container) return;
 
-    container.innerHTML = queryPresets
-        .map(
-            (preset) => `
-            <button
-                onclick="runQueryPreset('${escapeHtml(preset.query.replace(/'/g, "\\'"))}')"
-                data-query="${escapeHtml(preset.query)}"
-                class="query-btn px-3 py-1 text-xs rounded transition"
-                aria-label="${escapeHtml(preset.ariaLabel)}"
-            >${escapeHtml(preset.label)}</button>
-        `
-        )
-        .join('');
+    // Create buttons with proper event handling (avoid inline handlers with special chars)
+    container.innerHTML = '';
+    queryPresets.forEach((preset) => {
+        const button = document.createElement('button');
+        button.dataset.query = preset.query;
+        button.className = 'query-btn px-3 py-1 text-xs rounded transition';
+        button.setAttribute('aria-label', preset.ariaLabel);
+        button.textContent = preset.label;
+        container.appendChild(button);
+    });
+
+    // Use event delegation for query preset clicks
+    container.addEventListener('click', (e) => {
+        const target = /** @type {HTMLElement} */ (e.target);
+        const button = /** @type {HTMLButtonElement | null} */ (
+            target.closest('button[data-query]')
+        );
+        if (button && button.dataset.query) {
+            window.runQueryPreset(button.dataset.query);
+        }
+    });
 }
 
 /**
