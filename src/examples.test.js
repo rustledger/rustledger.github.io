@@ -100,8 +100,8 @@ describe('examples', () => {
 });
 
 describe('exampleNames', () => {
-    it('contains exactly 6 examples', () => {
-        expect(exampleNames.length).toBe(6);
+    it('contains exactly 7 examples', () => {
+        expect(exampleNames.length).toBe(7);
     });
 
     it('has no duplicates', () => {

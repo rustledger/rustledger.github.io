@@ -1,6 +1,6 @@
 // Example ledger files for the playground
 
-/** @typedef {'simple' | 'stocks' | 'crypto' | 'travel' | 'business' | 'errors'} ExampleName */
+/** @typedef {'simple' | 'stocks' | 'crypto' | 'travel' | 'business' | 'errors' | 'beancount'} ExampleName */
 
 /** @type {Record<ExampleName, string>} */
 export const examples = {
@@ -297,7 +297,375 @@ option "title" "Error Examples"
 2024-13-01 * "Invalid month"
     Expenses:Food       10.00 USD
     Assets:Checking`,
+
+    beancount: `;;; -*- mode: beancount; coding: utf-8; -*-
+;;; Official Beancount Example Ledger
+;;; From: github.com/beancount/beancount/examples/simple/basic.beancount
+;;;
+;;; This is a comprehensive example demonstrating Beancount features
+;;; including multiple accounts, stock trading, mortgages, and more.
+
+* Options
+
+option "title" "Beancount Example Ledger"
+option "operating_currency" "USD"
+option "operating_currency" "CAD"
+
+
+* Account Declarations
+
+1970-01-01 open Assets:UTrade:Account                     USD
+1970-01-01 open Assets:UTrade:Account:AAPL                AAPL
+1970-01-01 open Assets:UTrade:Account:EWJ                 EWJ
+1970-01-01 open Assets:AccountsReceivable
+
+1970-01-01 open Liabilities:BestBank:Mortgage:Loan        USD
+1970-01-01 open Liabilities:Credit-Card:VISA              USD
+1970-01-01 open Liabilities:Condo-Management              USD
+
+1970-01-01 open Equity:Opening-Balances
+
+1970-01-01 open Income:Interest:Checking
+1970-01-01 open Income:Interest:Savings
+1970-01-01 open Income:Dividends
+1970-01-01 open Income:Capital-Gains
+1970-01-01 open Income:Salary:AcmeCo
+
+1970-01-01 open Expenses:Financial:Fees
+1970-01-01 open Expenses:Financial:Commissions
+1970-01-01 open Expenses:Insurance:Life
+1970-01-01 open Expenses:Food:Restaurant
+1970-01-01 open Expenses:Food:Grocery
+1970-01-01 open Expenses:Food:Alcool
+1970-01-01 open Expenses:Communications:Phone
+1970-01-01 open Expenses:Communications:Mail
+1970-01-01 open Expenses:Transportation:Taxi
+1970-01-01 open Expenses:Taxes:US-Federal                 USD
+1970-01-01 open Expenses:Govt-Services                    USD
+1970-01-01 open Expenses:Clothes
+1970-01-01 open Expenses:Car:Gas
+1970-01-01 open Expenses:Sports
+1970-01-01 open Expenses:Sports:Gear
+1970-01-01 open Expenses:Fun:Movie
+1970-01-01 open Expenses:Books
+1970-01-01 open Expenses:Medical
+1970-01-01 open Expenses:Charity
+1970-01-01 open Expenses:Home:Monthly:Condo-Fees
+1970-01-01 open Expenses:Home:Monthly:Loan-Interest
+
+
+* Assets:BestBank:Checking
+
+1970-01-01 open Assets:BestBank:Checking                  USD
+
+;; Pad to opening balance (auto-inserts equity entry)
+2007-12-31 pad Assets:BestBank:Checking   Equity:Opening-Balances
+2008-01-01 balance Assets:BestBank:Checking  1412.24 USD
+
+
+;; Government tax rebate deposit
+2008-01-05 * "GST CANADA" "Deposit from govt for consumer tax rebate"
+  Assets:BestBank:Checking       77.76 USD
+  Expenses:Taxes:US-Federal
+
+;; Salary deposits
+2008-01-10 * "ACME" "Salary paid from employer"
+  Assets:BestBank:Checking        2000.00 USD
+  Income:Salary:AcmeCo           -2000.00 USD
+
+2008-01-25 * "ACME" "Salary paid from employer"
+  Assets:BestBank:Checking        2000.00 USD
+  Income:Salary:AcmeCo
+
+2008-02-10 * "ACME" "Salary paid from employer"
+  Assets:BestBank:Checking        2000.00 USD
+  Income:Salary:AcmeCo
+
+2008-02-25 * "ACME" "Salary paid from employer"
+  Assets:BestBank:Checking        2000.00 USD
+  Income:Salary:AcmeCo
+
+;; ATM withdrawals
+2008-01-12 * "ATM withdrawal - 00044242"
+  Assets:BestBank:Checking    -301.50 USD
+  Expenses:Financial:Fees        1.50 USD
+  Assets:Cash
+
+2008-01-30 * "ATM withdrawal"
+  Assets:BestBank:Checking    -800.00 USD
+  Assets:Cash
+
+;; Insurance payments
+2008-01-02 * "LIFE INSURANCE -- LONDON LIFE"
+  Assets:BestBank:Checking         -42.69 USD
+  Expenses:Insurance:Life
+
+2008-02-02 * "LIFE INSURANCE -- LONDON LIFE"
+  Assets:BestBank:Checking         -42.69 USD
+  Expenses:Insurance:Life
+
+;; Debit card purchase
+2008-01-17 * "Interac Purchase - 1341 - ACCES SPORTS S"
+  Assets:BestBank:Checking      -89.00 USD
+  Expenses:Sports:Gear
+
+;; Monthly bank fee
+2008-01-10 * "MONTHLY FEE"
+  Assets:BestBank:Checking        -4.00 USD
+  Expenses:Financial:Fees
+
+;; Interest earned
+2008-01-12 * "Deposit interest"
+  Assets:BestBank:Checking         0.02 USD
+  Income:Interest:Checking
+
+;; Accounts receivable example
+2008-03-26 * "Bought an iPhone for Gilbert (had to use ATM)"
+  Assets:AccountsReceivable       431.92 USD
+  Expenses:Financial:Fees           3.00 USD
+  Assets:Cash                    -434.92 USD
+
+2008-04-02 * "Gilbert paid back for iPhone"
+  Assets:Cash                     440.00 CAD
+  Assets:AccountsReceivable      -431.92 USD
+  Assets:Cash
+
+2008-02-01 balance Assets:BestBank:Checking   661.49 USD
+
+
+* Assets:BestBank:Savings
+
+1970-01-01 open Assets:BestBank:Savings                   USD
+2007-12-31 pad  Assets:BestBank:Savings   Equity:Opening-Balances
+2008-01-01 balance Assets:BestBank:Savings    12000 USD
+
+;; Savings interest
+2008-01-03 * "DEPOSIT INTEREST"
+  Assets:BestBank:Savings         95.69 USD
+  Income:Interest:Savings
+
+;; Transfer between accounts
+2008-01-29 * "Transfer from checking to savings account"
+  Assets:BestBank:Savings       2000.00 USD
+  Assets:BestBank:Checking
+
+2008-02-03 * "DEPOSIT INTEREST"
+  Assets:BestBank:Savings        102.34 USD
+  Income:Interest:Savings
+
+2008-02-03 * "Transferring money to brokerage account"
+  Assets:BestBank:Savings     -10000.00 USD
+  Assets:UTrade:Account
+
+;; Mortgage payments (principal + interest split)
+2008-01-12 * "MORTGAGE PAYMENT"
+  Assets:BestBank:Savings                  -464.46 USD
+  Liabilities:BestBank:Mortgage:Loan        171.01 USD
+  Expenses:Home:Monthly:Loan-Interest
+
+2008-01-27 * "MORTGAGE PAYMENT"
+  Assets:BestBank:Savings                  -464.46 USD
+  Liabilities:BestBank:Mortgage:Loan        171.01 USD
+  Expenses:Home:Monthly:Loan-Interest
+
+2008-02-12 * "MORTGAGE PAYMENT"
+  Assets:BestBank:Savings                  -464.46 USD
+  Liabilities:BestBank:Mortgage:Loan        171.01 USD
+  Expenses:Home:Monthly:Loan-Interest
+
+2008-03-01 balance Assets:BestBank:Savings    2340.19 USD
+
+
+* Liabilities:Credit-Card:VISA
+
+2007-12-31 pad Liabilities:Credit-Card:VISA  Equity:Opening-Balances
+2008-01-01 balance Liabilities:Credit-Card:VISA  -791.34 USD
+
+;; Credit card payment
+2008-01-22 * "Online Banking payment - 5051 - VISA"
+  Assets:BestBank:Checking     -791.34 USD
+  Liabilities:Credit-Card:VISA
+
+;; Restaurant expenses on credit card
+2008-01-15 * "Cafe Imagination" ""
+  Liabilities:Credit-Card:VISA
+  Expenses:Food:Restaurant        47.00 USD
+
+2008-01-19 * "Soupe Bol" ""
+  Liabilities:Credit-Card:VISA   -21.00 USD
+  Expenses:Food:Restaurant
+
+2008-01-27 * "Scola Pasta" ""
+  Liabilities:Credit-Card:VISA
+  Expenses:Food:Restaurant        51.17 USD
+
+;; Cell phone bill
+2008-01-19 * "FIDO" ""
+  Liabilities:Credit-Card:VISA
+  Expenses:Communications:Phone  121.96 USD
+
+
+* Assets:UTrade:Account (Stock Trading)
+
+2007-12-31 pad Assets:UTrade:Account  Equity:Opening-Balances
+2008-01-01 balance  Assets:UTrade:Account  31273.02 USD
+
+;; Buy Apple stock (cost basis tracking)
+2008-01-08 * "Buy some Apple Computer"
+  Assets:UTrade:Account:AAPL          30 AAPL {185.40 USD}
+  Assets:UTrade:Account
+  Expenses:Financial:Commissions       9.95 USD
+
+;; Dividend payment
+2008-02-02 * "DIVIDEND from AAPL position"
+  Assets:UTrade:Account    0.68 USD
+  Income:Dividends
+
+;; Sell Apple stock (capital gains)
+2008-02-28 * "Sell off my Apple"
+  Assets:UTrade:Account:AAPL   -30 AAPL {185.40 USD} @ 193.02 USD
+  Assets:UTrade:Account       5780.65 USD
+  Expenses:Financial:Commissions      9.95 USD
+  Income:Capital-Gains
+
+;; Buy Japanese ETF
+2008-02-10 * "Buy some japanese ETF from iShares"
+  Assets:UTrade:Account:EWJ          100 EWJ {13.34 USD}
+  Assets:UTrade:Account
+  Expenses:Financial:Commissions      9.95 USD
+
+;; Balance assertions
+2008-03-01 balance  Assets:UTrade:Account       40138.45 USD
+2008-03-01 balance  Assets:UTrade:Account:AAPL  0 AAPL
+2008-03-01 balance  Assets:UTrade:Account:EWJ   100 EWJ
+
+
+* Condo Fees
+
+2007-12-31 pad Liabilities:Condo-Management  Equity:Opening-Balances
+2008-01-01 balance Liabilities:Condo-Management  -41.11 USD
+
+2008-01-01 * "Propri-Manage" ""
+  Expenses:Home:Monthly:Condo-Fees   212.61 USD
+  Liabilities:Condo-Management
+
+2008-01-14 * "(998) Propri-Manage" "cheque sent by snail mail"
+  Liabilities:Condo-Management       800.00 USD
+  Assets:BestBank:Checking
+
+2008-02-01 * "Propri-Manage" ""
+  Expenses:Home:Monthly:Condo-Fees   212.61 USD
+  Liabilities:Condo-Management
+
+2008-03-01 * "Propri-Manage" ""
+  Expenses:Home:Monthly:Condo-Fees   212.61 USD
+  Liabilities:Condo-Management
+
+
+* Assets:Cash & Expenses
+
+1970-01-01 open Assets:Cash
+2007-12-30 pad  Assets:Cash  Equity:Opening-Balances
+
+2007-12-31 balance  Assets:Cash   200 CAD
+2007-12-31 balance  Assets:Cash   300 USD
+
+;; Cash expense distribution
+2008-01-02 * "Distribution of cash expenses"
+  Expenses:Food:Restaurant   300.00 USD
+  Expenses:Food:Alcool       100.00 USD
+  Assets:Cash
+
+2008-02-02 * "Distribution of cash expenses"
+  Expenses:Food:Restaurant   300.00 USD
+  Expenses:Food:Alcool       100.00 USD
+  Assets:Cash
+
+;; Various cash expenses
+2008-02-18 * "DMV" "Renewal of driver's license."
+  Expenses:Govt-Services     110.00 USD
+  Assets:Cash
+
+2008-01-21 * "WHOLE FOODS" ""
+  Expenses:Food:Grocery       54.03 USD
+  Assets:Cash
+
+2008-01-21 * "USPS" "sent package to mom"
+  Expenses:Communications:Mail  4.43 USD
+  Assets:Cash
+
+2008-02-04 * "taxi home from meeting"
+  Expenses:Transportation:Taxi  12.00 USD
+  Assets:Cash
+
+
+* Ski Trip (Tagged Transactions)
+
+pushtag #ski-trip
+
+2008-01-27 * "SUNONO" "fill'er up"
+  Expenses:Car:Gas            40 USD
+  Assets:Cash
+
+2008-01-27 * "SKII" "Lift tickets"
+  Expenses:Sports            120 USD
+  Assets:Cash
+
+2008-01-27 * "Dinner at chalet"
+  Expenses:Food:Restaurant    35.33 USD
+  Assets:Cash
+
+2008-01-28 * "breakfast"
+  Expenses:Food:Restaurant    17.23 USD
+  Assets:Cash
+
+2008-01-28 * "a new hat, it was cold"
+  Expenses:Clothes            40.02 USD
+  Assets:Cash
+
+poptag #ski-trip
+
+
+* Other Expenses
+
+2008-03-03 * "ALDO" "new shoes"
+  Expenses:Clothes           121.20 USD
+  Assets:Cash
+
+2008-02-24 * "AMC" "movies with girlfriend"
+  Expenses:Fun:Movie          24 USD
+  Assets:Cash
+
+2008-03-06 * "Barnes & Noble" "books on accounting"
+  Expenses:Books              74.43 USD
+  Assets:Cash
+
+2008-02-03 * "ITHURTS MEDICAL CENT" "x-ray for broken bones"
+  Expenses:Medical           312.00 USD
+  Assets:Cash
+
+2008-03-02 * "ZEN CENTER" "Donation to Zen center"
+  Expenses:Charity            50 USD
+  Assets:Cash
+
+
+* Final Balances & Prices
+
+2008-03-01 balance  Assets:Cash   200.00 CAD
+2008-03-01 balance  Assets:Cash    30.96 USD
+
+2008-03-15 price USD  1.0934 CAD
+
+2013-07-03 event "location" "New York City"`,
 };
 
 /** @type {ExampleName[]} */
-export const exampleNames = ['simple', 'stocks', 'crypto', 'travel', 'business', 'errors'];
+export const exampleNames = [
+    'simple',
+    'stocks',
+    'crypto',
+    'travel',
+    'business',
+    'errors',
+    'beancount',
+];
