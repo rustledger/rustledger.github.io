@@ -77,6 +77,20 @@ describe('formatNumber', () => {
 describe('fetchWithRetry', () => {
     const originalFetch = globalThis.fetch;
 
+    /**
+     * Create a mock response with headers
+     * @param {number} status
+     * @param {boolean} ok
+     * @param {Record<string, string>} [headerValues]
+     */
+    const createMockResponse = (status, ok, headerValues = {}) => ({
+        ok,
+        status,
+        headers: {
+            get: (name) => headerValues[name] ?? null,
+        },
+    });
+
     beforeEach(() => {
         vi.useFakeTimers();
     });
@@ -87,7 +101,7 @@ describe('fetchWithRetry', () => {
     });
 
     it('returns response on successful fetch', async () => {
-        const mockResponse = { ok: true, status: 200 };
+        const mockResponse = createMockResponse(200, true);
         globalThis.fetch = vi.fn().mockResolvedValue(mockResponse);
 
         const result = await fetchWithRetry('https://example.com');
@@ -96,8 +110,8 @@ describe('fetchWithRetry', () => {
     });
 
     it('retries on 5xx errors', async () => {
-        const mockError = { ok: false, status: 500 };
-        const mockSuccess = { ok: true, status: 200 };
+        const mockError = createMockResponse(500, false);
+        const mockSuccess = createMockResponse(200, true);
         globalThis.fetch = vi
             .fn()
             .mockResolvedValueOnce(mockError)
@@ -112,8 +126,8 @@ describe('fetchWithRetry', () => {
     });
 
     it('retries on 429 rate limit', async () => {
-        const mockRateLimit = { ok: false, status: 429 };
-        const mockSuccess = { ok: true, status: 200 };
+        const mockRateLimit = createMockResponse(429, false);
+        const mockSuccess = createMockResponse(200, true);
         globalThis.fetch = vi
             .fn()
             .mockResolvedValueOnce(mockRateLimit)
@@ -128,7 +142,7 @@ describe('fetchWithRetry', () => {
     });
 
     it('does not retry on 4xx client errors (except 429)', async () => {
-        const mockNotFound = { ok: false, status: 404 };
+        const mockNotFound = createMockResponse(404, false);
         globalThis.fetch = vi.fn().mockResolvedValue(mockNotFound);
 
         const result = await fetchWithRetry('https://example.com');
@@ -138,7 +152,7 @@ describe('fetchWithRetry', () => {
 
     it('retries on network errors', async () => {
         const networkError = new Error('Network error');
-        const mockSuccess = { ok: true, status: 200 };
+        const mockSuccess = createMockResponse(200, true);
         globalThis.fetch = vi
             .fn()
             .mockRejectedValueOnce(networkError)
@@ -169,8 +183,8 @@ describe('fetchWithRetry', () => {
     });
 
     it('uses exponential backoff for delays', async () => {
-        const mockError = { ok: false, status: 500 };
-        const mockSuccess = { ok: true, status: 200 };
+        const mockError = createMockResponse(500, false);
+        const mockSuccess = createMockResponse(200, true);
         globalThis.fetch = vi
             .fn()
             .mockResolvedValueOnce(mockError)
@@ -192,6 +206,39 @@ describe('fetchWithRetry', () => {
 
         expect(result).toBe(mockSuccess);
         expect(globalThis.fetch).toHaveBeenCalledTimes(3);
+    });
+
+    it('respects Retry-After header', async () => {
+        const mockRateLimit = createMockResponse(429, false, { 'Retry-After': '2' });
+        const mockSuccess = createMockResponse(200, true);
+        globalThis.fetch = vi
+            .fn()
+            .mockResolvedValueOnce(mockRateLimit)
+            .mockResolvedValueOnce(mockSuccess);
+
+        const promise = fetchWithRetry('https://example.com', { baseDelay: 100 });
+        // Should wait 2 seconds (2000ms) as per Retry-After header
+        await vi.advanceTimersByTimeAsync(2000);
+        const result = await promise;
+
+        expect(result).toBe(mockSuccess);
+        expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+    });
+
+    it('handles GitHub 403 rate limit response', async () => {
+        const mockRateLimit = createMockResponse(403, false, { 'X-RateLimit-Remaining': '0' });
+        const mockSuccess = createMockResponse(200, true);
+        globalThis.fetch = vi
+            .fn()
+            .mockResolvedValueOnce(mockRateLimit)
+            .mockResolvedValueOnce(mockSuccess);
+
+        const promise = fetchWithRetry('https://example.com', { baseDelay: 100 });
+        await vi.advanceTimersByTimeAsync(100);
+        const result = await promise;
+
+        expect(result).toBe(mockSuccess);
+        expect(globalThis.fetch).toHaveBeenCalledTimes(2);
     });
 });
 

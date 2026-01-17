@@ -332,7 +332,27 @@ const QUERY_PAGE_SIZE = 100;
 let currentQueryResult = null;
 
 /**
- * Render a page of query results
+ * Create a pagination button element
+ * @param {string} label - Button label
+ * @param {number} targetPage - Page to navigate to
+ * @param {boolean} disabled - Whether the button is disabled
+ * @param {string} ariaLabel - Accessibility label
+ * @returns {HTMLButtonElement}
+ */
+function createPaginationButton(label, targetPage, disabled, ariaLabel) {
+    const btn = document.createElement('button');
+    btn.className = `px-2 py-1 rounded ${disabled ? 'text-white/20 cursor-not-allowed' : 'text-white/60 hover:text-white hover:bg-white/10'}`;
+    btn.disabled = disabled;
+    btn.setAttribute('aria-label', ariaLabel);
+    btn.textContent = label;
+    if (!disabled) {
+        btn.addEventListener('click', () => window.goToQueryPage(targetPage));
+    }
+    return btn;
+}
+
+/**
+ * Render a page of query results using DocumentFragment for performance
  * @param {number} page - Page number (0-indexed)
  */
 function renderQueryPage(page) {
@@ -348,49 +368,93 @@ function renderQueryPage(page) {
     const endIdx = Math.min(startIdx + QUERY_PAGE_SIZE, totalRows);
     const pageRows = rows.slice(startIdx, endIdx);
 
-    let html = '<table class="w-full text-left" role="grid">';
-    html +=
-        '<thead><tr>' +
-        headers
-            .map(
-                (h) =>
-                    `<th scope="col" class="px-2 py-1 text-white/50 border-b border-white/10">${escapeHtml(String(h))}</th>`
-            )
-            .join('') +
-        '</tr></thead>';
-    html += '<tbody>';
+    // Use DocumentFragment for batched DOM operations
+    const fragment = document.createDocumentFragment();
+
+    // Create table
+    const table = document.createElement('table');
+    table.className = 'w-full text-left';
+    table.setAttribute('role', 'grid');
+
+    // Create thead
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    headers.forEach((h) => {
+        const th = document.createElement('th');
+        th.scope = 'col';
+        th.className = 'px-2 py-1 text-white/50 border-b border-white/10';
+        th.textContent = String(h);
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Create tbody with rows
+    const tbody = document.createElement('tbody');
     pageRows.forEach((row) => {
-        html += '<tr class="hover:bg-white/5">';
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-white/5';
+
         if (Array.isArray(row)) {
             row.forEach((val) => {
-                html += `<td class="px-2 py-1 border-b border-white/5">${formatCell(val)}</td>`;
+                const td = document.createElement('td');
+                td.className = 'px-2 py-1 border-b border-white/5';
+                td.innerHTML = formatCell(val);
+                tr.appendChild(td);
             });
         } else {
             headers.forEach((h, i) => {
                 const val = row[h] !== undefined ? row[h] : row[i];
-                html += `<td class="px-2 py-1 border-b border-white/5">${formatCell(val)}</td>`;
+                const td = document.createElement('td');
+                td.className = 'px-2 py-1 border-b border-white/5';
+                td.innerHTML = formatCell(val);
+                tr.appendChild(td);
             });
         }
-        html += '</tr>';
+        tbody.appendChild(tr);
     });
-    html += '</tbody></table>';
+    table.appendChild(tbody);
+    fragment.appendChild(table);
 
-    // Stats and pagination controls
-    html += '<div class="mt-3 flex items-center justify-between text-xs">';
-    html += `<span class="text-white/30">Showing ${startIdx + 1}-${endIdx} of ${totalRows} rows (${elapsed}ms)</span>`;
+    // Create stats and pagination container
+    const statsContainer = document.createElement('div');
+    statsContainer.className = 'mt-3 flex items-center justify-between text-xs';
 
+    const statsSpan = document.createElement('span');
+    statsSpan.className = 'text-white/50';
+    statsSpan.textContent = `Showing ${startIdx + 1}-${endIdx} of ${totalRows} rows (${elapsed}ms)`;
+    statsContainer.appendChild(statsSpan);
+
+    // Pagination controls
     if (totalPages > 1) {
-        html += '<div class="flex items-center gap-2">';
-        html += `<button onclick="window.goToQueryPage(0)" class="px-2 py-1 rounded ${page === 0 ? 'text-white/20 cursor-not-allowed' : 'text-white/60 hover:text-white hover:bg-white/10'}" ${page === 0 ? 'disabled' : ''} aria-label="First page">«</button>`;
-        html += `<button onclick="window.goToQueryPage(${page - 1})" class="px-2 py-1 rounded ${page === 0 ? 'text-white/20 cursor-not-allowed' : 'text-white/60 hover:text-white hover:bg-white/10'}" ${page === 0 ? 'disabled' : ''} aria-label="Previous page">‹</button>`;
-        html += `<span class="text-white/50 px-2">Page ${page + 1} of ${totalPages}</span>`;
-        html += `<button onclick="window.goToQueryPage(${page + 1})" class="px-2 py-1 rounded ${page >= totalPages - 1 ? 'text-white/20 cursor-not-allowed' : 'text-white/60 hover:text-white hover:bg-white/10'}" ${page >= totalPages - 1 ? 'disabled' : ''} aria-label="Next page">›</button>`;
-        html += `<button onclick="window.goToQueryPage(${totalPages - 1})" class="px-2 py-1 rounded ${page >= totalPages - 1 ? 'text-white/20 cursor-not-allowed' : 'text-white/60 hover:text-white hover:bg-white/10'}" ${page >= totalPages - 1 ? 'disabled' : ''} aria-label="Last page">»</button>`;
-        html += '</div>';
+        const paginationDiv = document.createElement('div');
+        paginationDiv.className = 'flex items-center gap-2';
+
+        paginationDiv.appendChild(createPaginationButton('«', 0, page === 0, 'First page'));
+        paginationDiv.appendChild(
+            createPaginationButton('‹', page - 1, page === 0, 'Previous page')
+        );
+
+        const pageSpan = document.createElement('span');
+        pageSpan.className = 'text-white/50 px-2';
+        pageSpan.textContent = `Page ${page + 1} of ${totalPages}`;
+        paginationDiv.appendChild(pageSpan);
+
+        paginationDiv.appendChild(
+            createPaginationButton('›', page + 1, page >= totalPages - 1, 'Next page')
+        );
+        paginationDiv.appendChild(
+            createPaginationButton('»', totalPages - 1, page >= totalPages - 1, 'Last page')
+        );
+
+        statsContainer.appendChild(paginationDiv);
     }
 
-    html += '</div>';
-    queryOutput.innerHTML = html;
+    fragment.appendChild(statsContainer);
+
+    // Clear and append all at once
+    queryOutput.innerHTML = '';
+    queryOutput.appendChild(fragment);
 }
 
 /**
@@ -605,18 +669,27 @@ function renderPluginButtons() {
     const container = document.getElementById('plugin-options');
     if (!container) return;
 
-    container.innerHTML = plugins
-        .map(
-            (plugin) => `
-            <button
-                onclick="togglePlugin('${plugin}')"
-                data-plugin="${plugin}"
-                class="plugin-btn px-3 py-1 text-xs rounded transition"
-                aria-pressed="false"
-            >${plugin}</button>
-        `
-        )
-        .join('');
+    // Clear and create buttons using DOM API (avoid innerHTML with dynamic data)
+    container.innerHTML = '';
+    plugins.forEach((plugin) => {
+        const button = document.createElement('button');
+        button.dataset.plugin = plugin;
+        button.className = 'plugin-btn px-3 py-1 text-xs rounded transition';
+        button.setAttribute('aria-pressed', 'false');
+        button.textContent = plugin;
+        container.appendChild(button);
+    });
+
+    // Use event delegation for plugin clicks
+    container.addEventListener('click', (e) => {
+        const target = /** @type {HTMLElement} */ (e.target);
+        const button = /** @type {HTMLButtonElement | null} */ (
+            target.closest('button[data-plugin]')
+        );
+        if (button && button.dataset.plugin) {
+            window.togglePlugin(button.dataset.plugin);
+        }
+    });
 }
 
 // Expose shortcuts functions to window for inline handlers

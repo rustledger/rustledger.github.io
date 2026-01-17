@@ -172,31 +172,67 @@ export function updateFooterStatus(status, version, errorMessage) {
         </svg>
     </button>`;
 
-    const spinningIcon = `<svg class="w-3.5 h-3.5 inline-block animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-    </svg>`;
+    // Helper to create a span with class and text
+    const createSpan = (/** @type {string} */ className, /** @type {string} */ text) => {
+        const span = document.createElement('span');
+        span.className = className;
+        span.textContent = text;
+        return span;
+    };
+
+    // Clear and rebuild footer content safely (avoid innerHTML with user data)
+    footerStatus.innerHTML = '';
+    footerStatus.className = 'text-xs';
 
     switch (status) {
         case 'loading':
-            footerStatus.innerHTML = '<span class="text-white/30">Loading...</span>';
+            footerStatus.appendChild(createSpan('text-white/30', 'Loading...'));
             break;
-        case 'ready':
-            footerStatus.innerHTML = `<span class="text-green-400">✓ Ready</span> <span class="text-orange-400">(rustledger ${currentWasmVersion || 'unknown'})</span>${refreshButton}`;
-            footerStatus.className = 'text-xs';
+        case 'ready': {
+            footerStatus.appendChild(createSpan('text-green-400', '✓ Ready'));
+            footerStatus.appendChild(document.createTextNode(' '));
+            footerStatus.appendChild(
+                createSpan('text-orange-400', `(rustledger ${currentWasmVersion || 'unknown'})`)
+            );
+            // Add refresh button (safe static HTML)
+            const refreshContainer = document.createElement('span');
+            refreshContainer.innerHTML = refreshButton;
+            footerStatus.appendChild(refreshContainer);
             attachUpdateCheckHandler();
             break;
-        case 'checking':
-            footerStatus.innerHTML = `<span class="text-green-400">✓ Ready</span> <span class="text-orange-400">(rustledger ${currentWasmVersion || 'unknown'})</span> <span class="ml-2 text-white/40">${spinningIcon}</span>`;
-            footerStatus.className = 'text-xs';
+        }
+        case 'checking': {
+            footerStatus.appendChild(createSpan('text-green-400', '✓ Ready'));
+            footerStatus.appendChild(document.createTextNode(' '));
+            footerStatus.appendChild(
+                createSpan('text-orange-400', `(rustledger ${currentWasmVersion || 'unknown'})`)
+            );
+            const spinnerSpan = document.createElement('span');
+            spinnerSpan.className = 'ml-2 text-white/40';
+            spinnerSpan.innerHTML =
+                '<svg class="w-3.5 h-3.5 inline-block animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>';
+            footerStatus.appendChild(spinnerSpan);
             break;
-        case 'update-available':
-            footerStatus.innerHTML = `<span class="text-green-400">✓ Ready</span> <span class="text-orange-400">(rustledger ${currentWasmVersion || 'unknown'})</span> <button id="reload-btn" class="ml-2 text-yellow-400 hover:text-yellow-300 transition text-xs underline">Update to ${errorMessage}</button>`;
-            footerStatus.className = 'text-xs';
+        }
+        case 'update-available': {
+            footerStatus.appendChild(createSpan('text-green-400', '✓ Ready'));
+            footerStatus.appendChild(document.createTextNode(' '));
+            footerStatus.appendChild(
+                createSpan('text-orange-400', `(rustledger ${currentWasmVersion || 'unknown'})`)
+            );
+            const updateBtn = document.createElement('button');
+            updateBtn.id = 'reload-btn';
+            updateBtn.className =
+                'ml-2 text-yellow-400 hover:text-yellow-300 transition text-xs underline';
+            updateBtn.textContent = `Update to ${errorMessage || 'latest'}`;
+            footerStatus.appendChild(updateBtn);
             attachReloadHandler();
             break;
+        }
         case 'error':
-            footerStatus.innerHTML = `<span class="text-red-400">✗ ${errorMessage || 'Failed to load'}</span>`;
-            footerStatus.className = 'text-xs';
+            footerStatus.appendChild(
+                createSpan('text-red-400', `✗ ${errorMessage || 'Failed to load'}`)
+            );
             break;
     }
 }

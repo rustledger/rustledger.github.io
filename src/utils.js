@@ -89,7 +89,40 @@ export function formatNumber(num) {
 }
 
 /**
+ * Get the retry delay from response headers or calculate exponential backoff
+ * @param {Response} response - The response object
+ * @param {number} attempt - Current attempt number (0-indexed)
+ * @param {number} baseDelay - Base delay in ms
+ * @returns {number} - Delay in ms
+ */
+function getRetryDelay(response, attempt, baseDelay) {
+    // Check for Retry-After header (in seconds)
+    const retryAfter = response.headers.get('Retry-After');
+    if (retryAfter) {
+        const seconds = parseInt(retryAfter, 10);
+        if (!isNaN(seconds)) {
+            return seconds * 1000;
+        }
+    }
+
+    // Check for GitHub's X-RateLimit-Reset header (Unix timestamp)
+    const resetTime = response.headers.get('X-RateLimit-Reset');
+    if (resetTime) {
+        const resetTimestamp = parseInt(resetTime, 10) * 1000;
+        const now = Date.now();
+        if (resetTimestamp > now) {
+            // Wait until reset time plus a small buffer
+            return Math.min(resetTimestamp - now + 1000, 60000);
+        }
+    }
+
+    // Default exponential backoff
+    return baseDelay * Math.pow(2, attempt);
+}
+
+/**
  * Fetch with retry and exponential backoff
+ * Respects Retry-After and GitHub X-RateLimit headers
  * @param {string} url - URL to fetch
  * @param {object} [options] - Fetch options
  * @param {number} [options.maxRetries=3] - Maximum number of retries
@@ -106,6 +139,17 @@ export async function fetchWithRetry(url, options = {}) {
         try {
             const response = await fetch(url, fetchOptions);
 
+            // Check if we're approaching GitHub rate limit
+            const remaining = response.headers.get('X-RateLimit-Remaining');
+            if (remaining && parseInt(remaining, 10) === 0 && response.status === 403) {
+                // Rate limited - treat like 429
+                if (attempt < maxRetries) {
+                    const delay = getRetryDelay(response, attempt, baseDelay);
+                    await new Promise((resolve) => setTimeout(resolve, delay));
+                    continue;
+                }
+            }
+
             // Don't retry on client errors (4xx) except 429 (rate limit)
             if (response.status >= 400 && response.status < 500 && response.status !== 429) {
                 return response;
@@ -114,7 +158,7 @@ export async function fetchWithRetry(url, options = {}) {
             // Retry on server errors (5xx) or rate limiting (429)
             if (response.status >= 500 || response.status === 429) {
                 if (attempt < maxRetries) {
-                    const delay = baseDelay * Math.pow(2, attempt);
+                    const delay = getRetryDelay(response, attempt, baseDelay);
                     await new Promise((resolve) => setTimeout(resolve, delay));
                     continue;
                 }

@@ -3,6 +3,10 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; font-src 'self'"
+        />
         <title>rustledger - Drop in Rust replacement for Beancount</title>
         <meta
             name="description"
@@ -120,7 +124,7 @@
         <!-- Hero -->
         <section class="min-h-[90vh] flex items-center justify-center px-6 pt-20">
             <div class="max-w-3xl mx-auto text-center">
-                <p class="text-white/40 text-sm uppercase tracking-widest mb-6">
+                <p class="text-white/50 text-sm uppercase tracking-widest mb-6">
                     Beancount, rewritten in Rust
                 </p>
                 <h1 class="text-5xl md:text-6xl font-bold tracking-tight mb-6">
@@ -1049,11 +1053,12 @@
                         <input
                             type="text"
                             id="query-text"
-                            class="mono w-full bg-transparent text-sm text-white/90 placeholder-white/30 outline-none"
+                            class="mono w-full bg-transparent text-sm text-white/90 placeholder-white/40 outline-none"
                             placeholder="Enter BQL query..."
                             onkeydown="if (event.key === 'Enter') runQueryFromInput();"
                             oninput="updateQueryButtons()"
                             aria-label="BQL Query"
+                            aria-keyshortcuts="Enter"
                         />
                     </div>
 
@@ -1102,7 +1107,7 @@
                         class="flex items-center gap-2 px-3 py-2 border-t border-white/10 bg-white/5"
                     >
                         <div class="flex-1"></div>
-                        <span id="footer-status" class="text-xs text-white/30">Loading...</span>
+                        <span id="footer-status" class="text-xs text-white/50">Loading...</span>
                     </div>
                 </div>
             </div>
@@ -1206,7 +1211,7 @@
                                 >25x</span
                             >
                         </div>
-                        <div class="text-white/40 text-sm">Faster</div>
+                        <div class="text-white/50 text-sm">Faster</div>
                     </div>
                     <div>
                         <div class="text-4xl font-bold mb-2">
@@ -1214,7 +1219,7 @@
                                 >20</span
                             >
                         </div>
-                        <div class="text-white/40 text-sm">Built-in plugins</div>
+                        <div class="text-white/50 text-sm">Built-in plugins</div>
                     </div>
                     <div>
                         <div class="text-4xl font-bold mb-2">
@@ -1222,7 +1227,7 @@
                                 >7</span
                             >
                         </div>
-                        <div class="text-white/40 text-sm">Booking methods</div>
+                        <div class="text-white/50 text-sm">Booking methods</div>
                     </div>
                     <div>
                         <div class="text-4xl font-bold mb-2">
@@ -1233,7 +1238,7 @@
                                 >100%</span
                             >
                         </div>
-                        <div class="text-white/40 text-sm">Plain text</div>
+                        <div class="text-white/50 text-sm">Plain text</div>
                     </div>
                 </div>
             </div>
@@ -1389,7 +1394,7 @@
                     </table>
                 </div>
 
-                <p class="text-center text-white/40 text-sm mt-10">
+                <p class="text-center text-white/50 text-sm mt-10">
                     Your existing .beancount files work without changes
                 </p>
             </div>
