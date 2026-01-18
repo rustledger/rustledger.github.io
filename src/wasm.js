@@ -7,6 +7,11 @@ import { WASM_MAX_RETRIES, WASM_BASE_DELAY } from './config.js';
  * @typedef {{ formatted: string | null, error: string | null, errors?: Array<{line: number, message: string}> }} FormatResult
  * @typedef {{ output: string, error: string | null, rows?: any[][], columns?: string[] }} QueryResult
  * @typedef {{ text: string, category: string }} Completion
+ * @typedef {{ label: string, kind: string, detail?: string, insertText?: string }} EditorCompletion
+ * @typedef {{ completions: EditorCompletion[], context: string }} EditorCompletionResult
+ * @typedef {{ line: number, character: number }} EditorLocation
+ * @typedef {{ contents: string, range?: { start: EditorLocation, end: EditorLocation } }} EditorHoverInfo
+ * @typedef {{ name: string, detail?: string, kind: string, range: { start: EditorLocation, end: EditorLocation }, children?: EditorDocumentSymbol[], deprecated?: boolean }} EditorDocumentSymbol
  */
 
 /** @type {Worker | null} */
@@ -268,6 +273,68 @@ export async function getBqlCompletions(text, cursorPos) {
     if (!wasmReady) return null;
     try {
         return await sendMessage('bqlCompletions', { text, cursorPos });
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Get editor completions at a position (async)
+ * @param {string} source
+ * @param {number} line - 0-indexed line number
+ * @param {number} character - 0-indexed character offset
+ * @returns {Promise<EditorCompletionResult | null>}
+ */
+export async function getCompletions(source, line, character) {
+    if (!wasmReady) return null;
+    try {
+        return await sendMessage('getCompletions', { source, line, character });
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Get hover info at a position (async)
+ * @param {string} source
+ * @param {number} line - 0-indexed line number
+ * @param {number} character - 0-indexed character offset
+ * @returns {Promise<EditorHoverInfo | null>}
+ */
+export async function getHoverInfo(source, line, character) {
+    if (!wasmReady) return null;
+    try {
+        return await sendMessage('getHoverInfo', { source, line, character });
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Get definition location at a position (async)
+ * @param {string} source
+ * @param {number} line - 0-indexed line number
+ * @param {number} character - 0-indexed character offset
+ * @returns {Promise<EditorLocation | null>}
+ */
+export async function getDefinition(source, line, character) {
+    if (!wasmReady) return null;
+    try {
+        return await sendMessage('getDefinition', { source, line, character });
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Get document symbols (async)
+ * @param {string} source
+ * @returns {Promise<EditorDocumentSymbol[] | null>}
+ */
+export async function getDocumentSymbols(source) {
+    if (!wasmReady) return null;
+    try {
+        return await sendMessage('getDocumentSymbols', { source });
     } catch {
         return null;
     }

@@ -36,6 +36,7 @@ import { queryPresets, plugins } from './presets.js';
 import { fetchGitHubInfo, fetchBenchmarkStats } from './github.js';
 import { initInstallTabs, initCopyButtons } from './install.js';
 import { initKeyboardShortcuts, showShortcutsModal, hideShortcutsModal } from './shortcuts.js';
+import { updateSymbols, initSymbolsPanel, clearSymbolsPanel } from './symbols.js';
 import './style.css';
 import LZString from 'lz-string';
 
@@ -90,15 +91,10 @@ async function liveValidate() {
         errorLines.clear();
         errorMessages.clear();
 
-        // Extract accounts for autocomplete
+        // Extract accounts for stats display
         const accounts = extractAccounts(source);
         knownAccounts.clear();
         accounts.forEach((a) => knownAccounts.add(a));
-
-        // Update editor's known accounts for autocomplete
-        if (editor.setKnownAccounts) {
-            editor.setKnownAccounts(knownAccounts);
-        }
 
         // Update query input with editor content for validation
         const queryInput = document.getElementById('query-text');
@@ -160,6 +156,12 @@ async function liveValidate() {
 
         // Update plugin button states
         updatePluginButtons(source);
+
+        // Update symbols panel if visible
+        const symbolsPanel = document.getElementById('symbols-panel');
+        if (symbolsPanel && !symbolsPanel.classList.contains('hidden')) {
+            updateSymbols(source, symbolsPanel, navigateToPosition);
+        }
     } catch (err) {
         if (statusTab) statusTab.textContent = 'Error';
         console.error('Validation error:', err);
@@ -237,6 +239,29 @@ window.loadExample = async function (name) {
 };
 
 /**
+ * Navigate editor to a specific line and character
+ * @param {number} line - 0-indexed line number
+ * @param {number} character - 0-indexed character offset
+ */
+function navigateToPosition(line, character) {
+    if (!editor || !editor.view) return;
+
+    const view = editor.view;
+    const targetLine = view.state.doc.line(line + 1); // 1-indexed
+    const targetPos = targetLine.from + character;
+
+    view.dispatch({
+        selection: { anchor: targetPos },
+        effects: [
+            // @ts-ignore - scrollIntoView is available
+            view.constructor.scrollIntoView(targetPos, { y: 'center' }),
+        ],
+    });
+
+    view.focus();
+}
+
+/**
  * Switch output tabs
  * @param {string} tabName
  */
@@ -255,6 +280,7 @@ function showTab(tabName) {
     const pluginOptions = document.getElementById('plugin-options');
     const output = document.getElementById('output');
     const queryOutput = document.getElementById('query-output');
+    const symbolsPanel = document.getElementById('symbols-panel');
 
     queryInput?.classList.add('hidden');
     queryOptions?.classList.add('hidden');
@@ -267,14 +293,22 @@ function showTab(tabName) {
     } else if (tabName === 'plugin') {
         pluginOptions?.classList.remove('hidden');
         if (editor) updatePluginButtons(editor.getContent());
+    } else if (tabName === 'symbols') {
+        // Initialize symbols panel if needed
+        if (symbolsPanel && editor) {
+            initSymbolsPanel(symbolsPanel, () => editor?.getContent() || '', navigateToPosition);
+        }
     }
 
     // Show corresponding content
     output?.classList.add('hidden');
     queryOutput?.classList.add('hidden');
+    symbolsPanel?.classList.add('hidden');
 
     if (tabName === 'query') {
         queryOutput?.classList.remove('hidden');
+    } else if (tabName === 'symbols') {
+        symbolsPanel?.classList.remove('hidden');
     } else {
         output?.classList.remove('hidden');
     }
@@ -891,6 +925,9 @@ window.addEventListener('pagehide', () => {
         editor.destroy();
         editor = null;
     }
+
+    // Clear symbols panel state
+    clearSymbolsPanel();
 
     // Terminate WASM worker
     terminateWorker();

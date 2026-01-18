@@ -1,6 +1,5 @@
 // @ts-check
 import { EditorState, RangeSetBuilder } from '@codemirror/state';
-import { escapeHtml } from './utils.js';
 import {
     EditorView,
     keymap,
@@ -9,10 +8,13 @@ import {
     highlightActiveLineGutter,
     Decoration,
     ViewPlugin,
+    hoverTooltip,
 } from '@codemirror/view';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { syntaxHighlighting, HighlightStyle, StreamLanguage } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
+import { autocompletion, completionKeymap } from '@codemirror/autocomplete';
+import { getCompletions, getHoverInfo, getDefinition } from './wasm.js';
 
 /**
  * @typedef {import('@codemirror/view').ViewUpdate} ViewUpdate
@@ -250,157 +252,128 @@ const errorLineDecoration = EditorView.baseTheme({
     },
 });
 
-/**
- * @typedef {{
- *   dropdown: HTMLDivElement | null,
- *   items: string[],
- *   selectedIndex: number,
- *   startPos: number,
- *   active: boolean
- * }} AutocompleteState
- */
-
-/** @type {AutocompleteState} */
-const accountAutocomplete = {
-    dropdown: null,
-    items: [],
-    selectedIndex: -1,
-    startPos: 0,
-    active: false,
+// Map WASM completion kinds to CodeMirror types
+/** @type {Record<string, string>} */
+const completionKindMap = {
+    keyword: 'keyword',
+    account: 'variable',
+    accountsegment: 'variable',
+    currency: 'constant',
+    payee: 'text',
+    date: 'text',
+    text: 'text',
 };
 
-/** Create account autocomplete dropdown */
-function createAccountAutocompleteDropdown() {
-    if (accountAutocomplete.dropdown) return;
-
-    const dropdown = document.createElement('div');
-    dropdown.className = 'editor-autocomplete hidden';
-    document.body.appendChild(dropdown);
-    accountAutocomplete.dropdown = dropdown;
-}
-
 /**
- * Show account autocomplete
- * @param {EditorView} view
- * @param {string[]} accounts
- * @param {string} filter
- * @param {number} startPos
+ * Create WASM-powered autocompletion extension
+ * @param {() => string} getSource
  */
-function showAccountAutocomplete(view, accounts, filter, startPos) {
-    if (!accountAutocomplete.dropdown) createAccountAutocompleteDropdown();
+function beancountCompletions(getSource) {
+    return autocompletion({
+        override: [
+            async (context) => {
+                const pos = context.pos;
+                const line = context.state.doc.lineAt(pos);
+                const lineNum = line.number - 1; // 0-indexed for WASM
+                const character = pos - line.from;
 
-    const dropdown = /** @type {HTMLDivElement} */ (accountAutocomplete.dropdown);
-    const lowerFilter = filter.toLowerCase();
+                const result = await getCompletions(getSource(), lineNum, character);
+                if (!result?.completions?.length) return null;
 
-    // Filter accounts
-    accountAutocomplete.items = accounts
-        .filter((a) => a.toLowerCase().includes(lowerFilter))
-        .slice(0, 10);
+                const word = context.matchBefore(/[\w:"-]*/);
 
-    if (accountAutocomplete.items.length === 0) {
-        hideAccountAutocomplete();
-        return;
-    }
-
-    accountAutocomplete.selectedIndex = 0;
-    accountAutocomplete.startPos = startPos;
-    accountAutocomplete.active = true;
-
-    // Render items
-    dropdown.innerHTML = accountAutocomplete.items
-        .map((item, idx) => {
-            const parts = item.split(':');
-            const coloredParts = parts
-                .map((part, i) => {
-                    const colors = ['#22d3ee', '#5eead4', '#6ee7b7', '#fcd34d', '#fdba74'];
-                    const color = colors[Math.min(i, colors.length - 1)];
-                    return `<span style="color: ${color}">${escapeHtml(part)}</span>`;
-                })
-                .join('<span style="color: rgba(255,255,255,0.5)">:</span>');
-
-            return `<div class="editor-autocomplete-item ${idx === 0 ? 'selected' : ''}" data-index="${idx}">${coloredParts}</div>`;
-        })
-        .join('');
-
-    // Position dropdown
-    const cursorCoords = view.coordsAtPos(view.state.selection.main.head);
-    if (cursorCoords) {
-        dropdown.style.left = `${cursorCoords.left}px`;
-        dropdown.style.top = `${cursorCoords.bottom + 4}px`;
-    }
-
-    dropdown.classList.remove('hidden');
-
-    // Add click handlers
-    dropdown.querySelectorAll('.editor-autocomplete-item').forEach((el) => {
-        el.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            const idx = parseInt(/** @type {HTMLElement} */ (el).dataset.index || '0');
-            selectAccountAutocompleteItem(view, idx);
-        });
+                return {
+                    from: word?.from ?? pos,
+                    options: result.completions.map((c) => ({
+                        label: c.label,
+                        type: completionKindMap[c.kind] || 'text',
+                        detail: c.detail,
+                        apply: c.insertText || c.label,
+                    })),
+                    validFor: /[\w:"-]*/,
+                };
+            },
+        ],
+        activateOnTyping: true,
     });
 }
 
-/** Hide account autocomplete */
-function hideAccountAutocomplete() {
-    if (accountAutocomplete.dropdown) {
-        accountAutocomplete.dropdown.classList.add('hidden');
-    }
-    accountAutocomplete.active = false;
-    accountAutocomplete.items = [];
-    accountAutocomplete.selectedIndex = -1;
+/**
+ * Create WASM-powered hover tooltip extension
+ * @param {() => string} getSource
+ */
+function beancountHover(getSource) {
+    return hoverTooltip(
+        async (view, pos) => {
+            const line = view.state.doc.lineAt(pos);
+            const lineNum = line.number - 1;
+            const character = pos - line.from;
+
+            const info = await getHoverInfo(getSource(), lineNum, character);
+            if (!info) return null;
+
+            // Calculate positions from range if provided
+            let startPos = pos,
+                endPos = pos;
+            if (info.range) {
+                const startLine = view.state.doc.line(info.range.start.line + 1);
+                startPos = startLine.from + info.range.start.character;
+                const endLine = view.state.doc.line(info.range.end.line + 1);
+                endPos = endLine.from + info.range.end.character;
+            }
+
+            return {
+                pos: startPos,
+                end: endPos,
+                above: true,
+                create: () => {
+                    const dom = document.createElement('div');
+                    dom.className = 'cm-hover-tooltip';
+                    dom.textContent = info.contents;
+                    return { dom };
+                },
+            };
+        },
+        { hoverTime: 300 }
+    );
 }
 
 /**
- * Select account autocomplete item
- * @param {EditorView} view
- * @param {number} index
+ * Create WASM-powered go-to-definition extension (Ctrl/Cmd+Click)
+ * @param {() => string} getSource
  */
-function selectAccountAutocompleteItem(view, index) {
-    if (index < 0 || index >= accountAutocomplete.items.length) return;
+function beancountGoToDefinition(getSource) {
+    return EditorView.domEventHandlers({
+        mousedown: (event, view) => {
+            if (!event.ctrlKey && !event.metaKey) return false;
 
-    const item = accountAutocomplete.items[index];
-    const from = accountAutocomplete.startPos;
-    const to = view.state.selection.main.head;
+            const pos = view.posAtCoords({ x: event.clientX, y: event.clientY });
+            if (pos === null) return false;
 
-    view.dispatch({
-        changes: { from, to, insert: item },
-        selection: { anchor: from + item.length },
-    });
+            const line = view.state.doc.lineAt(pos);
+            const lineNum = line.number - 1;
+            const character = pos - line.from;
 
-    hideAccountAutocomplete();
-}
+            // Fire and forget - async navigation
+            getDefinition(getSource(), lineNum, character).then((def) => {
+                if (!def) return;
 
-/**
- * Update autocomplete selection
- * @param {number} direction
- */
-function updateAccountAutocompleteSelection(direction) {
-    if (accountAutocomplete.items.length === 0) return;
+                // Navigate to definition
+                const targetLine = view.state.doc.line(def.line + 1);
+                const targetPos = targetLine.from + def.character;
 
-    accountAutocomplete.selectedIndex += direction;
-    if (accountAutocomplete.selectedIndex < 0) {
-        accountAutocomplete.selectedIndex = accountAutocomplete.items.length - 1;
-    }
-    if (accountAutocomplete.selectedIndex >= accountAutocomplete.items.length) {
-        accountAutocomplete.selectedIndex = 0;
-    }
+                view.dispatch({
+                    selection: { anchor: targetPos },
+                    effects: EditorView.scrollIntoView(targetPos, { y: 'center' }),
+                });
+            });
 
-    // Update visual selection
-    const dropdown = accountAutocomplete.dropdown;
-    if (!dropdown) return;
-    dropdown.querySelectorAll('.editor-autocomplete-item').forEach((el, idx) => {
-        if (idx === accountAutocomplete.selectedIndex) {
-            el.classList.add('selected');
-            el.scrollIntoView({ block: 'nearest' });
-        } else {
-            el.classList.remove('selected');
-        }
+            // Prevent default but don't block - navigation happens async
+            event.preventDefault();
+            return true;
+        },
     });
 }
-
-/** @type {Set<string>} Stored accounts for autocomplete (will be set from main.js) */
-let knownAccountsRef = new Set();
 
 /**
  * Create editor instance
@@ -415,91 +388,8 @@ export function createEditor(container, initialContent, onChange) {
         }
     });
 
-    // Custom keymap for autocomplete
-    const autocompleteKeymap = keymap.of([
-        {
-            key: 'ArrowDown',
-            run: (_view) => {
-                if (accountAutocomplete.active) {
-                    updateAccountAutocompleteSelection(1);
-                    return true;
-                }
-                return false;
-            },
-        },
-        {
-            key: 'ArrowUp',
-            run: (_view) => {
-                if (accountAutocomplete.active) {
-                    updateAccountAutocompleteSelection(-1);
-                    return true;
-                }
-                return false;
-            },
-        },
-        {
-            key: 'Enter',
-            run: (view) => {
-                if (accountAutocomplete.active && accountAutocomplete.selectedIndex >= 0) {
-                    selectAccountAutocompleteItem(view, accountAutocomplete.selectedIndex);
-                    return true;
-                }
-                return false;
-            },
-        },
-        {
-            key: 'Tab',
-            run: (view) => {
-                if (accountAutocomplete.active && accountAutocomplete.items.length > 0) {
-                    selectAccountAutocompleteItem(
-                        view,
-                        Math.max(0, accountAutocomplete.selectedIndex)
-                    );
-                    return true;
-                }
-                return false;
-            },
-        },
-        {
-            key: 'Escape',
-            run: (_view) => {
-                if (accountAutocomplete.active) {
-                    hideAccountAutocomplete();
-                    return true;
-                }
-                return false;
-            },
-        },
-    ]);
-
-    // Account autocomplete trigger on typing
-    const autocompleteUpdateListener = EditorView.updateListener.of((update) => {
-        if (!update.docChanged) return;
-
-        const view = update.view;
-        const pos = view.state.selection.main.head;
-        const line = view.state.doc.lineAt(pos);
-        const lineText = line.text;
-        const colInLine = pos - line.from;
-
-        // Find start of current word (looking for account pattern)
-        let wordStart = colInLine;
-        while (wordStart > 0 && !lineText[wordStart - 1].match(/[\s]/)) {
-            wordStart--;
-        }
-
-        const currentWord = lineText.slice(wordStart, colInLine);
-
-        // Check if we're typing an account (starts with capital letter and has colon)
-        if (currentWord.length >= 2 && /^[A-Z][A-Za-z0-9-]*:?/.test(currentWord)) {
-            const accounts = Array.from(knownAccountsRef);
-            if (accounts.length > 0) {
-                showAccountAutocomplete(view, accounts, currentWord, line.from + wordStart);
-            }
-        } else {
-            hideAccountAutocomplete();
-        }
-    });
+    // Helper to get current source (used by WASM extensions)
+    const getSource = () => view.state.doc.toString();
 
     const state = EditorState.create({
         doc: initialContent,
@@ -508,8 +398,7 @@ export function createEditor(container, initialContent, onChange) {
             highlightActiveLine(),
             highlightActiveLineGutter(),
             history(),
-            autocompleteKeymap,
-            keymap.of([...defaultKeymap, ...historyKeymap]),
+            keymap.of([...defaultKeymap, ...historyKeymap, ...completionKeymap]),
             beancountLanguage,
             syntaxHighlighting(highlightStyle),
             darkTheme,
@@ -517,7 +406,10 @@ export function createEditor(container, initialContent, onChange) {
             accountColorizer,
             errorLineDecoration,
             updateListener,
-            autocompleteUpdateListener,
+            // WASM-powered LSP-like features
+            beancountCompletions(getSource),
+            beancountHover(getSource),
+            beancountGoToDefinition(getSource),
             EditorView.lineWrapping,
         ],
     });
@@ -526,20 +418,6 @@ export function createEditor(container, initialContent, onChange) {
         state,
         parent: container,
     });
-
-    // Hide autocomplete when clicking outside - store reference for cleanup
-    /** @param {MouseEvent} e */
-    const handleClickOutside = (e) => {
-        const target = /** @type {Node | null} */ (e.target);
-        if (
-            accountAutocomplete.dropdown &&
-            target &&
-            !accountAutocomplete.dropdown.contains(target)
-        ) {
-            hideAccountAutocomplete();
-        }
-    };
-    document.addEventListener('click', handleClickOutside);
 
     return {
         view,
@@ -632,19 +510,10 @@ export function createEditor(container, initialContent, onChange) {
                 }
             });
         },
-        /** @param {Set<string>} accounts */
-        setKnownAccounts(accounts) {
-            knownAccountsRef = accounts;
-        },
         /**
          * Clean up editor resources and event listeners
          */
         destroy() {
-            document.removeEventListener('click', handleClickOutside);
-            if (accountAutocomplete.dropdown) {
-                accountAutocomplete.dropdown.remove();
-                accountAutocomplete.dropdown = null;
-            }
             view.destroy();
         },
     };

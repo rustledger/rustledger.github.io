@@ -413,6 +413,153 @@ body {
 }
 
 /* ========================================
+   CODEMIRROR LSP-LIKE FEATURES
+   ======================================== */
+
+/* Hover tooltip */
+.cm-hover-tooltip {
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 400px;
+    white-space: pre-wrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* CodeMirror autocomplete dropdown */
+.cm-tooltip-autocomplete {
+    background: rgba(30, 30, 30, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 6px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+}
+
+.cm-tooltip-autocomplete > ul {
+    font-family: var(--font-mono) !important;
+    font-size: 13px !important;
+}
+
+.cm-tooltip-autocomplete > ul > li {
+    padding: 4px 8px !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.cm-tooltip-autocomplete > ul > li[aria-selected] {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Completion item icons by type */
+.cm-completionIcon-keyword::after {
+    color: #c4b5fd !important;
+}
+
+.cm-completionIcon-variable::after {
+    color: #22d3ee !important;
+}
+
+.cm-completionIcon-constant::after {
+    color: #fdba74 !important;
+}
+
+.cm-completionIcon-text::after {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Completion detail text */
+.cm-completionDetail {
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-style: italic;
+    margin-left: 0.5em;
+}
+
+/* ========================================
+   DOCUMENT SYMBOLS PANEL
+   ======================================== */
+
+#symbols-panel {
+    font-family: var(--font-mono);
+    font-size: 13px;
+}
+
+.symbol-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background var(--transition);
+    border-left: 2px solid transparent;
+}
+
+.symbol-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.symbol-item:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.08);
+    border-left-color: var(--accent);
+}
+
+.symbol-icon {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 11px;
+    flex-shrink: 0;
+}
+
+.symbol-name {
+    color: rgba(255, 255, 255, 0.9);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.symbol-detail {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: auto;
+}
+
+.symbol-deprecated .symbol-name {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.symbols-empty,
+.symbols-loading {
+    padding: 16px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 13px;
+}
+
+.symbols-loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* ========================================
    ACCENT BORDER (for CTA)
    ======================================== */
 

@@ -32,7 +32,6 @@ describe('createEditor', () => {
         expect(typeof editor.getContent).toBe('function');
         expect(typeof editor.setContent).toBe('function');
         expect(typeof editor.highlightErrorLines).toBe('function');
-        expect(typeof editor.setKnownAccounts).toBe('function');
         expect(typeof editor.destroy).toBe('function');
     });
 
@@ -63,13 +62,6 @@ describe('createEditor', () => {
         const errorLines = new Set([2]);
         const errorMessages = new Map([[2, 'Test error']]);
         expect(() => editor.highlightErrorLines(errorLines, errorMessages)).not.toThrow();
-    });
-
-    it('can set known accounts for autocomplete', () => {
-        editor = createEditor(container, '', () => {});
-
-        const accounts = new Set(['Assets:Bank', 'Expenses:Food']);
-        expect(() => editor.setKnownAccounts(accounts)).not.toThrow();
     });
 
     it('cleans up on destroy', () => {

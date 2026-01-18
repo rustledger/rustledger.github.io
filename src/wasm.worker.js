@@ -24,6 +24,7 @@ async function initWasm() {
             query: wasm.query,
             version: wasm.version,
             bqlCompletions: wasm.bqlCompletions,
+            ParsedLedger: wasm.ParsedLedger,
         };
 
         isReady = true;
@@ -73,6 +74,34 @@ self.onmessage = async function (event) {
             case 'version':
                 result = wasmModule.version();
                 break;
+
+            case 'getCompletions': {
+                const ledger = new wasmModule.ParsedLedger(payload.source);
+                result = ledger.getCompletions(payload.line, payload.character);
+                ledger.free();
+                break;
+            }
+
+            case 'getHoverInfo': {
+                const ledger = new wasmModule.ParsedLedger(payload.source);
+                result = ledger.getHoverInfo(payload.line, payload.character);
+                ledger.free();
+                break;
+            }
+
+            case 'getDefinition': {
+                const ledger = new wasmModule.ParsedLedger(payload.source);
+                result = ledger.getDefinition(payload.line, payload.character);
+                ledger.free();
+                break;
+            }
+
+            case 'getDocumentSymbols': {
+                const ledger = new wasmModule.ParsedLedger(payload.source);
+                result = ledger.getDocumentSymbols();
+                ledger.free();
+                break;
+            }
 
             default:
                 throw new Error(`Unknown action: ${action}`);

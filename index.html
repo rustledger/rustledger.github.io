@@ -989,6 +989,15 @@
                         >
                             Query
                         </button>
+                        <button
+                            class="output-tab"
+                            data-tab="symbols"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="symbols-panel"
+                        >
+                            Outline
+                        </button>
                         <div class="flex-1"></div>
                         <button
                             class="output-tab text-yellow-400"
@@ -1087,6 +1096,12 @@
                             role="region"
                             aria-label="Query results"
                             aria-live="polite"
+                        ></div>
+                        <div
+                            id="symbols-panel"
+                            class="hidden overflow-y-auto"
+                            role="tree"
+                            aria-label="Document outline"
                         ></div>
                     </div>
 
