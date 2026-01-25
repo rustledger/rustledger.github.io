@@ -1,0 +1,42 @@
+name: Build rustfava docs
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [rustfava-docs-update]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          repository: rustledger/rustfava
+          path: rustfava-src
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - uses: astral-sh/setup-uv@v4
+
+      - name: Build docs
+        run: |
+          cd rustfava-src
+          touch src/rustfava/static/app.js
+          uv run --no-dev --group docs mkdocs build -d build/docs
+
+      - name: Copy docs
+        run: |
+          mkdir -p public/rustfava/docs
+          cp -r rustfava-src/build/docs/* public/rustfava/docs/
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/rustfava/docs
+          git diff --staged --quiet || git commit -m "docs: update rustfava documentation"
+          git push
