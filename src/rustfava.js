@@ -1,5 +1,6 @@
 // Entry point for rustfava page
 import { fetchRustfavaInfo } from './github.js';
+import { initInstallTabs, initCopyButtons } from './install.js';
 import { initScrollReveal } from './ui.js';
 import './style.css';
 
@@ -56,6 +57,10 @@ function init() {
 
     // Initialize scroll reveal animations
     initScrollReveal();
+
+    // Initialize install tabs and copy buttons
+    initInstallTabs();
+    initCopyButtons();
 
     // Initialize lightbox
     initLightbox();
