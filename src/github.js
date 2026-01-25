@@ -5,6 +5,9 @@ import { fetchWithRetry } from './utils.js';
 /** Cache key for GitHub info */
 const GITHUB_CACHE_KEY = 'rustledger_github_info';
 
+/** Cache key for rustfava GitHub info */
+const RUSTFAVA_CACHE_KEY = 'rustfava_github_info';
+
 /** Cache key for benchmark stats */
 const BENCHMARK_CACHE_KEY = 'rustledger_benchmark_stats';
 
@@ -336,5 +339,139 @@ export async function fetchBenchmarkStats() {
         }
     } catch (e) {
         console.warn('Failed to fetch benchmark stats:', e);
+    }
+}
+
+/**
+ * Get cached rustfava GitHub info from localStorage
+ * @returns {{ stars: number, version: string, timestamp: number } | null}
+ */
+export function getCachedRustfavaInfo() {
+    try {
+        const cached = localStorage.getItem(RUSTFAVA_CACHE_KEY);
+        if (!cached) return null;
+
+        const data = JSON.parse(cached);
+        const age = Date.now() - data.timestamp;
+
+        if (age < GITHUB_CACHE_TTL) {
+            return data;
+        }
+    } catch {
+        // Ignore parse errors
+    }
+    return null;
+}
+
+/**
+ * Save rustfava GitHub info to localStorage cache
+ * @param {number} stars
+ * @param {string} version
+ */
+export function cacheRustfavaInfo(stars, version) {
+    try {
+        localStorage.setItem(
+            RUSTFAVA_CACHE_KEY,
+            JSON.stringify({
+                stars,
+                version,
+                timestamp: Date.now(),
+            })
+        );
+    } catch {
+        // Ignore storage errors
+    }
+}
+
+/**
+ * Update rustfava binary download links with direct asset URLs
+ * @param {Array<{ name: string, browser_download_url: string }>} assets
+ */
+export function updateRustfavaBinaryLinks(assets) {
+    /** @type {NodeListOf<HTMLAnchorElement>} */
+    const binaryLinks = document.querySelectorAll('[data-rustfava-asset-pattern]');
+    binaryLinks.forEach((link) => {
+        const pattern = link.dataset.rustfavaAssetPattern;
+        if (pattern) {
+            const asset = assets.find((a) => a.name.endsWith(pattern));
+            if (asset && asset.browser_download_url) {
+                link.href = asset.browser_download_url;
+            }
+        }
+    });
+}
+
+/**
+ * Fetch GitHub stats for rustfava repository
+ */
+export async function fetchRustfavaInfo() {
+    const starsEl = document.getElementById('rustfava-github-stars');
+    const versionEl = document.getElementById('rustfava-footer-version');
+
+    // Use cached data for immediate display
+    const cached = getCachedRustfavaInfo();
+    if (cached) {
+        if (starsEl) {
+            starsEl.textContent = formatStarCount(cached.stars);
+        }
+        if (versionEl && cached.version) {
+            versionEl.textContent = cached.version;
+        }
+    }
+
+    try {
+        const [repoResponse, releasesResponse] = await Promise.all([
+            fetchWithRetry('https://api.github.com/repos/rustledger/rustfava'),
+            fetchWithRetry('https://api.github.com/repos/rustledger/rustfava/releases?per_page=1'),
+        ]);
+
+        if (repoResponse.status === 403 || releasesResponse.status === 403) {
+            console.warn('GitHub API rate limit reached for rustfava');
+            if (starsEl) starsEl.textContent = '-';
+            if (versionEl) versionEl.textContent = '';
+            return;
+        }
+
+        if (repoResponse.status === 404) {
+            console.warn('rustfava repository not found');
+            if (starsEl) starsEl.textContent = '-';
+            if (versionEl) versionEl.textContent = '';
+            return;
+        }
+
+        if (!repoResponse.ok || !releasesResponse.ok) {
+            throw new Error(`HTTP error: ${repoResponse.status}`);
+        }
+
+        const repoData = await repoResponse.json();
+        const releasesData = await releasesResponse.json();
+
+        let stars = 0;
+        let version = '';
+
+        if (repoData.stargazers_count !== undefined) {
+            stars = repoData.stargazers_count;
+            if (starsEl) {
+                starsEl.textContent = formatStarCount(stars);
+            }
+        }
+
+        if (Array.isArray(releasesData) && releasesData.length > 0 && releasesData[0].tag_name) {
+            version = releasesData[0].tag_name;
+            if (versionEl) {
+                versionEl.textContent = version;
+            }
+
+            const assets = releasesData[0].assets || [];
+            updateRustfavaBinaryLinks(assets);
+        }
+
+        if (stars > 0 || version) {
+            cacheRustfavaInfo(stars, version);
+        }
+    } catch (e) {
+        console.warn('Failed to fetch rustfava GitHub info:', e);
+        if (starsEl) starsEl.textContent = '-';
+        if (versionEl) versionEl.textContent = '';
     }
 }

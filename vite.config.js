@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
+import { resolve } from 'path';
 
 export default defineConfig({
     plugins: [tailwindcss()],
@@ -26,8 +27,12 @@ export default defineConfig({
     // Build config for GitHub Pages
     build: {
         outDir: 'dist',
-        // Don't hash assets for simpler GitHub Pages deployment
+        // Multi-page build configuration
         rollupOptions: {
+            input: {
+                main: resolve(__dirname, 'index.html'),
+                rustfava: resolve(__dirname, 'rustfava.html'),
+            },
             output: {
                 entryFileNames: 'assets/[name].js',
                 chunkFileNames: 'assets/[name].js',

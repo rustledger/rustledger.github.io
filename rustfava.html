@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; font-src 'self'"
+        />
+        <title>rustfava - Desktop App for rustledger</title>
+        <meta
+            name="description"
+            content="Desktop application for viewing and managing your rustledger/Beancount files. Built with Tauri, available for Linux, macOS, and Windows."
+        />
+
+        <!-- Open Graph / Social Media -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://rustledger.github.io/rustfava" />
+        <meta property="og:title" content="rustfava - Desktop App for rustledger" />
+        <meta
+            property="og:description"
+            content="Desktop application for viewing and managing your rustledger/Beancount files. Built with Tauri."
+        />
+        <meta property="og:image" content="https://rustledger.github.io/og-image.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="rustfava - Desktop App for rustledger" />
+        <meta
+            name="twitter:description"
+            content="Desktop application for viewing and managing your rustledger/Beancount files."
+        />
+
+        <!-- Preconnect to external resources -->
+        <link rel="preconnect" href="https://api.github.com" />
+        <link rel="dns-prefetch" href="https://api.github.com" />
+
+        <!-- Canonical URL -->
+        <link rel="canonical" href="https://rustledger.github.io/rustfava" />
+
+        <!-- Favicon -->
+        <link
+            rel="icon"
+            type="image/svg+xml"
+            href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0a0a'/%3E%3Ctext x='50' y='68' font-size='50' font-family='system-ui' font-weight='bold' text-anchor='middle'%3E%3Ctspan fill='%23f97316'%3Er%3C/tspan%3E%3Ctspan fill='white'%3Ef%3C/tspan%3E%3C/text%3E%3C/svg%3E"
+        />
+
+        <!-- Structured Data -->
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "SoftwareApplication",
+                "name": "rustfava",
+                "applicationCategory": "FinanceApplication",
+                "operatingSystem": "Windows, macOS, Linux",
+                "description": "Desktop application for viewing and managing rustledger/Beancount files. Built with Tauri.",
+                "url": "https://rustledger.github.io/rustfava",
+                "downloadUrl": "https://github.com/rustledger/rustfava/releases",
+                "softwareVersion": "latest",
+                "author": {
+                    "@type": "Organization",
+                    "name": "rustledger",
+                    "url": "https://github.com/rustledger"
+                },
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "USD"
+                }
+            }
+        </script>
+    </head>
+    <body class="bg-black text-white antialiased">
+        <!-- Skip to main content for accessibility -->
+        <a
+            href="#features"
+            class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded"
+        >
+            Skip to content
+        </a>
+
+        <!-- Nav -->
+        <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-sm border-b border-white/10 z-50">
+            <div
+                class="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center"
+            >
+                <a
+                    href="/"
+                    class="flex items-center gap-2 text-base sm:text-lg font-semibold tracking-tight shrink-0"
+                >
+                    <img
+                        src="/icon.png"
+                        alt="rl"
+                        class="w-6 h-6 rounded"
+                        onerror="
+                            this.style.display = 'none';
+                            this.nextElementSibling.style.display = 'flex';
+                        "
+                    />
+                    <span
+                        class="w-6 h-6 rounded bg-zinc-900 items-center justify-center text-xs font-bold hidden"
+                        aria-hidden="true"
+                        ><span class="text-accent">r</span>l</span
+                    >
+                    <span><span class="text-accent">rust</span>ledger</span>
+                </a>
+                <div class="flex items-center gap-3 sm:gap-8 text-xs sm:text-sm">
+                    <a href="/" class="text-white hover:text-white/60 transition"
+                        ><span class="text-accent">rust</span>ledger</a
+                    >
+                    <a href="/rustfava" class="font-medium" aria-current="page"
+                        ><span class="text-accent">rust</span>fava</a
+                    >
+                    <a
+                        href="https://docs.rs/rustledger-core"
+                        class="text-white/60 hover:text-white transition"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >Docs</a
+                    >
+                    <a
+                        href="https://github.com/rustledger/rustledger"
+                        class="text-white/60 hover:text-white transition"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >GitHub</a
+                    >
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero -->
+        <section class="min-h-[85vh] flex items-center justify-center px-6 pt-20">
+            <div class="max-w-3xl mx-auto text-center">
+                <p class="text-white/50 text-sm uppercase tracking-widest mb-6 reveal-fade">
+                    Desktop App for rustledger
+                </p>
+                <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 reveal-fade">
+                    <span class="text-accent">rust</span>fava
+                </h1>
+                <p class="text-xl md:text-2xl text-white/60 mb-10 max-w-xl mx-auto reveal-fade">
+                    Accounting in plain text, under your control, forever.
+                </p>
+
+                <!-- GitHub Star Button -->
+                <div class="flex justify-center mb-10 reveal-fade">
+                    <a
+                        href="https://github.com/rustledger/rustfava"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/20 px-5 py-3 rounded-lg transition"
+                    >
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                fill-rule="evenodd"
+                                d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                        <span>Star on GitHub</span>
+                        <span
+                            id="rustfava-github-stars"
+                            class="bg-white/20 px-2 py-0.5 rounded text-sm"
+                            >-</span
+                        >
+                    </a>
+                </div>
+
+                <!-- Download Options -->
+                <div class="install-section mb-12 reveal-fade">
+                    <div class="install-tabs">
+                        <button class="install-tab active">
+                            <svg class="tab-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+                            </svg>
+                            <span>Binary</span>
+                        </button>
+                    </div>
+                    <div class="install-content">
+                        <div class="install-panel active">
+                            <div class="binary-options">
+                                <a
+                                    href="https://github.com/rustledger/rustfava/releases/latest"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="binary-option"
+                                    data-rustfava-asset-pattern=".AppImage"
+                                >
+                                    <svg
+                                        class="platform-icon"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139z"
+                                        />
+                                    </svg>
+                                    <div class="platform-name">Linux</div>
+                                    <div class="platform-arch">x86_64</div>
+                                </a>
+                                <a
+                                    href="https://github.com/rustledger/rustfava/releases/latest"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="binary-option"
+                                    data-rustfava-asset-pattern=".dmg"
+                                >
+                                    <svg
+                                        class="platform-icon"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"
+                                        />
+                                    </svg>
+                                    <div class="platform-name">macOS</div>
+                                    <div class="platform-arch">Universal</div>
+                                </a>
+                                <a
+                                    href="https://github.com/rustledger/rustfava/releases/latest"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="binary-option"
+                                    data-rustfava-asset-pattern=".msi"
+                                >
+                                    <svg
+                                        class="platform-icon"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"
+                                        />
+                                    </svg>
+                                    <div class="platform-name">Windows</div>
+                                    <div class="platform-arch">x86_64</div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screenshot Preview -->
+                <div class="reveal-fade mt-8 mb-16">
+                    <button
+                        type="button"
+                        class="rounded-xl overflow-hidden border border-white/10 cursor-zoom-in hover:border-white/30 transition shadow-2xl shadow-black/50 max-w-4xl mx-auto"
+                        data-lightbox="/screenshots/rustfava-dashboard.png"
+                        aria-label="View larger: rustfava dashboard"
+                    >
+                        <img
+                            src="/screenshots/rustfava-dashboard.png"
+                            alt="rustfava dashboard showing Fava charts and financial data"
+                            class="w-full"
+                        />
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section id="features" class="py-24 px-6 border-t border-white/10">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center reveal-fade">
+                    Everything you need
+                </h2>
+                <p class="text-white/50 text-center mb-16 max-w-2xl mx-auto reveal-fade">
+                    A beautiful desktop app for managing your finances with the power of plain text
+                    accounting.
+                </p>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div
+                        class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20 transition reveal-fade"
+                    >
+                        <div
+                            class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center mb-4"
+                        >
+                            <svg
+                                class="w-5 h-5 text-accent"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                                />
+                            </svg>
+                        </div>
+                        <div class="font-semibold mb-2">Native Performance</div>
+                        <div class="text-sm text-white/50">
+                            Built with Tauri for small bundle size and instant startup. No Electron
+                            bloat.
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20 transition reveal-fade"
+                    >
+                        <div
+                            class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center mb-4"
+                        >
+                            <svg
+                                class="w-5 h-5 text-accent"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                                />
+                            </svg>
+                        </div>
+                        <div class="font-semibold mb-2">Fava Interface</div>
+                        <div class="text-sm text-white/50">
+                            The familiar Fava web UI you know and love, now as a native desktop app.
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20 transition reveal-fade"
+                    >
+                        <div
+                            class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center mb-4"
+                        >
+                            <svg
+                                class="w-5 h-5 text-accent"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                                />
+                            </svg>
+                        </div>
+                        <div class="font-semibold mb-2">rustledger Backend</div>
+                        <div class="text-sm text-white/50">
+                            Powered by rustledger for blazing fast parsing and validation of your
+                            ledger files.
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20 transition reveal-fade"
+                    >
+                        <div
+                            class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center mb-4"
+                        >
+                            <svg
+                                class="w-5 h-5 text-accent"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                                />
+                            </svg>
+                        </div>
+                        <div class="font-semibold mb-2">Cross-Platform</div>
+                        <div class="text-sm text-white/50">
+                            Available for Linux, macOS, and Windows. One app, everywhere.
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20 transition reveal-fade"
+                    >
+                        <div
+                            class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center mb-4"
+                        >
+                            <svg
+                                class="w-5 h-5 text-accent"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414"
+                                />
+                            </svg>
+                        </div>
+                        <div class="font-semibold mb-2">Offline First</div>
+                        <div class="text-sm text-white/50">
+                            Works without internet. Your financial data stays on your machine,
+                            always.
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20 transition reveal-fade"
+                    >
+                        <div
+                            class="w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center mb-4"
+                        >
+                            <svg
+                                class="w-5 h-5 text-accent"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                />
+                            </svg>
+                        </div>
+                        <div class="font-semibold mb-2">Multiple Files</div>
+                        <div class="text-sm text-white/50">
+                            Open multiple ledger files in tabs. Switch between projects
+                            effortlessly.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screenshots -->
+        <section id="screenshots" class="py-24 px-6 border-t border-white/10">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center reveal-fade">
+                    Screenshots
+                </h2>
+                <p class="text-white/50 text-center mb-12 reveal-fade">See rustfava in action</p>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <button
+                        type="button"
+                        class="rounded-xl overflow-hidden border border-white/10 cursor-zoom-in hover:border-white/30 transition reveal-fade"
+                        data-lightbox="/screenshots/rustfava-launcher.png"
+                        aria-label="View larger: rustfava launcher"
+                    >
+                        <img
+                            src="/screenshots/rustfava-launcher.png"
+                            alt="rustfava launcher showing file picker and recent files"
+                            class="w-full"
+                            loading="lazy"
+                        />
+                    </button>
+                    <button
+                        type="button"
+                        class="rounded-xl overflow-hidden border border-white/10 cursor-zoom-in hover:border-white/30 transition reveal-fade"
+                        data-lightbox="/screenshots/rustfava-dashboard.png"
+                        aria-label="View larger: rustfava dashboard"
+                    >
+                        <img
+                            src="/screenshots/rustfava-dashboard.png"
+                            alt="rustfava dashboard showing Fava charts and financial data"
+                            class="w-full"
+                            loading="lazy"
+                        />
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="py-12 px-6 border-t border-white/10">
+            <div
+                class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-white/40"
+            >
+                <div>
+                    <span class="text-accent">rust</span>fava
+                    <span id="rustfava-footer-version">...</span>
+                </div>
+                <div class="flex gap-6">
+                    <a href="/" class="hover:text-white transition"
+                        ><span class="text-accent">rust</span>ledger</a
+                    >
+                    <a
+                        href="https://github.com/rustledger/rustfava"
+                        class="hover:text-white transition"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >GitHub</a
+                    >
+                    <a href="/accessibility.html" class="hover:text-white transition"
+                        >Accessibility</a
+                    >
+                </div>
+            </div>
+        </footer>
+
+        <!-- Lightbox Modal -->
+        <div
+            id="lightbox"
+            class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/90 backdrop-blur-sm cursor-zoom-out"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Image preview"
+        >
+            <img id="lightbox-img" src="" alt="" class="max-w-[90vw] max-h-[90vh] rounded-lg" />
+        </div>
+
+        <!-- Entry point -->
+        <script type="module" src="/src/rustfava.js"></script>
+    </body>
+</html>
