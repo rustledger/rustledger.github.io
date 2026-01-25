@@ -178,6 +178,20 @@
                             <span>Docker</span>
                         </button>
                         <button
+                            class="install-tab"
+                            data-tab="flake"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="panel-flake"
+                        >
+                            <svg class="tab-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 0C9.62 0 7.54.89 6 2.34L12 5.5l6-3.16C16.46.89 14.38 0 12 0zm8.5 3.5L12 7.5 3.5 3.5C2 5 1 7.33 1 10c0 5.52 4.48 10 10 10s10-4.48 10-10c0-2.67-1-5-2.5-6.5zM12 18c-4.42 0-8-3.58-8-8 0-1.72.54-3.32 1.46-4.63L12 9l6.54-3.63C19.46 6.68 20 8.28 20 10c0 4.42-3.58 8-8 8zm0-14.5L5.5 7 12 10.5 18.5 7 12 3.5z"
+                                />
+                            </svg>
+                            <span>Flake</span>
+                        </button>
+                        <button
                             class="install-tab active"
                             data-tab="binary"
                             role="tab"
@@ -239,6 +253,77 @@
                                     >localhost:5000</a
                                 >
                                 in your browser.
+                            </p>
+                        </div>
+                        <!-- Flake Panel -->
+                        <div
+                            class="install-panel"
+                            id="panel-flake"
+                            role="tabpanel"
+                            aria-labelledby="tab-flake"
+                        >
+                            <div class="install-command">
+                                <span class="prompt">$</span>
+                                <span class="cmd"
+                                    ><span class="keyword">nix</span>
+                                    <span class="flag">run</span>
+                                    <span class="package">github:rustledger/rustfava</span></span
+                                >
+                                <span class="comment"># stable</span>
+                                <button
+                                    class="install-copy-btn"
+                                    data-command="nix run github:rustledger/rustfava"
+                                    title="Copy"
+                                    aria-label="Copy command"
+                                >
+                                    <svg
+                                        class="w-5 h-5"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="install-command">
+                                <span class="prompt">$</span>
+                                <span class="cmd"
+                                    ><span class="keyword">nix</span>
+                                    <span class="flag">run</span>
+                                    <span class="package"
+                                        >github:rustledger/rustfava#nightly</span
+                                    ></span
+                                >
+                                <span class="comment"># main branch</span>
+                                <button
+                                    class="install-copy-btn"
+                                    data-command="nix run github:rustledger/rustfava#nightly"
+                                    title="Copy"
+                                    aria-label="Copy command"
+                                >
+                                    <svg
+                                        class="w-5 h-5"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="install-note">
+                                Requires Nix with flakes enabled. Run directly without installation.
                             </p>
                         </div>
                         <!-- Binary Panel -->
