@@ -1,57 +1,57 @@
 name: Build rustfava docs
 
 on:
-  workflow_dispatch:
-  repository_dispatch:
-    types: [rustfava-docs-update]
+    workflow_dispatch:
+    repository_dispatch:
+        types: [rustfava-docs-update]
 
 permissions:
-  contents: write
-  pull-requests: write
+    contents: write
+    pull-requests: write
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.WEBSITE_DISPATCH_TOKEN }}
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  token: ${{ secrets.WEBSITE_DISPATCH_TOKEN }}
 
-      - uses: actions/checkout@v4
-        with:
-          repository: rustledger/rustfava
-          path: rustfava-src
+            - uses: actions/checkout@v4
+              with:
+                  repository: rustledger/rustfava
+                  path: rustfava-src
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: '3.13'
 
-      - uses: astral-sh/setup-uv@v4
+            - uses: astral-sh/setup-uv@v4
 
-      - name: Build docs
-        run: |
-          cd rustfava-src
-          touch src/rustfava/static/app.js
-          uv run --no-dev --group docs mkdocs build -d build/docs
+            - name: Build docs
+              run: |
+                  cd rustfava-src
+                  touch src/rustfava/static/app.js
+                  uv run --no-dev --group docs mkdocs build -d build/docs
 
-      - name: Copy docs
-        run: |
-          mkdir -p public/rustfava/docs
-          cp -r rustfava-src/build/docs/* public/rustfava/docs/
+            - name: Copy docs
+              run: |
+                  mkdir -p public/rustfava/docs
+                  cp -r rustfava-src/build/docs/* public/rustfava/docs/
 
-      - name: Create PR
-        env:
-          GH_TOKEN: ${{ secrets.WEBSITE_DISPATCH_TOKEN }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/rustfava/docs
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-            exit 0
-          fi
-          BRANCH="rustfava-docs-update-$(date +%Y%m%d-%H%M%S)"
-          git checkout -b "$BRANCH"
-          git commit -m "docs: update rustfava documentation"
-          git push -u origin "$BRANCH"
-          gh pr create --title "docs: update rustfava documentation" --body "Automated update of rustfava documentation from upstream." --head "$BRANCH"
+            - name: Create PR
+              env:
+                  GH_TOKEN: ${{ secrets.WEBSITE_DISPATCH_TOKEN }}
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git add public/rustfava/docs
+                  if git diff --staged --quiet; then
+                    echo "No changes to commit"
+                    exit 0
+                  fi
+                  BRANCH="rustfava-docs-update-$(date +%Y%m%d-%H%M%S)"
+                  git checkout -b "$BRANCH"
+                  git commit -m "docs: update rustfava documentation"
+                  git push -u origin "$BRANCH"
+                  gh pr create --title "docs: update rustfava documentation" --body "Automated update of rustfava documentation from upstream." --head "$BRANCH"
