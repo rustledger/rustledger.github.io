@@ -685,6 +685,19 @@ body {
     }
 }
 
+.install-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 0.5rem 0;
+}
+
+.install-label:not(:first-child) {
+    margin-top: 1rem;
+}
+
 .install-command {
     display: flex;
     align-items: center;
