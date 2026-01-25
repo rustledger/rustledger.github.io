@@ -31,7 +31,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: resolve(__dirname, 'index.html'),
-                rustfava: resolve(__dirname, 'rustfava.html'),
+                rustfava: resolve(__dirname, 'public/rustfava/index.html'),
             },
             output: {
                 entryFileNames: 'assets/[name].js',
