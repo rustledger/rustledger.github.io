@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   build:
@@ -38,10 +39,19 @@ jobs:
           mkdir -p public/rustfava/docs
           cp -r rustfava-src/build/docs/* public/rustfava/docs/
 
-      - name: Commit and push
+      - name: Create PR
+        env:
+          GH_TOKEN: ${{ secrets.WEBSITE_DISPATCH_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add public/rustfava/docs
-          git diff --staged --quiet || git commit -m "docs: update rustfava documentation"
-          git push
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          BRANCH="rustfava-docs-update-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$BRANCH"
+          git commit -m "docs: update rustfava documentation"
+          git push -u origin "$BRANCH"
+          gh pr create --title "docs: update rustfava documentation" --body "Automated update of rustfava documentation from upstream." --head "$BRANCH"
