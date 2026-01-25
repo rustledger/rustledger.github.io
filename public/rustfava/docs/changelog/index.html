@@ -1,0 +1,2131 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Web interface for rustledger, a Rust-based Beancount parser">
+      
+      
+      
+        <link rel="canonical" href="https://rustledger.github.io/rustfava/docs/changelog/">
+      
+      
+        <link rel="prev" href="../usage/">
+      
+      
+        <link rel="next" href="../development/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Changelog - Rustfava</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#changelog" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Rustfava" class="md-header__button md-logo" aria-label="Rustfava" data-md-component="logo">
+      
+  <img src="../logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Rustfava
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Changelog
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/rustledger/rustfava" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    rustledger/rustfava
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Rustfava" class="md-nav__button md-logo" aria-label="Rustfava" data-md-component="logo">
+      
+  <img src="../logo.svg" alt="logo">
+
+    </a>
+    Rustfava
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/rustledger/rustfava" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    rustledger/rustfava
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#rustfava-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rustfava (2025)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v130-2024-12-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.30 (2024-12-29)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v129-2024-10-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.29 (2024-10-09)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v128-2024-07-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.28 (2024-07-07)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v127-2024-01-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.27 (2024-01-06)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v126-2023-09-04" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.26 (2023-09-04)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v125-2023-07-17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.25 (2023-07-17)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v124-2023-02-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.24 (2023-02-21)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v123-2022-10-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.23 (2022-10-15)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v122-2022-07-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.22 (2022-07-03)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v121-2022-02-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.21 (2022-02-06)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1201-2021-09-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.20.1 (2021-09-22)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v120-2021-09-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.20 (2021-09-19)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v119-2021-05-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.19 (2021-05-18)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v118-2021-01-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.18 (2021-01-16)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v117-2020-11-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.17 (2020-11-15)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v116-2020-10-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.16 (2020-10-18)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v115-2020-05-30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.15 (2020-05-30)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v114-2020-02-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.14 (2020-02-16)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v113-2020-02-01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.13 (2020-02-01)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v112-2019-12-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.12 (2019-12-03)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v111-2019-08-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.11 (2019-08-20)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v110-2019-01-31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.10 (2019-01-31)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v19-2018-10-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.9 (2018-10-08)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v18-2018-07-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.8 (2018-07-25)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v17-2018-03-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.7 (2018-03-09)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v16-2017-10-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.6 (2017-10-06)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v15-2017-07-23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.5 (2017-07-23)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v14-2017-05-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.4 (2017-05-14)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v13-2017-03-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.3 (2017-03-15)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v12-2016-12-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.2 (2016-12-25)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v11-2016-11-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.1 (2016-11-19)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v10-2016-10-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.0 (2016-10-19)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v030-2016-03-24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.3.0 (2016-03-24)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v0.3.0 (2016-03-24)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#additions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-configuration-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New configuration options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v026-2016-03-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.2.6 (2016-03-20)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v0.2.6 (2016-03-20)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#additions_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-configuration-options_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New configuration options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v025-2016-02-28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.2.5 (2016-02-28)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v024-2016-02-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.2.4 (2016-02-18)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v0.2.4 (2016-02-18)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#additions_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changes_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-configuration-options_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New configuration options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed-configuration-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removed configuration options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v023-2016-02-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.2.3 (2016-02-15)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#earlier-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Earlier Versions
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#rustfava-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rustfava (2025)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v130-2024-12-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.30 (2024-12-29)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v129-2024-10-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.29 (2024-10-09)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v128-2024-07-07" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.28 (2024-07-07)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v127-2024-01-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.27 (2024-01-06)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v126-2023-09-04" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.26 (2023-09-04)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v125-2023-07-17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.25 (2023-07-17)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v124-2023-02-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.24 (2023-02-21)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v123-2022-10-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.23 (2022-10-15)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v122-2022-07-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.22 (2022-07-03)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v121-2022-02-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.21 (2022-02-06)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1201-2021-09-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.20.1 (2021-09-22)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v120-2021-09-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.20 (2021-09-19)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v119-2021-05-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.19 (2021-05-18)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v118-2021-01-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.18 (2021-01-16)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v117-2020-11-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.17 (2020-11-15)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v116-2020-10-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.16 (2020-10-18)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v115-2020-05-30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.15 (2020-05-30)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v114-2020-02-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.14 (2020-02-16)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v113-2020-02-01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.13 (2020-02-01)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v112-2019-12-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.12 (2019-12-03)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v111-2019-08-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.11 (2019-08-20)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v110-2019-01-31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.10 (2019-01-31)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v19-2018-10-08" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.9 (2018-10-08)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v18-2018-07-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.8 (2018-07-25)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v17-2018-03-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.7 (2018-03-09)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v16-2017-10-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.6 (2017-10-06)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v15-2017-07-23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.5 (2017-07-23)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v14-2017-05-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.4 (2017-05-14)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v13-2017-03-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.3 (2017-03-15)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v12-2016-12-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.2 (2016-12-25)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v11-2016-11-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.1 (2016-11-19)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v10-2016-10-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.0 (2016-10-19)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v030-2016-03-24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.3.0 (2016-03-24)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v0.3.0 (2016-03-24)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#additions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-configuration-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New configuration options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v026-2016-03-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.2.6 (2016-03-20)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v0.2.6 (2016-03-20)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#additions_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-configuration-options_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New configuration options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v025-2016-02-28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.2.5 (2016-02-28)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v024-2016-02-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.2.4 (2016-02-18)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v0.2.4 (2016-02-18)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#additions_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changes_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-configuration-options_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New configuration options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed-configuration-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removed configuration options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v023-2016-02-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v0.2.3 (2016-02-15)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#earlier-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Earlier Versions
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<h2 id="rustfava-2025">Rustfava (2025)<a class="headerlink" href="#rustfava-2025" title="Permanent link">&para;</a></h2>
+<p>This is a fork of Fava that replaces the Python Beancount parser and beanquery
+with <a href="https://github.com/rustledger/rustledger">rustledger</a>, a Rust-based
+implementation of the Beancount format compiled to WebAssembly.</p>
+<p>Key changes from Fava:</p>
+<ul>
+<li><strong>No Beancount dependency</strong>: Rustfava uses rustledger for parsing, so you
+  don't need to install Python's beancount package. Your existing Beancount
+  files are fully compatible.</li>
+<li><strong>Query support</strong>: BQL queries are now handled by rustledger's built-in query
+  engine instead of beanquery. The query syntax remains largely compatible.</li>
+<li><strong>Optional beancount compatibility</strong>: If you need to use Beancount plugins or
+  the import system, install with <code>uv pip install rustfava[beancount-compat]</code>.</li>
+</ul>
+<h2 id="v130-2024-12-29">v1.30 (2024-12-29)<a class="headerlink" href="#v130-2024-12-29" title="Permanent link">&para;</a></h2>
+<p><em>Note: This entry describes the original Fava release. Rustfava is based on
+this version with the rustledger integration.</em></p>
+<p>Under the hood, this also upgrades Svelte (the framework used for the frontend
+parts) to version 5.</p>
+<h2 id="v129-2024-10-09">v1.29 (2024-10-09)<a class="headerlink" href="#v129-2024-10-09" title="Permanent link">&para;</a></h2>
+<p>With this release, query results are now rendered in the frontend. The
+templates for HTML rendering are still available but extension authors are
+encouraged to switch, see the statistics report for an example how this can be
+done. This release adds CSS styles for dark-mode. Numerical comparisons on the
+units, price or cost are now possible in rustfava filters. As the watchfiles based
+watcher might not work correctly in some setups with network file systems, you
+can switch to the (slower) polling based watcher as well. The <code>default-file</code>
+option, if set, is now considered instead of the "main" file when inserting an
+entry.</p>
+<h2 id="v128-2024-07-07">v1.28 (2024-07-07)<a class="headerlink" href="#v128-2024-07-07" title="Permanent link">&para;</a></h2>
+<p>This release accumulates a couple of minor fixes and improvements. Under the
+hood, the file change detection is now powered by watchfiles instead of
+polling, which is more performant.</p>
+<h2 id="v127-2024-01-06">v1.27 (2024-01-06)<a class="headerlink" href="#v127-2024-01-06" title="Permanent link">&para;</a></h2>
+<p>It is now possible to convert to a sequence of currencies. Posting metadata is
+now supported in the entry forms. The editor should now be a bit more
+performant as the previous parses will be reused better. For compatibility with
+extensions using them, the Javascript and CSS for the "old" account trees has
+been re-added.</p>
+<h2 id="v126-2023-09-04">v1.26 (2023-09-04)<a class="headerlink" href="#v126-2023-09-04" title="Permanent link">&para;</a></h2>
+<p>This release brings various improvements to the charts, like allowing the
+toggling of currencies by clicking on their names in the chart legend. The
+account balance trees in rustfava are now rendered in the frontend, fixing some
+minor bugs in the process and easing maintenance. rustfava extensions can now also
+provide their own endpoints.</p>
+<h2 id="v125-2023-07-17">v1.25 (2023-07-17)<a class="headerlink" href="#v125-2023-07-17" title="Permanent link">&para;</a></h2>
+<p>With this release, extensions can now ship Javascript code to run in the
+frontend. The editor in rustfava now uses a tree-sitter grammar to obtain a full
+parsed syntax tree, which makes editor functionality more maintainable and
+should improve the autocompletion. The Flask WSGI app is now created using the
+application factory pattern - users who use the rustfava WSGI app directly should
+switch from <code>rustfava.application.app</code> to the <code>create_app</code> function in
+<code>rustfava.application</code>. This release also drops support for Python 3.7 and contains
+a couple of minor fixes and changes, in particular various styling fixes.</p>
+<h2 id="v124-2023-02-21">v1.24 (2023-02-21)<a class="headerlink" href="#v124-2023-02-21" title="Permanent link">&para;</a></h2>
+<p>With this release, the rendering of some report like the documents report has
+been moved completely to the frontend, which should be slightly more perfomant
+and easier to maintain. This release also contains a couple of minor fixes and
+changes.</p>
+<h2 id="v123-2022-10-15">v1.23 (2022-10-15)<a class="headerlink" href="#v123-2022-10-15" title="Permanent link">&para;</a></h2>
+<p>This release accumulates a couple of minor fixes and changes.</p>
+<h2 id="v122-2022-07-03">v1.22 (2022-07-03)<a class="headerlink" href="#v122-2022-07-03" title="Permanent link">&para;</a></h2>
+<p>This release brings stacked bar charts, which are a great way to visualise
+income broken down per account per month for example. The inferred display
+precision for currencies is now also used in the frontend and can be
+overwritten with commodity metadata.</p>
+<p>The <code>journal-show</code>, <code>journal-show-document</code>, and <code>journal-show-transaction</code>
+rustfava-options have been removed. The types of entries that to show in the journal
+are now automatically stored in the browser of the user (in localStorage).</p>
+<p>As usual, this release also includes a couple of bug fixes and minor
+improvements. To avoid some race conditions and improve perfomance, the
+per-file Ledger class is not filtered anymore in-place but rather the filtered
+data is generated per request - some extensions might have to adjust for this
+and use <code>g.filtered</code> instead of <code>ledger</code> for some attributes.</p>
+<h2 id="v121-2022-02-06">v1.21 (2022-02-06)<a class="headerlink" href="#v121-2022-02-06" title="Permanent link">&para;</a></h2>
+<p>This release of rustfava drops support for Python 3.6. It mainly consists of
+various small improvements and fixes.</p>
+<h2 id="v1201-2021-09-22">v1.20.1 (2021-09-22)<a class="headerlink" href="#v1201-2021-09-22" title="Permanent link">&para;</a></h2>
+<p>Bugfix release to fix loading of translations for the browser-rendered frontend
+parts.</p>
+<h2 id="v120-2021-09-19">v1.20 (2021-09-19)<a class="headerlink" href="#v120-2021-09-19" title="Permanent link">&para;</a></h2>
+<p>In this release, the document page now shows counts in the account tree and
+allows collapsing of accounts in the tree. Parts of the charts in the future
+are now desaturated. This release contains a couple of bug fixes as usual.</p>
+<h2 id="v119-2021-05-18">v1.19 (2021-05-18)<a class="headerlink" href="#v119-2021-05-18" title="Permanent link">&para;</a></h2>
+<p>The <code>conversion</code> and <code>interval</code> options have been removed. Their functionality
+can be achieved with the new <code>default-page</code> option. The editor components have
+been completely reworked, include autocompletion in more places and are now
+based on version 6 of CodeMirror. An option <code>invert-income-liabilities-equity</code>
+has been added to invert the numbers of those accounts on the income statement
+and the balance sheet. This release also adds a Bulgarian translation and
+features various smaller improvements and fixes as usual.</p>
+<h2 id="v118-2021-01-16">v1.18 (2021-01-16)<a class="headerlink" href="#v118-2021-01-16" title="Permanent link">&para;</a></h2>
+<p>This release contains couple of small improvements and various bug fixes.</p>
+<h2 id="v117-2020-11-15">v1.17 (2020-11-15)<a class="headerlink" href="#v117-2020-11-15" title="Permanent link">&para;</a></h2>
+<p>This release adds a document preview to the import page, as well as support
+for Python 3.9. It also fixes a couple of bugs.</p>
+<h2 id="v116-2020-10-18">v1.16 (2020-10-18)<a class="headerlink" href="#v116-2020-10-18" title="Permanent link">&para;</a></h2>
+<p>This release brings area charts as an alternative option to view the various
+line charts in rustfava and a Catalan translation for rustfava. There is also now an
+option to set the indentation of inserted Beancount entries. As usual this
+release also includes various minor fixes and improvements.</p>
+<h2 id="v115-2020-05-30">v1.15 (2020-05-30)<a class="headerlink" href="#v115-2020-05-30" title="Permanent link">&para;</a></h2>
+<p>This release accumulates various minor fixes and improvements, for example the
+setting of filters from payees and metadata in the Journal report.</p>
+<h2 id="v114-2020-02-16">v1.14 (2020-02-16)<a class="headerlink" href="#v114-2020-02-16" title="Permanent link">&para;</a></h2>
+<p>This is mainly a bugfix release to fix compatibility with one of the main
+dependencies (werkzeug). Also, a <code>default-conversion</code> option was added, which
+allows setting a default conversion.</p>
+<h2 id="v113-2020-02-01">v1.13 (2020-02-01)<a class="headerlink" href="#v113-2020-02-01" title="Permanent link">&para;</a></h2>
+<p>Rustfava can now display charts for BQL queries - if they have exactly two columns
+with the first being a date or string and the second an inventory, then a line
+chart or treemap chart is shown on the query page.</p>
+<h2 id="v112-2019-12-03">v1.12 (2019-12-03)<a class="headerlink" href="#v112-2019-12-03" title="Permanent link">&para;</a></h2>
+<p>Apart from plenty of bug fixes, this release mainly contains improvements to
+the forms to add transactions: postings can now be dragged and the full cost
+syntax of Beancount should supported.</p>
+<h2 id="v111-2019-08-20">v1.11 (2019-08-20)<a class="headerlink" href="#v111-2019-08-20" title="Permanent link">&para;</a></h2>
+<p>The import page of rustfava has been reworked - it now supports moving files to the
+documents folder and the import process should be a bit more interactive. This
+release also contains various fixes and a new <code>collapse-pattern</code> option to
+collapse accounts in account trees based on regular expressions (and replaces
+the use of the <code>rustfava-collapse-account</code> metadata entry).</p>
+<p>Other changes:</p>
+<ul>
+<li>Command line flags can be specified by setting environment variables.</li>
+<li>A Taiwanese translation has been added.</li>
+</ul>
+<h2 id="v110-2019-01-31">v1.10 (2019-01-31)<a class="headerlink" href="#v110-2019-01-31" title="Permanent link">&para;</a></h2>
+<p>This release contains mostly smaller changes and fixes. In particular, the net
+worth chart will now follow the selected conversion.</p>
+<h2 id="v19-2018-10-08">v1.9 (2018-10-08)<a class="headerlink" href="#v19-2018-10-08" title="Permanent link">&para;</a></h2>
+<p>In this release, the click behaviour has been updated to allow filtering for
+payees. The entry input forms now allow inputting prices and costs. As
+always, bugs have been fixed.</p>
+<h2 id="v18-2018-07-25">v1.8 (2018-07-25)<a class="headerlink" href="#v18-2018-07-25" title="Permanent link">&para;</a></h2>
+<p>The journal design has been updated and should now have a clearer structure.
+Starting with this version, there will not be any more GUI releases of rustfava.
+The GUI broke frequently and does not seem to worth the maintenance burden.</p>
+<p>Other changes:</p>
+<ul>
+<li>When downloading documents, the original filename will be used.</li>
+<li><code>any()</code> and <code>all()</code> functions have been added to the filter syntax to allow
+  filtering entries by properties of their postings.</li>
+<li>As always, bugs have been fixed.</li>
+</ul>
+<h2 id="v17-2018-03-09">v1.7 (2018-03-09)<a class="headerlink" href="#v17-2018-03-09" title="Permanent link">&para;</a></h2>
+<p>The entry filters have been reworked in this release and should now support for
+more flexible filtering of the entries. See the help page on how the new syntax
+works. Also, when completing the payee in the transaction form, the postings
+of the last transaction for this payee will be auto-filled.</p>
+<p>Other changes:</p>
+<ul>
+<li>The rustfava-option to hide the charts has been removed. This is now tracked in
+  the page URL.</li>
+<li>As always, bugs have been fixed.</li>
+</ul>
+<h2 id="v16-2017-10-06">v1.6 (2017-10-06)<a class="headerlink" href="#v16-2017-10-06" title="Permanent link">&para;</a></h2>
+<p>This is a release with various small changes and mainly some speed
+improvements to the Balance Sheet and the net worth calculation. Also, if 'At
+Value' is selected, the current unrealized gain is shown in parentheses in the
+Balance Sheet.</p>
+<p>Other changes:</p>
+<ul>
+<li>The currently filtered entries can now be exported from the Journal page.</li>
+<li>The CLI now has a <code>--version</code> flag.</li>
+</ul>
+<h2 id="v15-2017-07-23">v1.5 (2017-07-23)<a class="headerlink" href="#v15-2017-07-23" title="Permanent link">&para;</a></h2>
+<p>Rustfava now has an interface to edit single entries. Clicking on the entry date in
+the Journal will open an overlay that shows the entry context and allows
+editing just the lines of that entry.</p>
+<p>Other changes:</p>
+<ul>
+<li>The source editor now has a menu that gives access to editor commands like
+  "fold all".</li>
+<li>Entries with matching tags or links can now be excluded with <code>-#tag</code>.</li>
+<li>The keyboard shortcuts are now displayed in-place.</li>
+<li>The <code>incognito</code> option has been removed and replaced with a <code>--incognito</code>
+  command line switch.</li>
+<li>As always, several bugs have been fixed.</li>
+</ul>
+<h2 id="v14-2017-05-14">v1.4 (2017-05-14)<a class="headerlink" href="#v14-2017-05-14" title="Permanent link">&para;</a></h2>
+<p>Rustfava now provides an interface for Beancount's import system that allows you to
+import transactions from your bank for example.</p>
+<p>Rustfava can now show your balances at market value or convert them to a single
+currency if your file contains the necessary price information.</p>
+<p>We now also provide a compiled GUI version of rustfava for Linux and macOS. This
+version might still be a bit buggy so any feedback/help on it is very welcome.</p>
+<p>Other changes:</p>
+<ul>
+<li>The <code>insert-entry</code> option can be used to control where transactions are
+  inserted.</li>
+<li>The transaction form now accepts tags and links in the narration field.</li>
+<li>Budgets are now accumulated over all children where appropriate.</li>
+<li>As always, several bugs have been fixed.</li>
+</ul>
+<h2 id="v13-2017-03-15">v1.3 (2017-03-15)<a class="headerlink" href="#v13-2017-03-15" title="Permanent link">&para;</a></h2>
+<p>The translations of rustfava are on <a href="https://poeditor.com/projects/view?id=90283">POEditor.com</a>,
+which has helped us get translations in five more languages: Chinese
+(simplified), Dutch, French, Portuguese, and Spanish. A big thank you to the
+new translators!</p>
+<p>The transaction form has been improved, it now supports adding metadata and the
+suggestions will be ranked by how often and recently they occur (using
+exponential decay).</p>
+<p>The Query page supports all commands of the <code>bean-query</code> shell and shares its
+history of recently used queries.</p>
+<p>Rustfava has gained a basic extension mechanism. Extensions allow you to run hooks
+at various points, e.g., after adding a transaction. They are specified using
+the <code>extensions</code> option and for an example, see the <code>rustfava.ext.auto_commit</code>
+extension.</p>
+<p>Other changes:</p>
+<ul>
+<li>The default sort order in journals has been reversed so that the most recent
+  entries come first.</li>
+<li>The new <code>incognito</code> option can be used to obscure all numbers.</li>
+<li>As always, several bugs have been fixed.</li>
+</ul>
+<h2 id="v12-2016-12-25">v1.2 (2016-12-25)<a class="headerlink" href="#v12-2016-12-25" title="Permanent link">&para;</a></h2>
+<p>You can now add transactions from within rustfava. The form supports autocompletion
+for most fields.</p>
+<p>Rustfava will now show a little bubble in the sidebar for the number of events in
+the next week. This can be configured with the <code>upcoming-events</code> option.</p>
+<p>Other changes:</p>
+<ul>
+<li>The payee filter can filter by regular expression.</li>
+<li>The tag filter can filter for links, too.</li>
+<li>There's a nice spinning indicator during asynchronous page loads.</li>
+<li>The Journal shows little indicators for metadata.</li>
+<li>As always, several bugs have been fixed.</li>
+</ul>
+<h2 id="v11-2016-11-19">v1.1 (2016-11-19)<a class="headerlink" href="#v11-2016-11-19" title="Permanent link">&para;</a></h2>
+<p>You can now upload documents by dropping them onto transactions, which will
+also add the file path as <code>statement</code> metadata to the transaction. rustfava also
+ships with a plugin to link these transactions with the generated documents.
+See the help pages for details.</p>
+<p>This is the first release for which we provide compiled binaries (for macOS and
+Linux). These do not have any dependencies and can simply be executed from the
+terminal.</p>
+<p>Other changes:</p>
+<ul>
+<li>The bar charts on account pages now also show budgets.</li>
+<li>The Journal can now be sorted by date, flag and narration.</li>
+<li>Rustfava now has a Russian translation.</li>
+<li>As always, several bugs have been fixed.</li>
+</ul>
+<h2 id="v10-2016-10-19">v1.0 (2016-10-19)<a class="headerlink" href="#v10-2016-10-19" title="Permanent link">&para;</a></h2>
+<p>This is a major new release that includes too many improvements and changes to
+list. Some highlights:</p>
+<ul>
+<li>The layout has been tweaked and we use some nicer fonts.</li>
+<li>Rustfava looks and works much better on smaller screens.</li>
+<li>Rustfava loads most pages asynchronously, so navigating rustfava is much faster and
+  responsive.</li>
+</ul>
+<p>rustfava's configuration is not read from a configuration file anymore but can
+rather be specified using custom entries in the Beancount file. Some options
+have also been removed or renamed, so check rustfava's help page on the available
+options when upgrading from v0.3.0.</p>
+<p>There have been many changes under the hood to improve rustfava's codebase and a
+lot of bugs have been squashed.</p>
+<h2 id="v030-2016-03-24">v0.3.0 (2016-03-24)<a class="headerlink" href="#v030-2016-03-24" title="Permanent link">&para;</a></h2>
+<h3 id="additions">Additions<a class="headerlink" href="#additions" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Support for switching between multiple beancount files.</li>
+<li>New sunburst charts.</li>
+<li>Add "Clear filter" button when filters are active.</li>
+<li>Simple budgeting functionality in the Account view. See help pages on how to
+  use budgets.</li>
+<li>German translation.</li>
+<li>The Beancount is now being reloaded when it is saved in the Source Editor.</li>
+<li>New Journal filter controls.</li>
+<li>Tree-tables are now displayed in a hierarchical way.</li>
+</ul>
+<h3 id="changes">Changes<a class="headerlink" href="#changes" title="Permanent link">&para;</a></h3>
+<ul>
+<li>All charts are now rendered with d3.js.</li>
+<li>The title of a page is now shown in the header to save screen space.</li>
+<li>Changed shortcut for Journal from <code>g g</code> to <code>g j</code> as the Journal was
+  renamed from "General Journal" to "Journal".</li>
+</ul>
+<h3 id="new-configuration-options">New configuration options<a class="headerlink" href="#new-configuration-options" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>language</code>: The language to use. Valid languages are <code>"en"</code> and <code>"de"</code>
+  (default: <code>"en"</code>).</li>
+<li><code>treemaps-show-negative-numbers</code> was removed.</li>
+</ul>
+<h3 id="fixes">Fixes<a class="headerlink" href="#fixes" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Commodity prices are now filtered when a Time filter is enabled.</li>
+<li>Some improvements to the help pages.</li>
+<li>Many small bug fixes.</li>
+</ul>
+<h2 id="v026-2016-03-20">v0.2.6 (2016-03-20)<a class="headerlink" href="#v026-2016-03-20" title="Permanent link">&para;</a></h2>
+<h3 id="additions_1">Additions<a class="headerlink" href="#additions_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>There are now more interval options available for charts and the account
+  balances report. The interval can be selected from a dropdown next to the
+  charts.</li>
+<li>Show metadata for postings in the Journal.</li>
+<li>The editor now supports org-mode style folding.</li>
+<li>Show colored dots for all the postings of a transaction in the Journal
+  report. This way flagged postings can be quickly spotted.</li>
+<li>Add keyboard shortcuts for save to source editor.</li>
+</ul>
+<h3 id="changes_1">Changes<a class="headerlink" href="#changes_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Use beancount's DisplayContext to determine the correct precision at which to
+  render numbers.</li>
+<li>Improve the way that query results are serialized to XLS etc.</li>
+<li>Show inverse rates for pairs of operating currencies on the commodities
+  report.</li>
+<li>Use Click for the CLI and check if beancount file exists on startup.</li>
+<li>Hide closed accounts in tree tables. Also see new configuration option below.</li>
+</ul>
+<h3 id="new-configuration-options_1">New configuration options<a class="headerlink" href="#new-configuration-options_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>editor-strip-trailing-whitespace</code> to enable trimming of trailing
+  whitespace in the Source editor (default: "false").</li>
+<li><code>show-closed-accounts</code> to show closed accounts in tree tables, for example
+  on the balance sheet (default: "false").</li>
+<li><code>show-accounts-with-zero-balance</code> to show accounts with a balance of zero
+  in tree tables (default: "true").</li>
+<li><code>show-accounts-with-zero-transactions</code> to show accounts with no
+  transactions in tree tables (default: "true").</li>
+</ul>
+<h3 id="fixes_1">Fixes<a class="headerlink" href="#fixes_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fixed a bug where the months would be off by one for the interval reports.</li>
+<li>Fix the net worth report for more than one currency.</li>
+<li>Some improvements to the help pages.</li>
+<li>Many small bug fixes.</li>
+</ul>
+<h2 id="v025-2016-02-28">v0.2.5 (2016-02-28)<a class="headerlink" href="#v025-2016-02-28" title="Permanent link">&para;</a></h2>
+<p>Bump release to remove unused draft code.</p>
+<h2 id="v024-2016-02-18">v0.2.4 (2016-02-18)<a class="headerlink" href="#v024-2016-02-18" title="Permanent link">&para;</a></h2>
+<h3 id="additions_2">Additions<a class="headerlink" href="#additions_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Added missing Holdings views compared to <code>bean-web</code>.</li>
+<li>Custom queries are now shown in sidebar.</li>
+<li>The user settings file is now editable in the Source editor.</li>
+<li>Added second theme.</li>
+<li>Added Help pages.</li>
+<li>Query results can now be downloaded as CSV, XLS, XLSX and ODS.</li>
+<li>Documents can now be uploaded by dragging and dropping files over an Account
+  name on the Account page and all tree-tables.</li>
+<li>Journal can now be filtered by transaction type.</li>
+</ul>
+<h3 id="changes_2">Changes<a class="headerlink" href="#changes_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The uptodate-indicator is now shown everywhere by default, but only enabled
+  for accounts that have the metadata <code>rustfava-uptodate-indication: "True"</code> set
+  on their <code>open</code>-directives.</li>
+<li>Speedier Journal rendering.</li>
+<li>Only basenames will be shown for documents in the Journal.</li>
+<li>Slightly reordered the sidebar menu.</li>
+<li>Minor UI tweaks.</li>
+</ul>
+<h3 id="new-configuration-options_2">New configuration options<a class="headerlink" href="#new-configuration-options_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>sidebar-show-queries</code>: The maximum number of custom queries to show in the
+  sidebar (default: 5).</li>
+<li><code>theme</code>: The theme to use. Valid themes are <code>"default"</code> and <code>"alternative"</code>
+  (default: <code>"default"</code>).</li>
+<li><code>editor-print-margin-column</code>: Set the column for the print margin in the
+  Source editor (default: 60).</li>
+<li><code>uptodate-indicator-show-everywhere</code> (default: "true"). See Changes above.</li>
+</ul>
+<h3 id="removed-configuration-options">Removed configuration options<a class="headerlink" href="#removed-configuration-options" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>uptodate-indicator-exclude-accounts</code>, see Changes above.</li>
+</ul>
+<h3 id="fixes_2">Fixes<a class="headerlink" href="#fixes_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fixed Net worth calculation.</li>
+<li>Many small bug fixes.</li>
+</ul>
+<h2 id="v023-2016-02-15">v0.2.3 (2016-02-15)<a class="headerlink" href="#v023-2016-02-15" title="Permanent link">&para;</a></h2>
+<p>Bumped version to communicate that installing via <code>pip install</code> now works,
+all requirements included.</p>
+<h2 id="earlier-versions">Earlier Versions<a class="headerlink" href="#earlier-versions" title="Permanent link">&para;</a></h2>
+<p>It was not possible to install any of the earlier versions only using <code>pip</code>
+and you may consult the git log for earlier changes. The first commit in the
+git repository was on December 4th, 2015.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.expand", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
