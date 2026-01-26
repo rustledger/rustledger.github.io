@@ -22,29 +22,19 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Fetch latest WASM from releases
-              run: |
-                  # Get the latest release with WASM assets
-                  RELEASE_JSON=$(curl -s "https://api.github.com/repos/rustledger/rustledger/releases" | jq '[.[] | select(.assets[]?.name | test("wasm"))] | .[0]')
-                  WASM_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name | test("wasm.*\\.tar\\.gz$")) | .browser_download_url')
-                  VERSION=$(echo "$RELEASE_JSON" | jq -r '.tag_name')
-
-                  echo "Downloading WASM from $VERSION: $WASM_URL"
-
-                  # Download and extract to pkg/
-                  curl -sL "$WASM_URL" -o wasm.tar.gz
-                  rm -rf pkg
-                  mkdir -p pkg
-                  tar -xzf wasm.tar.gz -C pkg --strip-components=1
-                  rm wasm.tar.gz
-
-                  echo "WASM version: $VERSION"
-                  ls -la pkg/
-
             - uses: oven-sh/setup-bun@v2
 
             - name: Install dependencies
               run: bun install --frozen-lockfile
+
+            - name: Copy WASM from npm package to pkg/
+              run: |
+                  # Copy @rustledger/wasm from node_modules to pkg/ for runtime
+                  rm -rf pkg
+                  cp -r node_modules/@rustledger/wasm pkg
+                  VERSION=$(jq -r '.version' pkg/package.json)
+                  echo "WASM version from npm: $VERSION"
+                  ls -la pkg/
 
             - name: Check formatting
               run: bun run format:check
