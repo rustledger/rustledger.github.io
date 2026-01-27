@@ -221,11 +221,12 @@
                                     <span class="string">5000:5000</span>
                                     <span class="flag">-v</span>
                                     <span class="string">$PWD:/data</span>
-                                    <span class="package">ghcr.io/rustledger/rustfava</span></span
+                                    <span class="package">ghcr.io/rustledger/rustfava</span>
+                                    <span class="string">/data/file.beancount</span></span
                                 >
                                 <button
                                     class="install-copy-btn"
-                                    data-command="docker run -p 5000:5000 -v $PWD:/data ghcr.io/rustledger/rustfava"
+                                    data-command="docker run -p 5000:5000 -v $PWD:/data ghcr.io/rustledger/rustfava /data/file.beancount"
                                     title="Copy"
                                     aria-label="Copy command"
                                 >
