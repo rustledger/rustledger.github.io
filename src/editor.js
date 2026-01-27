@@ -467,6 +467,8 @@ export function createEditor(container, initialContent, onChange) {
                     scroller.dataset.tooltipInit = 'true';
                     /** @type {HTMLElement | null} */
                     let tooltip = null;
+                    /** @type {number | null} */
+                    let fadeTimeout = null;
 
                     scroller.addEventListener('mouseover', (e) => {
                         const target = /** @type {HTMLElement | null} */ (e.target);
@@ -474,6 +476,12 @@ export function createEditor(container, initialContent, onChange) {
                             target?.closest('.cm-error-line')
                         );
                         if (errorLine && errorLine.dataset.errorMessage) {
+                            // Clear any pending fade timeout
+                            if (fadeTimeout) {
+                                clearTimeout(fadeTimeout);
+                                fadeTimeout = null;
+                            }
+
                             // Remove existing tooltip
                             if (tooltip) tooltip.remove();
 
@@ -503,8 +511,18 @@ export function createEditor(container, initialContent, onChange) {
                         const target = /** @type {HTMLElement | null} */ (e.target);
                         const errorLine = target?.closest('.cm-error-line');
                         if (errorLine && tooltip) {
-                            tooltip.remove();
-                            tooltip = null;
+                            const currentTooltip = tooltip;
+                            // Wait 1 second, then fade out
+                            fadeTimeout = window.setTimeout(() => {
+                                currentTooltip.classList.add('fade-out');
+                                // Remove after fade transition completes (0.3s)
+                                setTimeout(() => {
+                                    currentTooltip.remove();
+                                    if (tooltip === currentTooltip) {
+                                        tooltip = null;
+                                    }
+                                }, 300);
+                            }, 1000);
                         }
                     });
                 }
