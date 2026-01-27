@@ -178,7 +178,7 @@ export function initStatsAnimation(sectionId) {
  * Initialize scroll reveal animations
  */
 export function initScrollReveal() {
-    const revealElements = document.querySelectorAll('.reveal');
+    const revealElements = document.querySelectorAll('.reveal, .reveal-fade');
     if (!revealElements.length) return;
 
     const observer = new IntersectionObserver(
