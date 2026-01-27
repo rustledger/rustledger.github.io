@@ -1,5 +1,5 @@
 // @ts-check
-import { EditorState, RangeSetBuilder } from '@codemirror/state';
+import { EditorState, RangeSetBuilder, StateField, StateEffect } from '@codemirror/state';
 import {
     EditorView,
     keymap,
@@ -245,12 +245,84 @@ const accountColorizer = ViewPlugin.fromClass(
     }
 );
 
-// Error line decoration
-const errorLineDecoration = EditorView.baseTheme({
+// Error line decoration theme
+const errorLineTheme = EditorView.baseTheme({
     '.cm-error-line': {
         backgroundColor: 'rgba(239, 68, 68, 0.15)',
     },
 });
+
+// Error line decoration mark
+const errorLineMark = Decoration.line({ class: 'cm-error-line' });
+
+/**
+ * @typedef {{ lineNumbers: Set<number>, messages: Map<number, string> }} ErrorState
+ */
+
+const setErrorsEffect = /** @type {import('@codemirror/state').StateEffectType<ErrorState>} */ (
+    StateEffect.define()
+);
+
+/** @type {StateField<ErrorState>} */
+const errorStateField = StateField.define({
+    create() {
+        return { lineNumbers: new Set(), messages: new Map() };
+    },
+    update(value, tr) {
+        for (const effect of tr.effects) {
+            if (effect.is(setErrorsEffect)) {
+                return effect.value;
+            }
+        }
+        return value;
+    },
+});
+
+// ViewPlugin to create error line decorations from state
+const errorLineDecorator = ViewPlugin.fromClass(
+    class {
+        /** @type {DecorationSet} */
+        decorations;
+
+        /** @param {EditorView} view */
+        constructor(view) {
+            this.decorations = this.buildDecorations(view);
+        }
+
+        /** @param {ViewUpdate} update */
+        update(update) {
+            // Rebuild if doc changed or error state changed
+            if (
+                update.docChanged ||
+                update.transactions.some((tr) => tr.effects.some((e) => e.is(setErrorsEffect)))
+            ) {
+                this.decorations = this.buildDecorations(update.view);
+            }
+        }
+
+        /**
+         * @param {EditorView} view
+         * @returns {DecorationSet}
+         */
+        buildDecorations(view) {
+            /** @type {RangeSetBuilder<Decoration>} */
+            const builder = new RangeSetBuilder();
+            const errorState = view.state.field(errorStateField);
+
+            for (const lineNum of errorState.lineNumbers) {
+                if (lineNum >= 1 && lineNum <= view.state.doc.lines) {
+                    const line = view.state.doc.line(lineNum);
+                    builder.add(line.from, line.from, errorLineMark);
+                }
+            }
+
+            return builder.finish();
+        }
+    },
+    {
+        decorations: (v) => v.decorations,
+    }
+);
 
 // Map WASM completion kinds to CodeMirror types
 /** @type {Record<string, string>} */
@@ -404,7 +476,9 @@ export function createEditor(container, initialContent, onChange) {
             darkTheme,
             accountTheme,
             accountColorizer,
-            errorLineDecoration,
+            errorLineTheme,
+            errorStateField,
+            errorLineDecorator,
             updateListener,
             // WASM-powered LSP-like features
             beancountCompletions(getSource),
@@ -440,91 +514,150 @@ export function createEditor(container, initialContent, onChange) {
          * @param {Map<number, string>} errorMessages
          */
         highlightErrorLines(lineNumbers, errorMessages = new Map()) {
-            // Use requestAnimationFrame to ensure DOM is ready
-            requestAnimationFrame(() => {
-                const scroller = /** @type {HTMLElement | null} */ (
-                    container.querySelector('.cm-scroller')
-                );
-                if (!scroller) return;
+            // Dispatch state effect to update error decorations
+            view.dispatch({
+                effects: setErrorsEffect.of({ lineNumbers, messages: errorMessages }),
+            });
 
-                scroller.querySelectorAll('.cm-line').forEach((line, idx) => {
-                    const lineEl = /** @type {HTMLElement} */ (line);
-                    const lineNum = idx + 1;
-                    if (lineNumbers.has(lineNum)) {
-                        lineEl.classList.add('cm-error-line');
-                        // Store error message as data attribute
-                        if (errorMessages.has(lineNum)) {
-                            lineEl.dataset.errorMessage = errorMessages.get(lineNum);
+            // Set up tooltip listeners if not already set
+            const scroller = /** @type {HTMLElement | null} */ (
+                container.querySelector('.cm-scroller')
+            );
+            if (!scroller || scroller.dataset.tooltipInit) return;
+
+            scroller.dataset.tooltipInit = 'true';
+            /** @type {HTMLElement | null} */
+            let tooltip = null;
+            /** @type {number | null} */
+            let fadeTimeout = null;
+            /** @type {string | null} */
+            let currentErrorMessage = null;
+
+            /**
+             * Get the line number for a DOM element
+             * @param {HTMLElement} lineEl
+             * @returns {number | null}
+             */
+            const getLineNumber = (lineEl) => {
+                // Find the position in the document for this line element
+                const pos = view.posAtDOM(lineEl);
+                if (pos === null) return null;
+                const line = view.state.doc.lineAt(pos);
+                return line.number;
+            };
+
+            /**
+             * Get error message for a line from state
+             * @param {number} lineNum
+             * @returns {string | null}
+             */
+            const getErrorMessage = (lineNum) => {
+                const errorState = view.state.field(errorStateField);
+                return errorState.messages.get(lineNum) || null;
+            };
+
+            /**
+             * Start the fade-out process for the tooltip
+             */
+            const startFadeOut = () => {
+                if (!tooltip || fadeTimeout) return;
+                const currentTooltip = tooltip;
+                // Wait 1 second, then fade out
+                fadeTimeout = window.setTimeout(() => {
+                    currentTooltip.classList.add('fade-out');
+                    // Remove after fade transition completes (0.3s)
+                    setTimeout(() => {
+                        currentTooltip.remove();
+                        if (tooltip === currentTooltip) {
+                            tooltip = null;
+                        }
+                    }, 300);
+                }, 1000);
+            };
+
+            /**
+             * Show tooltip for an error line
+             * @param {HTMLElement} errorLine
+             * @param {string} message
+             */
+            const showTooltip = (errorLine, message) => {
+                // Clear any pending fade timeout
+                if (fadeTimeout) {
+                    clearTimeout(fadeTimeout);
+                    fadeTimeout = null;
+                }
+
+                // Remove existing tooltip
+                if (tooltip) {
+                    tooltip.remove();
+                    tooltip = null;
+                }
+
+                currentErrorMessage = message;
+                tooltip = document.createElement('div');
+                tooltip.className = 'error-tooltip';
+                tooltip.textContent = message;
+
+                // Position offscreen first to measure height without layout thrashing
+                tooltip.style.visibility = 'hidden';
+                tooltip.style.top = '-9999px';
+                document.body.appendChild(tooltip);
+
+                // Batch all DOM reads together
+                const rect = errorLine.getBoundingClientRect();
+                const tooltipHeight = tooltip.offsetHeight;
+
+                // Now do all DOM writes
+                const topPosition = rect.top - tooltipHeight - 8;
+                tooltip.style.left = `${rect.left + 20}px`;
+                tooltip.style.top = topPosition < 0 ? `${rect.bottom + 8}px` : `${topPosition}px`;
+                tooltip.style.visibility = 'visible';
+            };
+
+            // Use mousemove to handle both entering and leaving error lines
+            // This is more reliable than mouseover/mouseout when DOM changes
+            scroller.addEventListener('mousemove', (e) => {
+                const target = /** @type {HTMLElement | null} */ (e.target);
+                const errorLine = /** @type {HTMLElement | null} */ (
+                    target?.closest('.cm-error-line')
+                );
+
+                if (errorLine) {
+                    const lineNum = getLineNumber(errorLine);
+                    const message = lineNum ? getErrorMessage(lineNum) : null;
+
+                    if (message) {
+                        // Over an error line with a message
+                        if (message !== currentErrorMessage) {
+                            // Different error, show new tooltip
+                            showTooltip(errorLine, message);
+                        } else if (tooltip && fadeTimeout) {
+                            // Same error, but we were fading - cancel the fade
+                            clearTimeout(fadeTimeout);
+                            fadeTimeout = null;
+                            tooltip.classList.remove('fade-out');
                         }
                     } else {
-                        lineEl.classList.remove('cm-error-line');
-                        delete lineEl.dataset.errorMessage;
+                        // Error line but no message in state
+                        if (currentErrorMessage && tooltip) {
+                            currentErrorMessage = null;
+                            startFadeOut();
+                        }
                     }
-                });
+                } else {
+                    // Not over an error line
+                    if (currentErrorMessage && tooltip) {
+                        currentErrorMessage = null;
+                        startFadeOut();
+                    }
+                }
+            });
 
-                // Set up tooltip listeners if not already set
-                if (!scroller.dataset.tooltipInit) {
-                    scroller.dataset.tooltipInit = 'true';
-                    /** @type {HTMLElement | null} */
-                    let tooltip = null;
-                    /** @type {number | null} */
-                    let fadeTimeout = null;
-
-                    scroller.addEventListener('mouseover', (e) => {
-                        const target = /** @type {HTMLElement | null} */ (e.target);
-                        const errorLine = /** @type {HTMLElement | null} */ (
-                            target?.closest('.cm-error-line')
-                        );
-                        if (errorLine && errorLine.dataset.errorMessage) {
-                            // Clear any pending fade timeout
-                            if (fadeTimeout) {
-                                clearTimeout(fadeTimeout);
-                                fadeTimeout = null;
-                            }
-
-                            // Remove existing tooltip
-                            if (tooltip) tooltip.remove();
-
-                            tooltip = document.createElement('div');
-                            tooltip.className = 'error-tooltip';
-                            tooltip.textContent = errorLine.dataset.errorMessage;
-
-                            // Position offscreen first to measure height without layout thrashing
-                            tooltip.style.visibility = 'hidden';
-                            tooltip.style.top = '-9999px';
-                            document.body.appendChild(tooltip);
-
-                            // Batch all DOM reads together
-                            const rect = errorLine.getBoundingClientRect();
-                            const tooltipHeight = tooltip.offsetHeight;
-
-                            // Now do all DOM writes
-                            const topPosition = rect.top - tooltipHeight - 8;
-                            tooltip.style.left = `${rect.left + 20}px`;
-                            tooltip.style.top =
-                                topPosition < 0 ? `${rect.bottom + 8}px` : `${topPosition}px`;
-                            tooltip.style.visibility = 'visible';
-                        }
-                    });
-
-                    scroller.addEventListener('mouseout', (e) => {
-                        const target = /** @type {HTMLElement | null} */ (e.target);
-                        const errorLine = target?.closest('.cm-error-line');
-                        if (errorLine && tooltip) {
-                            const currentTooltip = tooltip;
-                            // Wait 1 second, then fade out
-                            fadeTimeout = window.setTimeout(() => {
-                                currentTooltip.classList.add('fade-out');
-                                // Remove after fade transition completes (0.3s)
-                                setTimeout(() => {
-                                    currentTooltip.remove();
-                                    if (tooltip === currentTooltip) {
-                                        tooltip = null;
-                                    }
-                                }, 300);
-                            }, 1000);
-                        }
-                    });
+            // Clean up when mouse leaves the scroller entirely
+            scroller.addEventListener('mouseleave', () => {
+                if (tooltip) {
+                    currentErrorMessage = null;
+                    startFadeOut();
                 }
             });
         },

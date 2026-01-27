@@ -14,6 +14,13 @@ export default defineConfig({
     // Serve from root
     root: '.',
 
+    // Alias /pkg/ to the npm package so we use the installed version
+    resolve: {
+        alias: {
+            '/pkg': resolve(__dirname, 'node_modules/@rustledger/wasm'),
+        },
+    },
+
     // Dev server config
     server: {
         port: 8080,
