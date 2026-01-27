@@ -355,13 +355,91 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-desktop-app-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Desktop App (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-command-line-pypi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Command Line (PyPI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-3-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 3: Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#starting-rustfava" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Starting Rustfava
+        Starting rustfava
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Starting rustfava">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#desktop-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Desktop App
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command Line
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-rustfava" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using rustfava
       
     </span>
   </a>
@@ -519,13 +597,91 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-desktop-app-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Desktop App (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-command-line-pypi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Command Line (PyPI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-3-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 3: Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
   <a href="#starting-rustfava" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Starting Rustfava
+        Starting rustfava
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Starting rustfava">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#desktop-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Desktop App
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command Line
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-rustfava" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using rustfava
       
     </span>
   </a>
@@ -563,30 +719,66 @@ guide. There is extensive documentation for the Beancount file format at the
 <a href="https://docs.google.com/document/d/1RaondTJCS_IUPBHFNdT8oqFKJjVJDsfsn6JEjBG04eA">Beancount Documentation</a>
 page.</p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
-<p>Rustfava runs on macOS, Linux, and Windows. You will need
-<a href="https://www.python.org/downloads/">Python 3</a> and
+<h3 id="option-1-desktop-app-recommended">Option 1: Desktop App (Recommended)<a class="headerlink" href="#option-1-desktop-app-recommended" title="Permanent link">&para;</a></h3>
+<p>Download the desktop app from <a href="https://github.com/rustledger/rustfava/releases">GitHub Releases</a>:</p>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Download</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>macOS</strong></td>
+<td><code>rustfava_x.x.x_aarch64.dmg</code></td>
+</tr>
+<tr>
+<td><strong>Windows</strong></td>
+<td><code>rustfava_x.x.x_x64-setup.exe</code></td>
+</tr>
+<tr>
+<td><strong>Linux</strong></td>
+<td><code>rustfava_x.x.x_amd64.AppImage</code></td>
+</tr>
+</tbody>
+</table>
+<p>Double-click to launch, then open your <code>.beancount</code> file. No Python or other dependencies required.</p>
+<h3 id="option-2-command-line-pypi">Option 2: Command Line (PyPI)<a class="headerlink" href="#option-2-command-line-pypi" title="Permanent link">&para;</a></h3>
+<p>rustfava runs on macOS, Linux, and Windows. You will need
+<a href="https://www.python.org/downloads/">Python 3.13+</a> and
 <a href="https://docs.astral.sh/uv/">uv</a>.</p>
-<p>Then you can install rustfava or update your existing installation by running:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>rustfava
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>rustfava
 </code></pre></div>
-<p>Rustfava uses <a href="https://github.com/rustledger/rustledger">rustledger</a>, a
+<p>Or to install into a virtual environment:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>rustfava
+</code></pre></div>
+<p>rustfava uses <a href="https://github.com/rustledger/rustledger">rustledger</a>, a
 Rust-based parser compiled to WebAssembly, to parse your Beancount files. No
 separate Beancount installation is required.</p>
-<p>If you want to export query results to Microsoft Excel or LibreOffice Calc, use
-the following command to install the optional dependencies for this feature:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>rustfava<span class="o">[</span>excel<span class="o">]</span>
+<p>To export query results to Microsoft Excel or LibreOffice Calc:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>rustfava<span class="o">[</span>excel<span class="o">]</span>
 </code></pre></div>
-<h2 id="starting-rustfava">Starting Rustfava<a class="headerlink" href="#starting-rustfava" title="Permanent link">&para;</a></h2>
-<p>After installing rustfava, you can start it by running:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>rustfava<span class="w"> </span>ledger.beancount
+<h3 id="option-3-docker">Option 3: Docker<a class="headerlink" href="#option-3-docker" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-p<span class="w"> </span><span class="m">5000</span>:5000<span class="w"> </span>-v<span class="w"> </span>/path/to/ledger:/data<span class="w"> </span>ghcr.io/rustledger/rustfava<span class="w"> </span>/data/main.beancount
 </code></pre></div>
-<p>pointing it to your Beancount file -- and visit the web interface at
-<a href="http://localhost:5000">http://localhost:5000</a>.</p>
-<p>There are some command-line options available, run <code>rustfava --help</code> for an
-overview.</p>
-<p>For more information on rustfava's features, refer to the help pages that are
-available through rustfava's web-interface. Rustfava comes with Gmail-style
-keyboard shortcuts; press <code>?</code> to show an overview.</p>
+<p>See <a href="../contrib/docker/README.md">Docker deployment</a> for advanced options.</p>
+<h2 id="starting-rustfava">Starting rustfava<a class="headerlink" href="#starting-rustfava" title="Permanent link">&para;</a></h2>
+<h3 id="desktop-app">Desktop App<a class="headerlink" href="#desktop-app" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Launch the app</li>
+<li>Click "Open File" or use File → Open</li>
+<li>Select your <code>.beancount</code> file</li>
+</ol>
+<h3 id="command-line">Command Line<a class="headerlink" href="#command-line" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>rustfava<span class="w"> </span>ledger.beancount
+</code></pre></div>
+<p>Then visit <a href="http://localhost:5000">http://localhost:5000</a>.</p>
+<p>Run <code>rustfava --help</code> for available options.</p>
+<h2 id="using-rustfava">Using rustfava<a class="headerlink" href="#using-rustfava" title="Permanent link">&para;</a></h2>
+<p>For more information on rustfava's features, refer to the help pages available
+through rustfava's web interface. rustfava comes with Gmail-style keyboard
+shortcuts; press <code>?</code> to show an overview.</p>
 
 
 
