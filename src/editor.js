@@ -63,8 +63,8 @@ const beancountLanguage = StreamLanguage.define({
             return 'keyword';
         }
 
-        // Transaction flags
-        if (stream.match(/[*!&#?%PSTCURM]/)) {
+        // Transaction flags (only common symbols, not letters which cause false positives)
+        if (stream.match(/[*!&#?%]/)) {
             return 'operator';
         }
 
