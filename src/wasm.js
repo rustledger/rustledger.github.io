@@ -10,8 +10,9 @@ import { WASM_MAX_RETRIES, WASM_BASE_DELAY } from './config.js';
  * @typedef {{ label: string, kind: string, detail?: string, insertText?: string }} EditorCompletion
  * @typedef {{ completions: EditorCompletion[], context: string }} EditorCompletionResult
  * @typedef {{ line: number, character: number }} EditorLocation
- * @typedef {{ contents: string, range?: { start: EditorLocation, end: EditorLocation } }} EditorHoverInfo
- * @typedef {{ name: string, detail?: string, kind: string, range: { start: EditorLocation, end: EditorLocation }, children?: EditorDocumentSymbol[], deprecated?: boolean }} EditorDocumentSymbol
+ * @typedef {{ start_line: number, start_character: number, end_line: number, end_character: number }} EditorRange
+ * @typedef {{ contents: string, range?: EditorRange }} EditorHoverInfo
+ * @typedef {{ name: string, detail?: string, kind: string, range: EditorRange, children?: EditorDocumentSymbol[], deprecated?: boolean }} EditorDocumentSymbol
  */
 
 /** @type {Worker | null} */

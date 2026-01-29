@@ -385,13 +385,14 @@ function beancountHover(getSource) {
             if (!info) return null;
 
             // Calculate positions from range if provided
+            // WASM returns flat range: { start_line, start_character, end_line, end_character }
             let startPos = pos,
                 endPos = pos;
             if (info.range) {
-                const startLine = view.state.doc.line(info.range.start.line + 1);
-                startPos = startLine.from + info.range.start.character;
-                const endLine = view.state.doc.line(info.range.end.line + 1);
-                endPos = endLine.from + info.range.end.character;
+                const startLine = view.state.doc.line(info.range.start_line + 1);
+                startPos = startLine.from + info.range.start_character;
+                const endLine = view.state.doc.line(info.range.end_line + 1);
+                endPos = endLine.from + info.range.end_character;
             }
 
             return {

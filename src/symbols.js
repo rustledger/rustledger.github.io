@@ -54,8 +54,9 @@ function renderSymbol(symbol, depth, onNavigate) {
     const deprecatedClass = symbol.deprecated ? 'symbol-deprecated' : '';
 
     // Create data attributes for navigation
-    const line = symbol.range.start.line;
-    const char = symbol.range.start.character;
+    // WASM returns flat range: { start_line, start_character, end_line, end_character }
+    const line = symbol.range.start_line;
+    const char = symbol.range.start_character;
 
     let html = `
         <div class="symbol-item ${deprecatedClass}"
