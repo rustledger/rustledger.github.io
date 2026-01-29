@@ -11,7 +11,7 @@
         "@codemirror/state": "^6.5.3",
         "@codemirror/view": "^6.39.8",
         "@lezer/highlight": "^1.2.3",
-        "@rustledger/wasm": "^0.7.4",
+        "@rustledger/wasm": "0.8.0",
         "codemirror": "^6.0.2",
         "lz-string": "^1.5.0",
       },
@@ -206,7 +206,7 @@
 
     "@rollup/rollup-win32-x64-msvc": ["@rollup/rollup-win32-x64-msvc@4.55.1", "", { "os": "win32", "cpu": "x64" }, "sha512-SPEpaL6DX4rmcXtnhdrQYgzQ5W2uW3SCJch88lB2zImhJRhIIK44fkUrgIV/Q8yUNfw5oyZ5vkeQsZLhCb06lw=="],
 
-    "@rustledger/wasm": ["@rustledger/wasm@0.7.4", "", {}, "sha512-pVDvs/USzexxylAFn7IBOOj2KBjZm2Mttj+BKuP6xXIBH4U/Rq51hMZ00LV3HUQQu1EvqDVtIoeVrTwlKPItbQ=="],
+    "@rustledger/wasm": ["@rustledger/wasm@0.8.0", "", {}, "sha512-jugHX8+Bs95ZlmcL89bSiGTfcrHcRfXaAOvSliRTx0pX7yJnwYeAxSGBZaUI/ilA96kLE9LKiuKj52AfkIFNog=="],
 
     "@tailwindcss/node": ["@tailwindcss/node@4.1.18", "", { "dependencies": { "@jridgewell/remapping": "^2.3.4", "enhanced-resolve": "^5.18.3", "jiti": "^2.6.1", "lightningcss": "1.30.2", "magic-string": "^0.30.21", "source-map-js": "^1.2.1", "tailwindcss": "4.1.18" } }, "sha512-DoR7U1P7iYhw16qJ49fgXUlry1t4CpXeErJHnQ44JgTSKMaZUdf17cfn5mHchfJ4KRBZRFA/Coo+MUF5+gOaCQ=="],
 

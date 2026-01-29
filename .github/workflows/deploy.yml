@@ -24,8 +24,12 @@ jobs:
 
             - uses: oven-sh/setup-bun@v2
 
+            - name: Update WASM package (on wasm-release)
+              if: github.event_name == 'repository_dispatch'
+              run: bun add @rustledger/wasm@latest
+
             - name: Install dependencies
-              run: bun install --frozen-lockfile
+              run: bun install ${{ github.event_name == 'repository_dispatch' && '' || '--frozen-lockfile' }}
 
             - name: Copy WASM from npm package to pkg/
               run: |
