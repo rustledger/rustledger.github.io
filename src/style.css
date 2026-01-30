@@ -522,6 +522,39 @@ body {
 
 #charts-panel:not(.hidden) {
     display: flex;
+    flex-direction: column;
+}
+
+#chart-container {
+    flex: 1;
+    overflow: auto;
+}
+
+.chart-single {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 16px;
+}
+
+.chart-single .chart-title {
+    padding: 0 0 12px 0;
+    border-bottom: none;
+}
+
+.chart-area-full {
+    flex: 1;
+    min-height: 250px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: auto;
+}
+
+.chart-area-full svg {
+    display: block;
 }
 
 .charts-grid {
@@ -733,6 +766,33 @@ body {
     color: var(--accent);
     border-color: var(--accent);
     background: rgba(249, 115, 22, 0.1);
+}
+
+/* Chart view buttons - same style as sankey */
+.chart-view-btn {
+    padding: 4px 10px;
+    font-size: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.chart-view-btn:hover {
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.chart-view-btn.active {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(249, 115, 22, 0.1);
+}
+
+.chart-toolbar {
+    flex-shrink: 0;
 }
 
 .sankey-area {

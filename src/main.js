@@ -1048,6 +1048,24 @@ function initButtonListeners() {
             }
         });
     });
+
+    // Chart view buttons
+    document.querySelectorAll('.chart-view-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const viewBtn = /** @type {HTMLElement} */ (btn);
+            const view = viewBtn.dataset.view || 'summary';
+
+            // Update active state
+            document.querySelectorAll('.chart-view-btn').forEach((b) => {
+                b.classList.toggle('active', b === viewBtn);
+            });
+
+            // Update chart view
+            if (chartsModule && editor) {
+                chartsModule.setChartView(view);
+            }
+        });
+    });
 }
 
 // Register service worker for WASM caching

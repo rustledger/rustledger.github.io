@@ -1239,6 +1239,21 @@
                             role="region"
                             aria-label="Financial charts"
                         >
+                            <div
+                                class="chart-toolbar px-3 py-2 border-b border-white/10 flex items-center gap-2"
+                            >
+                                <span class="text-xs text-white/50">View:</span>
+                                <button class="chart-view-btn active" data-view="summary">
+                                    Summary
+                                </button>
+                                <button class="chart-view-btn" data-view="expenses">
+                                    Expenses
+                                </button>
+                                <button class="chart-view-btn" data-view="accounts">
+                                    Accounts
+                                </button>
+                                <button class="chart-view-btn" data-view="trends">Trends</button>
+                            </div>
                             <div id="chart-container" class="h-full"></div>
                         </div>
                         <div
