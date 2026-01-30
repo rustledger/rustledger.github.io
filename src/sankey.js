@@ -356,7 +356,7 @@ function renderSankey(container, data) {
         .nodeId((/** @type {any} */ d) => d.fullPath)
         .nodeAlign(accountingAlign)
         .nodeWidth(8)
-        .nodePadding(1)
+        .nodePadding(10)
         .iterations(Math.min(12, 6 + Math.floor(nodes.length / 5)))
         .linkSort((/** @type {any} */ a, /** @type {any} */ b) => {
             // Sort links by target Y position to minimize crossings
@@ -422,17 +422,25 @@ function renderSankey(container, data) {
         (/** @type {any} */ d) => `${d.fullPath}\n${formatValue(d.value || 0)}`
     );
 
-    // Node labels
+    // Node labels - position OUTSIDE the diagram:
+    // - Income (left column): labels on LEFT
+    // - Assets (middle column): labels on RIGHT (between middle and right columns)
+    // - Expenses/Liabilities (right column): labels on RIGHT
     // @ts-ignore - d3 selection types are complex with generics
     node.append('text')
-        .attr('x', (/** @type {any} */ d) =>
-            (d.x0 || 0) < width / 2 ? (d.x1 || 0) + 6 : (d.x0 || 0) - 6
-        )
+        .attr('x', (/** @type {any} */ d) => {
+            // Income goes on the left side of its nodes
+            if (d.category === 'Income') {
+                return (d.x0 || 0) - 6;
+            }
+            // Everything else (Assets, Expenses, Liabilities) goes on the right
+            return (d.x1 || 0) + 6;
+        })
         .attr('y', (/** @type {any} */ d) => ((d.y1 || 0) + (d.y0 || 0)) / 2)
         .attr('dy', '0.35em')
-        .attr('text-anchor', (/** @type {any} */ d) => ((d.x0 || 0) < width / 2 ? 'start' : 'end'))
+        .attr('text-anchor', (/** @type {any} */ d) => (d.category === 'Income' ? 'end' : 'start'))
         .attr('fill', 'rgba(255, 255, 255, 0.8)')
-        .attr('font-size', '11px')
+        .attr('font-size', '10px')
         .attr('font-family', 'ui-monospace, SFMono-Regular, monospace')
         .text((/** @type {any} */ d) => d.name);
 }
