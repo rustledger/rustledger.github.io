@@ -101,7 +101,7 @@ let validationVersion = 0;
 let queryVersion = 0;
 
 /** @type {number} Current sankey depth */
-let sankeyDepth = 3;
+let sankeyDepth = 3; // Default to Sub-accounts (0 = Leafs for full paths)
 
 /**
  * Live validation of editor content (async - runs in Web Worker)

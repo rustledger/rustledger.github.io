@@ -284,10 +284,13 @@ async function queryFlows(source, depth = 2) {
 /**
  * Truncate account path to specified depth
  * @param {string} account
- * @param {number} depth
+ * @param {number} depth - 0 means use full path (leafs)
  * @returns {string}
  */
 function truncateAccount(account, depth) {
+    if (depth === 0) {
+        return account; // Leafs: use full account path
+    }
     const parts = account.split(':');
     return parts.slice(0, depth).join(':');
 }
