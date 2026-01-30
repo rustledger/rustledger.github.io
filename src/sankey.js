@@ -346,11 +346,35 @@ function renderSankey(container, data, depth = 3) {
     // Clear container
     container.innerHTML = '';
 
-    // Get container dimensions - fit within available space (no scrolling)
-    // Scale down to 85% of container to ensure margins on all sides
-    const width = container.clientWidth || 600;
-    const height = Math.max(Math.floor(container.clientHeight * 0.85), 260);
+    // Calculate dimensions based on node density
+    // Minimum 18px per node to ensure labels don't overlap (font is 10px + padding)
+    const minHeightPerNode = 18;
     const margin = { top: 12, right: 95, bottom: 12, left: 80 };
+
+    const width = container.clientWidth || 600;
+    const containerHeight = container.clientHeight || 400;
+
+    // Calculate required height based on worst-case column density
+    // In accounting Sankey, Expenses column often has most nodes (taxes, insurance, etc.)
+    // Count nodes by category to find actual max column
+    /** @type {Record<string, number>} */
+    const categoryCounts = { Income: 0, Assets: 0, Expenses: 0, Liabilities: 0 };
+    for (const node of nodes) {
+        const cat = node.category;
+        if (cat in categoryCounts) {
+            categoryCounts[cat]++;
+        }
+    }
+    const maxColumnNodes = Math.max(...Object.values(categoryCounts), 1);
+    const requiredHeight = maxColumnNodes * minHeightPerNode + margin.top + margin.bottom;
+
+    // Use larger of container height (85%) or required height for readability
+    const baseHeight = Math.max(Math.floor(containerHeight * 0.85), 260);
+    const height = Math.max(baseHeight, requiredHeight);
+
+    // Enable scrolling if content exceeds container
+    const needsScroll = height > containerHeight;
+    container.style.overflowY = needsScroll ? 'auto' : 'hidden';
 
     // Create SVG
     const svg = d3
@@ -364,11 +388,13 @@ function renderSankey(container, data, depth = 3) {
     // Create sankey generator
     // linkSort by target Y position reduces link crossings (slope heuristic from d3-sankey PR #74)
     // iterations: scale with node count, min 6 (default), max 12 for performance
+    // nodePadding: increase when scrolling to ensure labels don't overlap
+    const nodePadding = needsScroll ? Math.max(10, minHeightPerNode - 8) : 10;
     // @ts-ignore - d3-sankey types are complex with generics
     const sankeyGenerator = sankey()
         .nodeId((/** @type {any} */ d) => d.fullPath)
         .nodeWidth(8)
-        .nodePadding(10)
+        .nodePadding(nodePadding)
         .iterations(Math.min(12, 6 + Math.floor(nodes.length / 5)))
         .linkSort((/** @type {any} */ a, /** @type {any} */ b) => {
             // Sort links by target Y position to minimize crossings
