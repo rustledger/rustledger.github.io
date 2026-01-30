@@ -1,6 +1,32 @@
 // Transaction Calendar Heatmap with Transaction List
 import { executeQuery, isWasmReady } from './wasm.js';
 
+// Account hierarchy colors (matching editor.js)
+const accountColors = [
+    '#22d3ee', // cyan-400 - Root (Assets, Expenses, etc.)
+    '#5eead4', // teal-300 - Level 1
+    '#6ee7b7', // emerald-300 - Level 2
+    '#fcd34d', // amber-300 - Level 3
+    '#fdba74', // orange-300 - Level 4+
+];
+const colonColor = 'rgba(255, 255, 255, 0.5)';
+
+/**
+ * Format account name with hierarchy coloring
+ * @param {string} account - Account name like "Assets:Bank:Checking"
+ * @returns {string} HTML with colored spans
+ */
+function formatAccountWithColors(account) {
+    const parts = account.split(':');
+    return parts
+        .map((part, i) => {
+            const color = accountColors[Math.min(i, accountColors.length - 1)];
+            const escapedPart = part.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return `<span style="color: ${color}">${escapedPart}</span>`;
+        })
+        .join(`<span style="color: ${colonColor}">:</span>`);
+}
+
 /**
  * @typedef {Object} DayData
  * @property {string} date - ISO date string (YYYY-MM-DD)
@@ -427,8 +453,6 @@ function renderTransactionList(transactions, dateFilter) {
 
     const rows = filtered
         .map((tx) => {
-            const accountType = tx.account.split(':')[0];
-            const accountClass = accountType.toLowerCase();
             const isNegative = tx.amount.startsWith('-');
             const amountClass = isNegative ? 'negative' : 'positive';
 
@@ -436,7 +460,7 @@ function renderTransactionList(transactions, dateFilter) {
             <div class="tx-row" data-line="${tx.line}" title="Click to jump to line ${tx.line}">
                 <div class="tx-date">${tx.date}</div>
                 <div class="tx-payee">${escapeHtml(tx.payee) || '—'}</div>
-                <div class="tx-account ${accountClass}">${escapeHtml(tx.account)}</div>
+                <div class="tx-account">${formatAccountWithColors(tx.account)}</div>
                 <div class="tx-amount ${amountClass}">${escapeHtml(tx.amount)}</div>
             </div>
         `;

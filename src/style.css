@@ -1373,7 +1373,7 @@ a:focus-visible {
 
 .tx-row {
     display: grid;
-    grid-template-columns: 85px 1fr 1fr auto;
+    grid-template-columns: 85px minmax(0, 1fr) minmax(0, 1fr) auto;
     gap: 8px;
     padding: 5px 16px;
     font-size: 12px;
