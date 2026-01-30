@@ -309,26 +309,32 @@ function formatValue(value) {
 
 /**
  * Custom node alignment for accounting Sankey
- * Places nodes in columns by category:
+ * Places nodes in columns by category, scaled to the graph's depth range:
  * - Column 0 (LEFT): Income
- * - Column 1 (MIDDLE): Assets
- * - Column 2 (RIGHT): Expenses, Liabilities
+ * - Column middle (CENTER): Assets
+ * - Column max (RIGHT): Expenses, Liabilities
+ *
+ * The second parameter `x` is the number of columns (maxDepth + 1).
+ * We must return values in [0, x-1] to avoid gaps in the columns array.
+ *
  * @param {any} node
+ * @param {number} x - Number of columns (maxDepth + 1)
  * @returns {number}
  */
-function accountingAlign(node) {
+function accountingAlign(node, x) {
     const category = node.category;
     if (category === 'Income') return 0;
-    if (category === 'Assets') return 1;
-    return 2; // Expenses, Liabilities
+    if (category === 'Assets') return Math.floor((x - 1) / 2);
+    return x - 1; // Expenses, Liabilities at rightmost column
 }
 
 /**
  * Render Sankey diagram
  * @param {HTMLElement} container
  * @param {{nodes: SankeyNode[], links: SankeyLink[]}} data
+ * @param {number} depth - Account hierarchy depth (0 = Leafs, use natural graph alignment)
  */
-function renderSankey(container, data) {
+function renderSankey(container, data, depth = 3) {
     const { nodes, links } = data;
 
     if (nodes.length === 0 || links.length === 0) {
@@ -355,13 +361,12 @@ function renderSankey(container, data) {
         .attr('viewBox', [0, 0, width, height])
         .attr('class', 'sankey-svg');
 
-    // Create sankey generator with custom accounting alignment
+    // Create sankey generator
     // linkSort by target Y position reduces link crossings (slope heuristic from d3-sankey PR #74)
     // iterations: scale with node count, min 6 (default), max 12 for performance
     // @ts-ignore - d3-sankey types are complex with generics
     const sankeyGenerator = sankey()
         .nodeId((/** @type {any} */ d) => d.fullPath)
-        .nodeAlign(accountingAlign)
         .nodeWidth(8)
         .nodePadding(10)
         .iterations(Math.min(12, 6 + Math.floor(nodes.length / 5)))
@@ -373,6 +378,12 @@ function renderSankey(container, data) {
             [margin.left, margin.top],
             [width - margin.right, height - margin.bottom],
         ]);
+
+    // Use custom accounting alignment for depth > 0 (categories/accounts/sub-accounts)
+    // For Leafs (depth=0), use default justify alignment which handles complex graphs better
+    if (depth > 0) {
+        sankeyGenerator.nodeAlign(accountingAlign);
+    }
 
     // Generate sankey layout
     // @ts-ignore - d3-sankey types are complex with generics
@@ -482,7 +493,7 @@ export async function updateSankey(source, container, depth = 2) {
 
         if (currentVersion !== sankeyVersion) return;
 
-        renderSankey(container, data);
+        renderSankey(container, data, depth);
     }, 300);
 }
 
