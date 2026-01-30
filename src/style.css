@@ -527,7 +527,7 @@ body {
 
 #chart-container {
     flex: 1;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .chart-single {
@@ -544,13 +544,13 @@ body {
 
 .chart-area-full {
     flex: 1;
-    min-height: 250px;
+    min-height: 0;
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .chart-area-full svg {
