@@ -17,6 +17,7 @@
     --accent-muted: rgba(249, 115, 22, 0.15);
     --success: #22c55e;
     --error: #ef4444;
+    --warning: #eab308;
 
     /* Typography */
     --font-sans: system-ui, -apple-system, sans-serif;
@@ -1372,9 +1373,9 @@ a:focus-visible {
 
 .tx-row {
     display: grid;
-    grid-template-columns: 90px 1fr 1fr auto;
-    gap: 12px;
-    padding: 10px 16px;
+    grid-template-columns: 85px 1fr 1fr auto;
+    gap: 8px;
+    padding: 5px 16px;
     font-size: 12px;
     border-bottom: 1px solid var(--border);
     cursor: pointer;
@@ -1386,7 +1387,7 @@ a:focus-visible {
 }
 
 .tx-date {
-    color: var(--text-muted);
+    color: #c792ea;
     font-family: var(--font-mono);
 }
 
@@ -1436,7 +1437,7 @@ a:focus-visible {
 }
 
 .tx-amount.negative {
-    color: var(--text-muted);
+    color: var(--error);
 }
 
 /* ========================================
