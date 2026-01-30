@@ -233,23 +233,13 @@ async function queryFlows(source, depth = 2) {
             // If netValue === 0, flows cancel out completely
         }
 
-        // Convert to Sankey format
-        /** @type {SankeyNode[]} */
-        const nodes = Array.from(nodeSet).map((name) => ({
-            name: name.split(':').slice(-1)[0], // Short name for display
-            fullPath: name,
-            category: getCategory(name),
-        }));
-
-        // Create node path set for validation
-        const nodePathSet = new Set(nodes.map((n) => n.fullPath));
-
+        // Build links first, then filter nodes to only those with links
+        // (netting can remove flows, leaving orphan nodes that crash d3-sankey)
         /** @type {SankeyLink[]} */
         const links = [];
         for (const [key, value] of nettedFlows) {
             const [src, tgt] = key.split('→');
-            // Use fullPath strings directly (matches nodeId)
-            if (nodePathSet.has(src) && nodePathSet.has(tgt) && src !== tgt) {
+            if (nodeSet.has(src) && nodeSet.has(tgt) && src !== tgt) {
                 links.push({
                     source: src,
                     target: tgt,
@@ -258,6 +248,20 @@ async function queryFlows(source, depth = 2) {
                 });
             }
         }
+
+        // Only include nodes that have at least one link
+        const linkedNodes = new Set();
+        for (const link of links) {
+            linkedNodes.add(link.source);
+            linkedNodes.add(link.target);
+        }
+
+        /** @type {SankeyNode[]} */
+        const nodes = Array.from(linkedNodes).map((name) => ({
+            name: String(name).split(':').slice(-1)[0], // Short name for display
+            fullPath: String(name),
+            category: getCategory(String(name)),
+        }));
 
         // Apply minimum value floor so small flows remain visible
         // Use 3% of max value as floor - ensures thin flows are at least readable
@@ -369,10 +373,20 @@ function renderSankey(container, data) {
 
     // Generate sankey layout
     // @ts-ignore - d3-sankey types are complex with generics
-    const { nodes: layoutNodes, links: layoutLinks } = sankeyGenerator({
-        nodes: nodes.map((d) => ({ ...d })),
-        links: links.map((d) => ({ ...d })),
-    });
+    let layoutNodes, layoutLinks;
+    try {
+        const result = sankeyGenerator({
+            nodes: nodes.map((d) => ({ ...d })),
+            links: links.map((d) => ({ ...d })),
+        });
+        layoutNodes = result.nodes;
+        layoutLinks = result.links;
+    } catch (err) {
+        console.error('Sankey layout error:', err, { nodes, links });
+        container.innerHTML =
+            '<div class="sankey-empty">Error generating flow diagram. Try a different depth level.</div>';
+        return;
+    }
 
     // Draw links
     // @ts-ignore - d3 selection types are complex with generics
