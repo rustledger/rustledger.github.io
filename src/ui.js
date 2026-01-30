@@ -123,6 +123,73 @@ export function initResizer(resizerId, topPanelId, bottomPanelId) {
         document.body.style.userSelect = 'none';
         e.preventDefault();
     });
+
+    // Handle window resize to maintain proportions
+    /** @type {ReturnType<typeof setTimeout> | null} */
+    let resizeTimeout = null;
+    window.addEventListener('resize', () => {
+        // Debounce resize handling
+        if (resizeTimeout) clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            // Clear the fixed heights to let CSS recalculate
+            topPanel.style.height = '';
+            bottomPanel.style.height = '';
+        }, 100);
+    });
+}
+
+/**
+ * Initialize a horizontal (column) resizer for sidebar
+ * @param {string} resizerId - ID of the resizer element
+ * @param {string} sidebarId - ID of the sidebar panel (left)
+ */
+export function initSidebarResizer(resizerId, sidebarId) {
+    const resizer = document.getElementById(resizerId);
+    const sidebar = document.getElementById(sidebarId);
+
+    if (!resizer || !sidebar) return;
+
+    let startX = 0;
+    let startWidth = 0;
+
+    /** @param {MouseEvent} e */
+    const onMouseMove = (e) => {
+        const delta = e.clientX - startX;
+        const newWidth = Math.max(120, Math.min(400, startWidth + delta));
+        sidebar.style.width = newWidth + 'px';
+    };
+
+    const onMouseUp = () => {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        resizer.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+    };
+
+    resizer.addEventListener('mousedown', (e) => {
+        startX = e.clientX;
+        startWidth = sidebar.offsetWidth;
+        resizer.classList.add('dragging');
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+    });
+
+    // Handle window resize - reset sidebar width to default on mobile
+    /** @type {ReturnType<typeof setTimeout> | null} */
+    let sidebarResizeTimeout = null;
+    window.addEventListener('resize', () => {
+        if (sidebarResizeTimeout) clearTimeout(sidebarResizeTimeout);
+        sidebarResizeTimeout = setTimeout(() => {
+            // On mobile, reset sidebar width
+            if (window.innerWidth <= 768) {
+                sidebar.style.width = '';
+            }
+        }, 100);
+    });
 }
 
 /**

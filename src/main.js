@@ -26,6 +26,7 @@ import {
 import {
     showToast,
     initResizer,
+    initSidebarResizer,
     initStatsAnimation,
     initScrollReveal,
     updateFooterStatus,
@@ -36,7 +37,40 @@ import { queryPresets, plugins } from './presets.js';
 import { fetchGitHubInfo, fetchBenchmarkStats } from './github.js';
 import { initInstallTabs, initCopyButtons } from './install.js';
 import { initKeyboardShortcuts, showShortcutsModal, hideShortcutsModal } from './shortcuts.js';
-import { updateSymbols, initSymbolsPanel, clearSymbolsPanel } from './symbols.js';
+import { toggleTemplatesDropdown } from './templates.js';
+import { initAccountTree, clearAccountTree, expandAll, collapseAll } from './account-tree.js';
+
+// Lazy-loaded visualization modules (loaded on demand to reduce initial bundle)
+/** @type {typeof import('./charts.js') | null} */
+let chartsModule = null;
+/** @type {typeof import('./sankey.js') | null} */
+let sankeyModule = null;
+/** @type {typeof import('./calendar.js') | null} */
+let calendarModule = null;
+
+/** Load charts module on demand */
+async function loadChartsModule() {
+    if (!chartsModule) {
+        chartsModule = await import('./charts.js');
+    }
+    return chartsModule;
+}
+
+/** Load sankey module on demand */
+async function loadSankeyModule() {
+    if (!sankeyModule) {
+        sankeyModule = await import('./sankey.js');
+    }
+    return sankeyModule;
+}
+
+/** Load calendar module on demand */
+async function loadCalendarModule() {
+    if (!calendarModule) {
+        calendarModule = await import('./calendar.js');
+    }
+    return calendarModule;
+}
 import './style.css';
 import LZString from 'lz-string';
 
@@ -65,6 +99,9 @@ let validationVersion = 0;
 
 /** @type {number} Query version counter to prevent race conditions */
 let queryVersion = 0;
+
+/** @type {number} Current sankey depth */
+let sankeyDepth = 3;
 
 /**
  * Live validation of editor content (async - runs in Web Worker)
@@ -156,12 +193,6 @@ async function liveValidate() {
 
         // Update plugin button states
         updatePluginButtons(source);
-
-        // Update symbols panel if visible
-        const symbolsPanel = document.getElementById('symbols-panel');
-        if (symbolsPanel && !symbolsPanel.classList.contains('hidden')) {
-            updateSymbols(source, symbolsPanel, navigateToPosition);
-        }
     } catch (err) {
         if (statusTab) statusTab.textContent = 'Error';
         console.error('Validation error:', err);
@@ -233,33 +264,11 @@ window.loadExample = async function (name) {
     // Validate and show query results
     if (isWasmReady()) {
         await liveValidate();
+        initAccountsSidebar();
         showTab('query');
         await window.runQueryPreset('BALANCES');
     }
 };
-
-/**
- * Navigate editor to a specific line and character
- * @param {number} line - 0-indexed line number
- * @param {number} character - 0-indexed character offset
- */
-function navigateToPosition(line, character) {
-    if (!editor || !editor.view) return;
-
-    const view = editor.view;
-    const targetLine = view.state.doc.line(line + 1); // 1-indexed
-    const targetPos = targetLine.from + character;
-
-    view.dispatch({
-        selection: { anchor: targetPos },
-        effects: [
-            // @ts-ignore - scrollIntoView is available
-            view.constructor.scrollIntoView(targetPos, { y: 'center' }),
-        ],
-    });
-
-    view.focus();
-}
 
 /**
  * Switch output tabs
@@ -280,7 +289,7 @@ function showTab(tabName) {
     const pluginOptions = document.getElementById('plugin-options');
     const output = document.getElementById('output');
     const queryOutput = document.getElementById('query-output');
-    const symbolsPanel = document.getElementById('symbols-panel');
+    const chartsPanel = document.getElementById('charts-panel');
 
     queryInput?.classList.add('hidden');
     queryOptions?.classList.add('hidden');
@@ -293,22 +302,55 @@ function showTab(tabName) {
     } else if (tabName === 'plugin') {
         pluginOptions?.classList.remove('hidden');
         if (editor) updatePluginButtons(editor.getContent());
-    } else if (tabName === 'symbols') {
-        // Initialize symbols panel if needed
-        if (symbolsPanel && editor) {
-            initSymbolsPanel(symbolsPanel, () => editor?.getContent() || '', navigateToPosition);
+    } else if (tabName === 'charts') {
+        // Lazy load and initialize chart
+        const chartContainer = document.getElementById('chart-container');
+        if (chartContainer && editor) {
+            loadChartsModule().then(({ initChart, updateChart }) => {
+                initChart(chartContainer);
+                updateChart(editor?.getContent() || '');
+            });
+        }
+    } else if (tabName === 'sankey') {
+        // Lazy load and initialize sankey diagram
+        const sankeyContainer = document.getElementById('sankey-container');
+        if (sankeyContainer && editor) {
+            loadSankeyModule().then(({ initSankey }) => {
+                initSankey(sankeyContainer, () => editor?.getContent() || '', sankeyDepth);
+            });
+        }
+    } else if (tabName === 'calendar') {
+        // Lazy load and initialize calendar heatmap
+        const calendarContainer = document.getElementById('calendar-container');
+        if (calendarContainer && editor) {
+            loadCalendarModule().then(({ initCalendar }) => {
+                initCalendar(
+                    calendarContainer,
+                    () => editor?.getContent() || '',
+                    (line) => editor?.goToLine(line)
+                );
+            });
         }
     }
 
     // Show corresponding content
+    const sankeyPanel = document.getElementById('sankey-panel');
+    const calendarPanel = document.getElementById('calendar-panel');
+
     output?.classList.add('hidden');
     queryOutput?.classList.add('hidden');
-    symbolsPanel?.classList.add('hidden');
+    chartsPanel?.classList.add('hidden');
+    sankeyPanel?.classList.add('hidden');
+    calendarPanel?.classList.add('hidden');
 
     if (tabName === 'query') {
         queryOutput?.classList.remove('hidden');
-    } else if (tabName === 'symbols') {
-        symbolsPanel?.classList.remove('hidden');
+    } else if (tabName === 'charts') {
+        chartsPanel?.classList.remove('hidden');
+    } else if (tabName === 'sankey') {
+        sankeyPanel?.classList.remove('hidden');
+    } else if (tabName === 'calendar') {
+        calendarPanel?.classList.remove('hidden');
     } else {
         output?.classList.remove('hidden');
     }
@@ -753,6 +795,47 @@ window.showShortcutsModal = showShortcutsModal;
 window.hideShortcutsModal = hideShortcutsModal;
 
 /**
+ * Toggle the accounts sidebar collapsed state
+ */
+function toggleAccountsSidebarCollapse() {
+    const sidebar = document.getElementById('accounts-sidebar');
+    const toggle = document.getElementById('accounts-sidebar-toggle');
+    if (!sidebar || !toggle) return;
+
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+        // On mobile, toggle 'expanded' class
+        sidebar.classList.toggle('expanded');
+        toggle.setAttribute('aria-expanded', String(sidebar.classList.contains('expanded')));
+    } else {
+        // On desktop, toggle 'collapsed' class
+        sidebar.classList.toggle('collapsed');
+        toggle.setAttribute('aria-expanded', String(!sidebar.classList.contains('collapsed')));
+    }
+}
+
+/**
+ * Initialize the accounts sidebar
+ */
+function initAccountsSidebar() {
+    const sidebar = document.getElementById('accounts-sidebar');
+    const sidebarContent = document.getElementById('accounts-sidebar-content');
+
+    // On mobile, start collapsed (no 'expanded' class)
+    // On desktop, start expanded (no 'collapsed' class)
+    if (sidebar && window.innerWidth <= 768) {
+        sidebar.classList.remove('expanded');
+        const toggle = document.getElementById('accounts-sidebar-toggle');
+        if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    if (sidebarContent && editor) {
+        initAccountTree(sidebarContent, () => editor?.getContent() || '');
+    }
+}
+
+/**
  * Initialize the application
  */
 async function init() {
@@ -760,7 +843,7 @@ async function init() {
     const container = document.getElementById('editor-panel');
     if (!container) return;
 
-    editor = createEditor(container, examples.simple, onEditorChange);
+    editor = createEditor(container, examples.budget, onEditorChange);
 
     // Hide loading skeleton
     const skeleton = document.getElementById('editor-skeleton');
@@ -773,7 +856,8 @@ async function init() {
     renderPluginButtons();
 
     // Initialize UI components
-    initResizer('resizer', 'editor-panel', 'output-panel');
+    initResizer('resizer', 'editor-container', 'output-panel');
+    initSidebarResizer('sidebar-resizer', 'accounts-sidebar');
     initQueryAutocomplete();
 
     // Add custom event listener for running queries
@@ -790,6 +874,9 @@ async function init() {
 
         // Run initial validation
         await liveValidate();
+
+        // Initialize accounts sidebar
+        initAccountsSidebar();
 
         // Show query tab and run default query
         showTab('query');
@@ -822,10 +909,11 @@ async function init() {
     // Initialize keyboard shortcuts
     initKeyboardShortcuts({
         onFormat: () => window.runFormat(),
+        onRunQuery: () => window.runQueryFromInput(),
     });
 
     // Set initial active states
-    document.querySelector('.example-tab[data-example="simple"]')?.classList.add('active');
+    document.querySelector('.example-tab[data-example="budget"]')?.classList.add('active');
     document.querySelector('.output-tab[data-tab="output"]')?.classList.add('active');
 
     // Set up event listeners for buttons (replacing inline onclick handlers)
@@ -869,6 +957,28 @@ function initButtonListeners() {
         window.shareUrl();
     });
 
+    // Sidebar toggle (collapse/expand the whole panel)
+    document.getElementById('accounts-sidebar-toggle')?.addEventListener('click', () => {
+        toggleAccountsSidebarCollapse();
+    });
+
+    // Sidebar expand/collapse buttons (for account tree nodes)
+    document.getElementById('sidebar-expand-all-btn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const sidebarContent = document.getElementById('accounts-sidebar-content');
+        if (sidebarContent) {
+            expandAll(sidebarContent);
+        }
+    });
+
+    document.getElementById('sidebar-collapse-all-btn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const sidebarContent = document.getElementById('accounts-sidebar-content');
+        if (sidebarContent) {
+            collapseAll(sidebarContent);
+        }
+    });
+
     // Copy output button
     document.getElementById('copy-output-btn')?.addEventListener('click', () => {
         window.copyOutput();
@@ -877,6 +987,66 @@ function initButtonListeners() {
     // Close shortcuts modal button
     document.getElementById('close-shortcuts-btn')?.addEventListener('click', () => {
         hideShortcutsModal();
+    });
+
+    // Templates dropdown button
+    const templatesBtn = document.getElementById('templates-btn');
+    templatesBtn?.addEventListener('click', () => {
+        toggleTemplatesDropdown(templatesBtn, (templateText, selectRange) => {
+            if (!editor || !editor.view) return;
+
+            const view = editor.view;
+            const pos = view.state.selection.main.head;
+            const currentLine = view.state.doc.lineAt(pos);
+
+            // Insert template at end of current line or next line
+            let insertPos = currentLine.to;
+            let prefix = '\n';
+            // If line is empty, insert at current position without newline
+            if (currentLine.text.trim() === '') {
+                insertPos = currentLine.from;
+                prefix = '';
+            }
+
+            const insertText = prefix + templateText + '\n';
+
+            view.dispatch({
+                changes: { from: insertPos, insert: insertText },
+                selection: selectRange
+                    ? {
+                          anchor: insertPos + prefix.length + selectRange.start,
+                          head: insertPos + prefix.length + selectRange.end,
+                      }
+                    : { anchor: insertPos + prefix.length },
+            });
+
+            view.focus();
+
+            // Trigger validation
+            if (isWasmReady()) {
+                liveValidate();
+            }
+        });
+    });
+
+    // Sankey depth buttons
+    document.querySelectorAll('.sankey-depth-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const depthBtn = /** @type {HTMLElement} */ (btn);
+            const depth = parseInt(depthBtn.dataset.depth || '1', 10);
+
+            // Update active state
+            document.querySelectorAll('.sankey-depth-btn').forEach((b) => {
+                b.classList.toggle('active', b === depthBtn);
+            });
+
+            // Update sankey (use lazy-loaded module if available)
+            sankeyDepth = depth;
+            const sankeyContainer = document.getElementById('sankey-container');
+            if (sankeyContainer && editor && sankeyModule) {
+                sankeyModule.updateSankey(editor.getContent(), sankeyContainer, sankeyDepth);
+            }
+        });
     });
 }
 
@@ -926,8 +1096,17 @@ window.addEventListener('pagehide', () => {
         editor = null;
     }
 
-    // Clear symbols panel state
-    clearSymbolsPanel();
+    // Destroy chart (only if module was loaded)
+    chartsModule?.destroyChart();
+
+    // Clear account tree state
+    clearAccountTree();
+
+    // Clear sankey state (only if module was loaded)
+    sankeyModule?.clearSankey();
+
+    // Clear calendar state (only if module was loaded)
+    calendarModule?.clearCalendar();
 
     // Terminate WASM worker
     terminateWorker();

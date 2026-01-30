@@ -39,7 +39,7 @@ export function isUserTyping() {
 
 /**
  * Initialize keyboard shortcuts
- * @param {{ onFormat: () => void }} handlers - Callback handlers for shortcuts
+ * @param {{ onFormat: () => void, onRunQuery?: () => void }} handlers - Callback handlers for shortcuts
  */
 export function initKeyboardShortcuts(handlers) {
     document.addEventListener('keydown', (e) => {
@@ -67,6 +67,20 @@ export function initKeyboardShortcuts(handlers) {
         if (e.key === 'F' && e.ctrlKey && e.shiftKey) {
             e.preventDefault();
             handlers.onFormat();
+            return;
+        }
+
+        // Format on Cmd/Ctrl+S (save = format, since there's no server)
+        if (e.key === 's' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
+            e.preventDefault();
+            handlers.onFormat();
+            return;
+        }
+
+        // Run query on Cmd/Ctrl+Enter (when in editor)
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && handlers.onRunQuery) {
+            e.preventDefault();
+            handlers.onRunQuery();
             return;
         }
     });

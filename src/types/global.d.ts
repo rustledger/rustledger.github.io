@@ -1,6 +1,6 @@
 // Global type declarations
 
-type ExampleName = 'simple' | 'stocks' | 'crypto' | 'travel' | 'business' | 'errors';
+type ExampleName = 'budget' | 'stocks' | 'forex' | 'errors' | 'large-example';
 
 // Extend Window with our global functions
 interface Window {

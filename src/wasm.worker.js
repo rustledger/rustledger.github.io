@@ -103,6 +103,13 @@ self.onmessage = async function (event) {
                 break;
             }
 
+            case 'getReferences': {
+                const ledger = new wasmModule.ParsedLedger(payload.source);
+                result = ledger.getReferences(payload.line, payload.character);
+                ledger.free();
+                break;
+            }
+
             default:
                 throw new Error(`Unknown action: ${action}`);
         }

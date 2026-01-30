@@ -342,6 +342,28 @@ export async function getDocumentSymbols(source) {
 }
 
 /**
+ * @typedef {'account' | 'currency' | 'payee'} ReferenceKind
+ * @typedef {{ range: EditorRange, kind: ReferenceKind, is_definition: boolean, context?: string }} EditorReference
+ * @typedef {{ symbol: string, kind: ReferenceKind, references: EditorReference[] }} EditorReferencesResult
+ */
+
+/**
+ * Get all references to the symbol at a position (async)
+ * @param {string} source
+ * @param {number} line - 0-indexed line number
+ * @param {number} character - 0-indexed character offset
+ * @returns {Promise<EditorReferencesResult | null>}
+ */
+export async function getReferences(source, line, character) {
+    if (!wasmReady) return null;
+    try {
+        return await sendMessage('getReferences', { source, line, character });
+    } catch {
+        return null;
+    }
+}
+
+/**
  * Terminate the worker (for cleanup)
  */
 export function terminateWorker() {

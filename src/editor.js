@@ -14,7 +14,8 @@ import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { syntaxHighlighting, HighlightStyle, StreamLanguage } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
 import { autocompletion, completionKeymap } from '@codemirror/autocomplete';
-import { getCompletions, getHoverInfo, getDefinition } from './wasm.js';
+import { getCompletions, getHoverInfo, getDefinition, getReferences } from './wasm.js';
+import { showMinimap } from '@replit/codemirror-minimap';
 
 /**
  * @typedef {import('@codemirror/view').ViewUpdate} ViewUpdate
@@ -121,11 +122,9 @@ const darkTheme = EditorView.theme(
             backgroundColor: 'transparent',
             borderRight: '1px solid rgba(255, 255, 255, 0.1)',
             color: 'rgba(255, 255, 255, 0.25)',
-            minWidth: '3rem',
         },
         '.cm-lineNumbers .cm-gutterElement': {
-            padding: '0 8px 0 8px',
-            minWidth: '2.5rem',
+            padding: '0 6px 0 4px',
             textAlign: 'right',
         },
         '.cm-activeLineGutter': {
@@ -448,6 +447,100 @@ function beancountGoToDefinition(getSource) {
     });
 }
 
+// Reference highlight styling
+const referenceHighlightMark = Decoration.mark({ class: 'cm-reference-highlight' });
+const referenceDefinitionMark = Decoration.mark({ class: 'cm-reference-definition' });
+
+/** @type {import('@codemirror/state').StateEffectType<{ranges: Array<{from: number, to: number, isDefinition: boolean}>}>} */
+const setReferencesEffect = StateEffect.define();
+
+/** @type {import('@codemirror/state').StateEffectType<null>} */
+const clearReferencesEffect = StateEffect.define();
+
+/**
+ * StateField for reference highlighting
+ */
+const referenceHighlightField = StateField.define({
+    create() {
+        return Decoration.none;
+    },
+    update(decorations, tr) {
+        for (const effect of tr.effects) {
+            if (effect.is(clearReferencesEffect)) {
+                return Decoration.none;
+            }
+            if (effect.is(setReferencesEffect)) {
+                /** @type {RangeSetBuilder<Decoration>} */
+                const builder = new RangeSetBuilder();
+                // Sort ranges by position
+                const sortedRanges = [...effect.value.ranges].sort((a, b) => a.from - b.from);
+                for (const range of sortedRanges) {
+                    const mark = range.isDefinition
+                        ? referenceDefinitionMark
+                        : referenceHighlightMark;
+                    builder.add(range.from, range.to, mark);
+                }
+                return builder.finish();
+            }
+        }
+        // Clear on document change
+        if (tr.docChanged) {
+            return Decoration.none;
+        }
+        return decorations;
+    },
+    provide: (f) => EditorView.decorations.from(f),
+});
+
+/**
+ * Create Find All References command (Shift+F12)
+ * @param {() => string} getSource
+ */
+function beancountFindReferences(getSource) {
+    return keymap.of([
+        {
+            key: 'Shift-F12',
+            run: (view) => {
+                const pos = view.state.selection.main.head;
+                const line = view.state.doc.lineAt(pos);
+                const lineNum = line.number - 1;
+                const character = pos - line.from;
+
+                getReferences(getSource(), lineNum, character).then((result) => {
+                    if (!result || !result.references.length) {
+                        // Clear any existing highlights
+                        view.dispatch({ effects: clearReferencesEffect.of(null) });
+                        return;
+                    }
+
+                    // Convert references to decoration ranges
+                    const ranges = result.references.map((ref) => {
+                        const startLine = view.state.doc.line(ref.range.start_line + 1);
+                        const endLine = view.state.doc.line(ref.range.end_line + 1);
+                        return {
+                            from: startLine.from + ref.range.start_character,
+                            to: endLine.from + ref.range.end_character,
+                            isDefinition: ref.is_definition,
+                        };
+                    });
+
+                    view.dispatch({ effects: setReferencesEffect.of({ ranges }) });
+                });
+
+                return true;
+            },
+        },
+        {
+            key: 'Escape',
+            run: (view) => {
+                // Clear reference highlights on Escape
+                view.dispatch({ effects: clearReferencesEffect.of(null) });
+                return false; // Allow other Escape handlers
+            },
+        },
+    ]);
+}
+
 /**
  * Create editor instance
  * @param {HTMLElement} container
@@ -485,7 +578,15 @@ export function createEditor(container, initialContent, onChange) {
             beancountCompletions(getSource),
             beancountHover(getSource),
             beancountGoToDefinition(getSource),
-            EditorView.lineWrapping,
+            referenceHighlightField,
+            beancountFindReferences(getSource),
+            // Minimap for document overview (hidden via CSS on smaller screens)
+            showMinimap.compute(['doc'], () => ({
+                create: () => ({ dom: document.createElement('div') }),
+                displayText: 'blocks',
+                showOverlay: 'mouse-over',
+                gutters: [{ 1: '#f97316' }], // Orange accent for line 1
+            })),
         ],
     });
 
@@ -661,6 +762,22 @@ export function createEditor(container, initialContent, onChange) {
                     startFadeOut();
                 }
             });
+        },
+        /**
+         * Navigate to a specific line number
+         * @param {number} lineNum - 1-based line number
+         */
+        goToLine(lineNum) {
+            try {
+                const line = view.state.doc.line(lineNum);
+                view.dispatch({
+                    selection: { anchor: line.from },
+                    effects: EditorView.scrollIntoView(line.from, { y: 'center' }),
+                });
+                view.focus();
+            } catch {
+                // Line doesn't exist, ignore
+            }
         },
         /**
          * Clean up editor resources and event listeners

@@ -1,10 +1,10 @@
 // Example ledger files for the playground
 
-/** @typedef {'simple' | 'stocks' | 'crypto' | 'travel' | 'business' | 'errors' | 'beancount-example'} ExampleName */
+/** @typedef {'budget' | 'stocks' | 'forex' | 'errors' | 'large-example'} ExampleName */
 
 /** @type {Record<string, string>} */
 const lazyExampleUrls = {
-    'beancount-example': '/examples/beancount-example.beancount',
+    'large-example': '/examples/beancount-example.beancount',
 };
 
 /** @type {Map<string, string>} */
@@ -85,308 +85,550 @@ export function preloadLazyExamples() {
 
 /** @type {Record<string, string>} */
 export const examples = {
-    simple: `; === Your First Month with Beancount ===
-; Track where your money actually goes.
-; Edit this file - changes validate instantly!
+    budget: `; ══════════════════════════════════════════════════════════════════
+; PERSONAL FINANCE - Full Year Budget Tracking
+; ══════════════════════════════════════════════════════════════════
+; A comprehensive personal budget with multiple accounts, credit cards,
+; detailed expense categorization, and income from multiple sources.
 
-option "title" "January 2024"
+option "title" "Personal Finance 2024"
+option "operating_currency" "USD"
 plugin "noduplicates"
 
-; Step 1: Open your accounts
-2024-01-01 open Assets:BofA:Checking        USD
-2024-01-01 open Assets:Venmo                USD
-2024-01-01 open Liabilities:Amex            USD
-2024-01-01 open Expenses:Rent               USD
-2024-01-01 open Expenses:Food:Groceries     USD
-2024-01-01 open Expenses:Food:Restaurants   USD
-2024-01-01 open Expenses:Subscriptions      USD
-2024-01-01 open Income:Salary               USD
-2024-01-01 open Equity:Opening              USD
+; ─────────────────────────────────────────────────────────────────
+; ACCOUNT HIERARCHY
+; ─────────────────────────────────────────────────────────────────
 
-; Step 2: Starting balances (from your statements)
-2024-01-01 * "Starting balance"
-    Assets:BofA:Checking            4250.00 USD
-    Assets:Venmo                     340.00 USD
-    Liabilities:Amex               -1200.00 USD  ; you owe this
-    Equity:Opening
+; Banking
+2024-01-01 open Assets:Bank:Chase:Checking            USD
+2024-01-01 open Assets:Bank:Chase:Savings             USD
+2024-01-01 open Assets:Bank:Ally:HYSA                 USD
+2024-01-01 open Assets:Venmo                          USD
+2024-01-01 open Assets:Cash                           USD
 
-; Step 3: Record transactions as they happen
-2024-01-02 * "Landlord" "January rent"
-    Expenses:Rent                   1800.00 USD
-    Assets:BofA:Checking
+; Retirement & Investment
+2024-01-01 open Assets:Vanguard:401k                  USD
+2024-01-01 open Assets:Vanguard:Roth-IRA              USD
 
-2024-01-05 * "Spotify"
-    Expenses:Subscriptions            10.99 USD
-    Liabilities:Amex
+; Credit Cards
+2024-01-01 open Liabilities:CC:Chase-Sapphire         USD
+2024-01-01 open Liabilities:CC:Amex-Gold              USD
+2024-01-01 open Liabilities:CC:Apple-Card             USD
 
-2024-01-05 * "Netflix"
-    Expenses:Subscriptions            15.99 USD
-    Liabilities:Amex
+; Income Sources
+2024-01-01 open Income:Salary:Gross                   USD
+2024-01-01 open Income:Side-Hustle                    USD
+2024-01-01 open Income:Interest                       USD
+2024-01-01 open Income:Cashback                       USD
 
-2024-01-08 * "Trader Joe's"
-    Expenses:Food:Groceries           67.34 USD
-    Liabilities:Amex
+; Housing
+2024-01-01 open Expenses:Housing:Rent                 USD
+2024-01-01 open Expenses:Housing:Utilities:Electric   USD
+2024-01-01 open Expenses:Housing:Utilities:Gas        USD
+2024-01-01 open Expenses:Housing:Utilities:Water      USD
+2024-01-01 open Expenses:Housing:Internet             USD
 
-2024-01-12 * "Chipotle" "Lunch with coworkers"
-    Expenses:Food:Restaurants         14.50 USD
-    Assets:Venmo
+; Transportation
+2024-01-01 open Expenses:Transport:Gas                USD
+2024-01-01 open Expenses:Transport:Rideshare          USD
 
-2024-01-15 * "Employer" "Paycheck - take home"
-    Assets:BofA:Checking            3450.00 USD
-    Income:Salary
+; Food & Dining
+2024-01-01 open Expenses:Food:Groceries               USD
+2024-01-01 open Expenses:Food:Restaurants             USD
+2024-01-01 open Expenses:Food:Coffee                  USD
+2024-01-01 open Expenses:Food:Delivery                USD
 
-2024-01-18 * "Pay Amex bill"
-    Liabilities:Amex                1294.32 USD
-    Assets:BofA:Checking
+; Subscriptions & Services
+2024-01-01 open Expenses:Subscriptions:Streaming      USD
+2024-01-01 open Expenses:Subscriptions:Software       USD
+2024-01-01 open Expenses:Subscriptions:News           USD
+2024-01-01 open Expenses:Subscriptions:Gym            USD
+2024-01-01 open Expenses:Phone                        USD
 
-; Step 4: Reconcile with your statements
-2024-01-31 balance Assets:BofA:Checking     4605.68 USD
-2024-01-31 balance Liabilities:Amex            0.00 USD`,
+; Taxes
+2024-01-01 open Expenses:Taxes:Federal                USD
+2024-01-01 open Expenses:Taxes:State                  USD
+2024-01-01 open Expenses:Taxes:FICA                   USD
 
-    stocks: `; === Stock Portfolio Tracking ===
-; Track investments, dividends, and gains
+2024-01-01 open Equity:Opening-Balances               USD
 
-option "title" "Investment Portfolio"
+; ─────────────────────────────────────────────────────────────────
+; OPENING BALANCES
+; ─────────────────────────────────────────────────────────────────
+
+2024-01-01 * "Opening Balances"
+    Assets:Bank:Chase:Checking             8542.30 USD
+    Assets:Bank:Chase:Savings             15000.00 USD
+    Assets:Bank:Ally:HYSA                 25000.00 USD
+    Assets:Venmo                            340.00 USD
+    Assets:Cash                             180.00 USD
+    Assets:Vanguard:401k                  87500.00 USD
+    Assets:Vanguard:Roth-IRA              32000.00 USD
+    Liabilities:CC:Chase-Sapphire         -1847.23 USD
+    Liabilities:CC:Amex-Gold               -523.10 USD
+    Equity:Opening-Balances
+
+; ─────────────────────────────────────────────────────────────────
+; JANUARY 2024 - RECURRING & DAILY TRANSACTIONS
+; ─────────────────────────────────────────────────────────────────
+
+; Rent payment
+2024-01-01 * "Property Management" "January rent" #recurring
+    Expenses:Housing:Rent                  2100.00 USD
+    Assets:Bank:Chase:Checking
+
+; Subscriptions (auto-pay)
+2024-01-01 * "Netflix" #subscription
+    Expenses:Subscriptions:Streaming         15.99 USD
+    Liabilities:CC:Apple-Card
+
+2024-01-01 * "Spotify" #subscription
+    Expenses:Subscriptions:Streaming         10.99 USD
+    Liabilities:CC:Apple-Card
+
+2024-01-01 * "NYTimes" #subscription
+    Expenses:Subscriptions:News              17.00 USD
+    Liabilities:CC:Chase-Sapphire
+
+; Gas fillup
+2024-01-03 * "Shell" "Gas fillup"
+    Expenses:Transport:Gas                   58.42 USD
+    Liabilities:CC:Chase-Sapphire
+
+; Utilities
+2024-01-05 * "PG&E" "Electric bill" #utilities
+    Expenses:Housing:Utilities:Electric      87.43 USD
+    Liabilities:CC:Chase-Sapphire
+
+2024-01-05 * "PG&E" "Gas bill" #utilities
+    Expenses:Housing:Utilities:Gas           42.18 USD
+    Liabilities:CC:Chase-Sapphire
+
+2024-01-05 * "Equinox" "Gym membership" #subscription
+    Expenses:Subscriptions:Gym              185.00 USD
+    Liabilities:CC:Amex-Gold
+
+; Groceries
+2024-01-06 * "Whole Foods" "Weekly groceries"
+    Expenses:Food:Groceries                 127.43 USD
+    Liabilities:CC:Amex-Gold
+
+2024-01-07 * "1Password" "Annual subscription" #subscription
+    Expenses:Subscriptions:Software          35.88 USD
+    Liabilities:CC:Apple-Card
+
+; Water bill
+2024-01-08 * "EBMUD" "Water bill" #utilities
+    Expenses:Housing:Utilities:Water         38.50 USD
+    Assets:Bank:Chase:Checking
+
+2024-01-08 * "Blue Bottle Coffee"
+    Expenses:Food:Coffee                      6.50 USD
+    Liabilities:CC:Apple-Card
+
+; Uber ride
+2024-01-09 * "Uber" "Airport ride"
+    Expenses:Transport:Rideshare             47.80 USD
+    Liabilities:CC:Chase-Sapphire
+
+; Internet
+2024-01-10 * "Comcast" "Internet" #recurring
+    Expenses:Housing:Internet                79.99 USD
+    Liabilities:CC:Chase-Sapphire
+
+; Lunch
+2024-01-11 * "Chipotle" "Lunch"
+    Expenses:Food:Restaurants                14.75 USD
+    Liabilities:CC:Chase-Sapphire
+
+; Phone bill
+2024-01-12 * "T-Mobile" "Phone bill" #recurring
+    Expenses:Phone                           85.00 USD
+    Liabilities:CC:Chase-Sapphire
+
+; Groceries
+2024-01-13 * "Trader Joe's" "Weekly groceries"
+    Expenses:Food:Groceries                  89.67 USD
+    Liabilities:CC:Amex-Gold
+
+; Dinner
+2024-01-14 * "Nobu" "Dinner with friends" #social
+    Expenses:Food:Restaurants                87.00 USD
+    Liabilities:CC:Amex-Gold
+
+; First paycheck of January (net after deductions)
+2024-01-15 * "Employer" "Bi-weekly paycheck" #payroll
+    Assets:Bank:Chase:Checking             4127.84 USD
+    Expenses:Taxes:Federal                 1245.00 USD
+    Expenses:Taxes:State                    412.50 USD
+    Expenses:Taxes:FICA                     589.66 USD
+    Assets:Vanguard:401k                    625.00 USD
+    Income:Salary:Gross                   -7000.00 USD
+
+; Food delivery
+2024-01-17 * "DoorDash" "Late night delivery"
+    Expenses:Food:Delivery                   32.47 USD
+    Liabilities:CC:Chase-Sapphire
+
+; Pay credit cards (pay off old balance)
+2024-01-20 * "Chase" "Pay Sapphire balance"
+    Liabilities:CC:Chase-Sapphire          1847.23 USD
+    Assets:Bank:Chase:Checking
+
+; Groceries
+2024-01-20 * "Safeway" "Weekly groceries"
+    Expenses:Food:Groceries                 104.22 USD
+    Liabilities:CC:Amex-Gold
+
+; Pay Amex
+2024-01-22 * "Amex" "Pay Gold card balance"
+    Liabilities:CC:Amex-Gold                523.10 USD
+    Assets:Bank:Chase:Checking
+
+; Side income
+2024-01-25 * "Freelance Client" "Website project"
+    Assets:Venmo                            850.00 USD
+    Income:Side-Hustle
+
+; Second paycheck
+2024-01-31 * "Employer" "Bi-weekly paycheck" #payroll
+    Assets:Bank:Chase:Checking             4127.84 USD
+    Expenses:Taxes:Federal                 1245.00 USD
+    Expenses:Taxes:State                    412.50 USD
+    Expenses:Taxes:FICA                     589.66 USD
+    Assets:Vanguard:401k                    625.00 USD
+    Income:Salary:Gross                   -7000.00 USD
+
+; Interest earned
+2024-01-31 * "Ally Bank" "HYSA Interest"
+    Assets:Bank:Ally:HYSA                    89.17 USD
+    Income:Interest
+
+; Credit card cashback
+2024-01-31 * "Chase" "Sapphire rewards redemption"
+    Assets:Bank:Chase:Checking               47.50 USD
+    Income:Cashback
+
+; Transfer to savings
+2024-01-31 * "Transfer to HYSA"
+    Assets:Bank:Ally:HYSA                  1000.00 USD
+    Assets:Bank:Chase:Checking
+
+; ─────────────────────────────────────────────────────────────────
+; JANUARY BALANCE CHECKS (checked at start of Feb 1)
+; ─────────────────────────────────────────────────────────────────
+
+2024-02-01 balance Assets:Bank:Chase:Checking    11336.65 USD
+2024-02-01 balance Assets:Bank:Ally:HYSA         26089.17 USD
+2024-02-01 balance Assets:Vanguard:401k          88750.00 USD
+2024-02-01 balance Assets:Venmo                   1190.00 USD`,
+
+    stocks: `; ══════════════════════════════════════════════════════════════════
+; INVESTMENT PORTFOLIO - Stocks & Options Trading
+; ══════════════════════════════════════════════════════════════════
+; Track stock purchases, sales, dividends, and options trading
+; with proper cost basis and capital gains tracking.
+
+option "title" "Trading Portfolio 2024"
 option "operating_currency" "USD"
 plugin "implicit_prices"
 plugin "noduplicates"
 
-2024-01-01 open Assets:Brokerage:Cash        USD
-2024-01-01 open Assets:Brokerage:Stocks      USD
-2024-01-01 open Income:Dividends             USD
-2024-01-01 open Income:Capital-Gains         USD
-2024-01-01 open Expenses:Fees                USD
-2024-01-01 open Equity:Opening               USD
+; ─────────────────────────────────────────────────────────────────
+; COMMODITIES (Securities)
+; ─────────────────────────────────────────────────────────────────
 
-; Initial deposit
-2024-01-02 * "Transfer" "Fund brokerage"
-    Assets:Brokerage:Cash            10000.00 USD
+2024-01-01 commodity AAPL
+    name: "Apple Inc."
+
+2024-01-01 commodity NVDA
+    name: "NVIDIA Corporation"
+
+2024-01-01 commodity SPY
+    name: "SPDR S&P 500 ETF"
+
+2024-01-01 commodity MSFT
+    name: "Microsoft Corporation"
+
+2024-01-01 commodity TSLA
+    name: "Tesla Inc."
+
+; ─────────────────────────────────────────────────────────────────
+; ACCOUNTS
+; ─────────────────────────────────────────────────────────────────
+
+2024-01-01 open Assets:Schwab:Cash                    USD
+2024-01-01 open Assets:Schwab:AAPL                    AAPL
+2024-01-01 open Assets:Schwab:NVDA                    NVDA
+2024-01-01 open Assets:Schwab:SPY                     SPY
+2024-01-01 open Assets:Schwab:MSFT                    MSFT
+
+2024-01-01 open Assets:IBKR:Cash                      USD
+2024-01-01 open Assets:IBKR:TSLA                      TSLA
+
+2024-01-01 open Income:Dividends                      USD
+2024-01-01 open Income:Capital-Gains:Short-Term       USD
+2024-01-01 open Income:Capital-Gains:Long-Term        USD
+
+2024-01-01 open Expenses:Fees:Commission              USD
+
+2024-01-01 open Equity:Opening                        USD
+
+; ─────────────────────────────────────────────────────────────────
+; OPENING POSITIONS
+; ─────────────────────────────────────────────────────────────────
+
+2024-01-02 * "Opening balances"
+    Assets:Schwab:Cash                    50000.00 USD
+    Assets:IBKR:Cash                      25000.00 USD
     Equity:Opening
 
-; Buy Apple shares (25 shares @ $185.50)
-2024-01-15 * "Buy AAPL" "25 shares"
-    Assets:Brokerage:Stocks           4637.50 USD
-    Expenses:Fees                        4.95 USD
-    Assets:Brokerage:Cash
+; Existing AAPL position (100 shares @ $142.50, purchased last year)
+2024-01-02 * "Transfer in AAPL" "Long-term holding"
+    Assets:Schwab:AAPL                         100 AAPL {142.50 USD, 2023-03-15}
+    Equity:Opening                        -14250.00 USD
 
-; Buy VTI index fund (20 shares @ $240)
-2024-01-15 * "Buy VTI" "20 shares"
-    Assets:Brokerage:Stocks           4800.00 USD
-    Assets:Brokerage:Cash
+; Existing SPY position (50 shares @ $423.00)
+2024-01-02 * "Transfer in SPY" "Index fund holding"
+    Assets:Schwab:SPY                           50 SPY {423.00 USD, 2023-06-01}
+    Equity:Opening                        -21150.00 USD
 
-; Dividend received
-2024-02-15 * "AAPL Dividend"
-    Assets:Brokerage:Cash                6.00 USD
-    Income:Dividends
+; ─────────────────────────────────────────────────────────────────
+; JANUARY - STOCK TRADES
+; ─────────────────────────────────────────────────────────────────
 
-; Sell Apple shares at a gain
-2024-03-01 * "Sell AAPL" "10 shares @ $196"
-    Assets:Brokerage:Cash             1960.00 USD
-    Assets:Brokerage:Stocks          -1855.00 USD
-    Income:Capital-Gains              -105.00 USD
+; Buy NVDA before earnings (50 shares @ $547.20)
+2024-01-18 * "Buy NVDA" "50 shares"
+    Assets:Schwab:NVDA                          50 NVDA {547.20 USD}
+    Assets:Schwab:Cash                     -27360.00 USD
 
-2024-03-31 balance Assets:Brokerage:Cash    2523.55 USD
-2024-03-31 balance Assets:Brokerage:Stocks  7582.50 USD`,
+; Buy MSFT on dip (30 shares @ $397.50)
+2024-01-22 * "Buy MSFT" "30 shares"
+    Assets:Schwab:MSFT                          30 MSFT {397.50 USD}
+    Assets:Schwab:Cash                     -11925.00 USD
 
-    crypto: `; === Cryptocurrency Portfolio ===
-; Track crypto investments in USD value
+; Sell 25 AAPL at profit (long-term gain)
+2024-01-25 * "Sell AAPL" "25 shares @ $194.50"
+    Assets:Schwab:AAPL                         -25 AAPL {142.50 USD, 2023-03-15}
+    Assets:Schwab:Cash                       4862.50 USD
+    Income:Capital-Gains:Long-Term          -1300.00 USD
 
-option "title" "Crypto Holdings"
+; ─────────────────────────────────────────────────────────────────
+; DIVIDENDS
+; ─────────────────────────────────────────────────────────────────
+
+; AAPL quarterly dividend (75 remaining shares @ $0.24)
+2024-01-25 * "AAPL Dividend" "Q1 2024"
+    Assets:Schwab:Cash                         18.00 USD
+    Income:Dividends                          -18.00 USD
+
+; SPY monthly dividend (50 shares @ $0.52)
+2024-01-31 * "SPY Dividend" "January 2024"
+    Assets:Schwab:Cash                         26.00 USD
+    Income:Dividends                          -26.00 USD
+
+; ─────────────────────────────────────────────────────────────────
+; IBKR - Buy TSLA
+; ─────────────────────────────────────────────────────────────────
+
+; Buy TSLA (100 shares @ $182.50)
+2024-01-26 * "Buy TSLA" "100 shares"
+    Assets:IBKR:TSLA                          100 TSLA {182.50 USD}
+    Assets:IBKR:Cash                      -18250.00 USD
+
+; ─────────────────────────────────────────────────────────────────
+; PRICES (End of January)
+; ─────────────────────────────────────────────────────────────────
+
+2024-01-31 price AAPL                          188.50 USD
+2024-01-31 price NVDA                          615.27 USD
+2024-01-31 price SPY                           483.05 USD
+2024-01-31 price MSFT                          408.00 USD
+2024-01-31 price TSLA                          187.29 USD
+
+; ─────────────────────────────────────────────────────────────────
+; BALANCE ASSERTIONS (checked at start of Feb 1)
+; ─────────────────────────────────────────────────────────────────
+
+2024-02-01 balance Assets:Schwab:Cash        15621.50 USD
+2024-02-01 balance Assets:Schwab:AAPL              75 AAPL
+2024-02-01 balance Assets:Schwab:NVDA              50 NVDA
+2024-02-01 balance Assets:Schwab:SPY               50 SPY
+2024-02-01 balance Assets:Schwab:MSFT              30 MSFT
+2024-02-01 balance Assets:IBKR:TSLA              100 TSLA
+2024-02-01 balance Assets:IBKR:Cash            6750.00 USD`,
+
+    forex: `; ══════════════════════════════════════════════════════════════════
+; FOREX TRADING - Multi-Currency Portfolio
+; ══════════════════════════════════════════════════════════════════
+; Track forex positions, currency conversions, and trading P&L
+; across multiple currency pairs.
+
+option "title" "Forex Trading Account 2024"
 option "operating_currency" "USD"
 plugin "implicit_prices"
 plugin "noduplicates"
 
-2024-01-01 open Assets:Coinbase:Cash        USD
-2024-01-01 open Assets:Coinbase:Crypto      USD
-2024-01-01 open Assets:Ledger:Crypto        USD
-2024-01-01 open Expenses:Fees:Trading       USD
-2024-01-01 open Expenses:Fees:Network       USD
-2024-01-01 open Income:Capital-Gains        USD
-2024-01-01 open Equity:Opening              USD
+; ─────────────────────────────────────────────────────────────────
+; CURRENCIES
+; ─────────────────────────────────────────────────────────────────
 
-; Deposit USD
-2024-01-05 * "ACH Transfer"
-    Assets:Coinbase:Cash             5000.00 USD
-    Equity:Opening
+2024-01-01 commodity USD
+    name: "US Dollar"
 
-; Buy Bitcoin (0.05 BTC @ $42,500)
-2024-01-10 * "Buy BTC" "0.05 BTC"
-    Assets:Coinbase:Crypto           2125.00 USD
-    Expenses:Fees:Trading              10.00 USD
-    Assets:Coinbase:Cash
+2024-01-01 commodity EUR
+    name: "Euro"
 
-; Buy Ethereum (1 ETH @ $2,200)
-2024-01-10 * "Buy ETH" "1 ETH"
-    Assets:Coinbase:Crypto           2200.00 USD
-    Expenses:Fees:Trading               5.50 USD
-    Assets:Coinbase:Cash
+2024-01-01 commodity GBP
+    name: "British Pound"
 
-; Transfer to hardware wallet
-2024-01-20 * "Transfer to Ledger" "0.049 BTC"
-    Assets:Ledger:Crypto             2082.75 USD
-    Expenses:Fees:Network              42.50 USD
-    Assets:Coinbase:Crypto
+2024-01-01 commodity JPY
+    name: "Japanese Yen"
 
-; Sell some ETH at profit
-2024-03-01 * "Sell ETH" "0.5 ETH @ $3,200"
-    Assets:Coinbase:Cash             1600.00 USD
-    Assets:Coinbase:Crypto          -1100.00 USD
-    Income:Capital-Gains             -500.00 USD
+2024-01-01 commodity CHF
+    name: "Swiss Franc"
 
-2024-03-31 balance Assets:Coinbase:Cash     2259.50 USD
-2024-03-31 balance Assets:Coinbase:Crypto   1099.75 USD
-2024-03-31 balance Assets:Ledger:Crypto     2082.75 USD`,
+; ─────────────────────────────────────────────────────────────────
+; ACCOUNTS
+; ─────────────────────────────────────────────────────────────────
 
-    travel: `; === Travel Expense Tracking ===
-; Track trip expenses in USD
+; Multi-currency cash accounts
+2024-01-01 open Assets:OANDA:USD                      USD
+2024-01-01 open Assets:OANDA:EUR                      EUR
+2024-01-01 open Assets:OANDA:GBP                      GBP
+2024-01-01 open Assets:OANDA:JPY                      JPY
 
-option "title" "Japan Trip 2024"
-option "operating_currency" "USD"
-plugin "noduplicates"
-plugin "leafonly"
+; Income & Expenses
+2024-01-01 open Income:Forex:Gains                    USD
+2024-01-01 open Expenses:Forex:Losses                 USD
+2024-01-01 open Expenses:Forex:Fees                   USD
 
-2024-01-01 open Assets:Checking             USD
-2024-01-01 open Assets:Cash                 USD
-2024-01-01 open Liabilities:CreditCard      USD
-2024-01-01 open Expenses:Travel:Flights     USD
-2024-01-01 open Expenses:Travel:Hotels      USD
-2024-01-01 open Expenses:Travel:Food        USD
-2024-01-01 open Expenses:Travel:Transport   USD
-2024-01-01 open Expenses:Travel:Activities  USD
-2024-01-01 open Equity:Opening              USD
+; Bank account for deposits
+2024-01-01 open Assets:Bank:USD                       USD
+2024-01-01 open Equity:Opening                        USD
 
-; Book flights (2 months before)
-2024-01-15 * "United Airlines" "SFO-NRT roundtrip"
-    Expenses:Travel:Flights         1200.00 USD
-    Liabilities:CreditCard
+; ─────────────────────────────────────────────────────────────────
+; OPENING PRICES
+; ─────────────────────────────────────────────────────────────────
 
-; Book hotel
-2024-02-01 * "Shinjuku Hotel" "7 nights"
-    Expenses:Travel:Hotels           980.00 USD
-    Liabilities:CreditCard
+2024-01-02 price EUR    1.0950 USD
+2024-01-02 price GBP    1.2720 USD
+2024-01-02 price JPY    0.00685 USD
+2024-01-02 price CHF    1.1850 USD
 
-; Withdraw cash for trip
-2024-03-10 * "ATM Withdrawal" "Travel cash"
-    Assets:Cash                     1000.00 USD
-    Assets:Checking
+; ─────────────────────────────────────────────────────────────────
+; ACCOUNT FUNDING
+; ─────────────────────────────────────────────────────────────────
 
-; Daily expenses in Japan (converted to USD)
-2024-03-15 * "Ramen shop" "Dinner in Shibuya"
-    Expenses:Travel:Food               8.40 USD
-    Assets:Cash
+2024-01-02 * "Fund trading account"
+    Assets:OANDA:USD                       50000.00 USD
+    Assets:Bank:USD                       -50000.00 USD
 
-2024-03-15 * "JR Pass" "7-day rail pass"
-    Expenses:Travel:Transport        207.55 USD
-    Assets:Cash
+; ─────────────────────────────────────────────────────────────────
+; CURRENCY CONVERSIONS
+; ─────────────────────────────────────────────────────────────────
 
-2024-03-16 * "TeamLab" "Digital art museum"
-    Expenses:Travel:Activities        22.40 USD
-    Assets:Cash
+; Convert USD to EUR (buy 10,000 EUR)
+2024-01-03 * "Buy EUR/USD" "10000 EUR at 1.0950"
+    Assets:OANDA:EUR                       10000.00 EUR {1.0950 USD}
+    Assets:OANDA:USD                      -10950.00 USD
 
-2024-03-16 * "Sushi restaurant"
-    Expenses:Travel:Food              31.50 USD
-    Assets:Cash
+; Convert USD to GBP (buy 5,000 GBP)
+2024-01-03 * "Buy GBP/USD" "5000 GBP at 1.2720"
+    Assets:OANDA:GBP                        5000.00 GBP {1.2720 USD}
+    Assets:OANDA:USD                       -6360.00 USD
 
-2024-03-31 balance Assets:Cash              730.15 USD
-2024-03-31 balance Liabilities:CreditCard -2180.00 USD`,
+; Convert USD to JPY (buy 1,000,000 JPY)
+2024-01-05 * "Buy USD/JPY" "1000000 JPY at 0.00685"
+    Assets:OANDA:JPY                     1000000.00 JPY {0.00685 USD}
+    Assets:OANDA:USD                       -6850.00 USD
 
-    business: `; === Freelance Business ===
-; Track income, expenses, and quarterly taxes
+; ─────────────────────────────────────────────────────────────────
+; FOREX TRADES
+; ─────────────────────────────────────────────────────────────────
 
-option "title" "Freelance Consulting 2024"
-option "operating_currency" "USD"
-plugin "noduplicates"
-plugin "leafonly"
+; Sell half EUR position at profit (EUR strengthened)
+2024-01-15 * "Sell EUR/USD" "5000 EUR at 1.1025"
+    Assets:OANDA:EUR                       -5000.00 EUR {1.0950 USD}
+    Assets:OANDA:USD                        5512.50 USD
+    Income:Forex:Gains                       -37.50 USD
 
-2024-01-01 open Assets:Business:Checking    USD
-2024-01-01 open Assets:Business:Savings     USD
-2024-01-01 open Income:Consulting           USD
-2024-01-01 open Income:Consulting:Acme      USD
-2024-01-01 open Income:Consulting:TechCorp  USD
-2024-01-01 open Expenses:Software           USD
-2024-01-01 open Expenses:Equipment          USD
-2024-01-01 open Expenses:Office             USD
-2024-01-01 open Expenses:Taxes:Federal      USD
-2024-01-01 open Expenses:Taxes:State        USD
-2024-01-01 open Liabilities:Taxes:Federal   USD
-2024-01-01 open Liabilities:Taxes:State     USD
-2024-01-01 open Equity:Opening              USD
+; Sell GBP at slight loss (GBP weakened)
+2024-01-20 * "Sell GBP/USD" "2500 GBP at 1.2650"
+    Assets:OANDA:GBP                       -2500.00 GBP {1.2720 USD}
+    Assets:OANDA:USD                        3162.50 USD
+    Expenses:Forex:Losses                     17.50 USD
 
-; Starting balance
-2024-01-01 * "Opening balance"
-    Assets:Business:Checking        5000.00 USD
-    Equity:Opening
+; Sell some JPY at profit
+2024-01-25 * "Sell USD/JPY" "500000 JPY at 0.00700"
+    Assets:OANDA:JPY                     -500000.00 JPY {0.00685 USD}
+    Assets:OANDA:USD                        3500.00 USD
+    Income:Forex:Gains                       -75.00 USD
 
-; January income
-2024-01-15 * "Acme Corp" "January consulting"
-    Assets:Business:Checking        8500.00 USD
-    Income:Consulting:Acme
+; Trading fee
+2024-01-31 * "OANDA" "Monthly platform fee"
+    Expenses:Forex:Fees                       25.00 USD
+    Assets:OANDA:USD
 
-2024-01-30 * "TechCorp" "API integration project"
-    Assets:Business:Checking        4200.00 USD
-    Income:Consulting:TechCorp
+; ─────────────────────────────────────────────────────────────────
+; END OF MONTH PRICES
+; ─────────────────────────────────────────────────────────────────
 
-; Business expenses
-2024-01-05 * "GitHub" "Team subscription"
-    Expenses:Software                 44.00 USD
-    Assets:Business:Checking
+2024-01-31 price EUR    1.0815 USD
+2024-01-31 price GBP    1.2695 USD
+2024-01-31 price JPY    0.006803 USD
+2024-01-31 price CHF    1.1720 USD
 
-2024-01-10 * "AWS" "Cloud hosting"
-    Expenses:Software                156.00 USD
-    Assets:Business:Checking
+; ─────────────────────────────────────────────────────────────────
+; BALANCE ASSERTIONS
+; ─────────────────────────────────────────────────────────────────
 
-2024-01-20 * "Apple" "MacBook Pro"
-    Expenses:Equipment             2499.00 USD
-    Assets:Business:Checking
+2024-02-01 balance Assets:OANDA:USD        37990.00 USD
+2024-02-01 balance Assets:OANDA:EUR         5000.00 EUR
+2024-02-01 balance Assets:OANDA:GBP         2500.00 GBP
+2024-02-01 balance Assets:OANDA:JPY       500000.00 JPY`,
 
-; Set aside for quarterly taxes (30%)
-2024-01-31 * "Tax reserve Q1"
-    Assets:Business:Savings         3810.00 USD
-    Assets:Business:Checking
-
-; Q1 estimated tax payment
-2024-04-15 * "IRS" "Q1 estimated tax"
-    Expenses:Taxes:Federal          2800.00 USD
-    Assets:Business:Savings
-
-2024-04-15 * "State FTB" "Q1 estimated tax"
-    Expenses:Taxes:State             700.00 USD
-    Assets:Business:Savings`,
-
-    errors: `; === Example with Errors ===
-; This file demonstrates error detection
+    errors: `; ══════════════════════════════════════════════════════════════════
+; ERROR EXAMPLES - Demonstrating Validation
+; ══════════════════════════════════════════════════════════════════
+; This file contains intentional errors to demonstrate the parser's
+; error detection capabilities. Each error is labeled.
 
 option "title" "Error Examples"
 
 2024-01-01 open Assets:Checking USD
 2024-01-01 open Expenses:Food USD
 
-; Error 1: Transaction doesn't balance
+; ─────────────────────────────────────────────────────────────────
+; ERROR 1: Transaction doesn't balance
+; The debits and credits don't sum to zero
+; ─────────────────────────────────────────────────────────────────
 2024-01-15 * "Grocery Store"
     Expenses:Food        50.00 USD
     Assets:Checking     -45.00 USD
 
-; Error 2: Account not opened
+; ─────────────────────────────────────────────────────────────────
+; ERROR 2: Account not opened
+; Using an account that was never declared with 'open'
+; ─────────────────────────────────────────────────────────────────
 2024-01-20 * "Coffee Shop"
     Expenses:Coffee      5.00 USD
     Assets:Checking
 
-; Error 3: Balance assertion fails
+; ─────────────────────────────────────────────────────────────────
+; ERROR 3: Balance assertion fails
+; The expected balance doesn't match the calculated balance
+; ─────────────────────────────────────────────────────────────────
 2024-01-31 balance Assets:Checking 1000.00 USD
 
-; Error 4: Invalid date
+; ─────────────────────────────────────────────────────────────────
+; ERROR 4: Invalid date
+; Month 13 doesn't exist
+; ─────────────────────────────────────────────────────────────────
 2024-13-01 * "Invalid month"
     Expenses:Food       10.00 USD
     Assets:Checking`,
 };
 
 /** @type {ExampleName[]} */
-export const exampleNames = [
-    'simple',
-    'stocks',
-    'crypto',
-    'travel',
-    'business',
-    'errors',
-    'beancount-example',
-];
+export const exampleNames = ['budget', 'stocks', 'forex', 'errors', 'large-example'];

@@ -1,13 +1,6 @@
 // Global type declarations
 
-type ExampleName =
-    | 'simple'
-    | 'stocks'
-    | 'crypto'
-    | 'travel'
-    | 'business'
-    | 'errors'
-    | 'beancount-example';
+type ExampleName = 'budget' | 'stocks' | 'forex' | 'errors' | 'large-example';
 
 declare global {
     interface Window {

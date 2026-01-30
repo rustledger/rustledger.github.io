@@ -31,7 +31,7 @@ describe('Main application setup', () => {
             <div id="resizer"></div>
             <div id="output-panel"></div>
             <input id="query-text" type="text" />
-            <div class="example-tab" data-example="simple"></div>
+            <div class="example-tab" data-example="budget"></div>
             <div class="output-tab" data-tab="query"></div>
         `;
     });
@@ -43,17 +43,17 @@ describe('Main application setup', () => {
 
     describe('examples', () => {
         it('all examples are non-empty strings', () => {
-            const exampleNames = ['simple', 'stocks', 'crypto', 'travel', 'business', 'errors'];
+            const exampleNames = ['budget', 'stocks', 'forex', 'errors'];
             for (const name of exampleNames) {
                 expect(typeof examples[name]).toBe('string');
                 expect(examples[name].length).toBeGreaterThan(100);
             }
         });
 
-        it('simple example contains expected beancount directives', () => {
-            expect(examples.simple).toContain('option');
-            expect(examples.simple).toContain('open');
-            expect(examples.simple).toContain('balance');
+        it('budget example contains expected beancount directives', () => {
+            expect(examples.budget).toContain('option');
+            expect(examples.budget).toContain('open');
+            expect(examples.budget).toContain('balance');
         });
 
         it('errors example contains intentional errors', () => {

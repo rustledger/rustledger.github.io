@@ -42,8 +42,23 @@ export default defineConfig({
             },
             output: {
                 entryFileNames: 'assets/[name].js',
-                chunkFileNames: 'assets/[name].js',
+                chunkFileNames: 'assets/[name]-[hash].js',
                 assetFileNames: 'assets/[name].[ext]',
+                // Split heavy libraries into separate chunks for better caching
+                manualChunks: {
+                    // CodeMirror core (loaded immediately for editor)
+                    codemirror: [
+                        'codemirror',
+                        '@codemirror/autocomplete',
+                        '@codemirror/commands',
+                        '@codemirror/language',
+                        '@codemirror/state',
+                        '@codemirror/view',
+                        '@lezer/highlight',
+                    ],
+                    // D3 visualization (lazy loaded)
+                    d3: ['d3', 'd3-sankey'],
+                },
             },
         },
     },
