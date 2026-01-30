@@ -1211,7 +1211,9 @@ a:focus-visible {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
 }
 
 .calendar-months {
