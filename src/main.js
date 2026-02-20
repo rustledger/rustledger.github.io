@@ -38,7 +38,13 @@ import { fetchGitHubInfo, fetchBenchmarkStats } from './github.js';
 import { initInstallTabs, initCopyButtons } from './install.js';
 import { initKeyboardShortcuts, showShortcutsModal, hideShortcutsModal } from './shortcuts.js';
 import { toggleTemplatesDropdown } from './templates.js';
-import { initAccountTree, clearAccountTree, expandAll, collapseAll } from './account-tree.js';
+import {
+    initAccountTree,
+    clearAccountTree,
+    expandAll,
+    collapseAll,
+    updateAccountTree,
+} from './account-tree.js';
 
 // Lazy-loaded visualization modules (loaded on demand to reduce initial bundle)
 /** @type {typeof import('./charts.js') | null} */
@@ -210,13 +216,19 @@ function showOutput(html) {
 
 /**
  * Handle editor content changes
- * @param {string} _content
+ * @param {string} content
  */
-function onEditorChange(_content) {
+function onEditorChange(content) {
     if (liveValidationTimeout) clearTimeout(liveValidationTimeout);
     liveValidationTimeout = setTimeout(() => {
         if (isWasmReady()) {
             liveValidate();
+
+            // Update account tree when editor content changes
+            const sidebarContent = document.getElementById('accounts-sidebar-content');
+            if (sidebarContent) {
+                updateAccountTree(content, sidebarContent);
+            }
         }
     }, 300);
 }
