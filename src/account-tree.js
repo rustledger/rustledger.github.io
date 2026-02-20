@@ -22,6 +22,9 @@ let treeVersion = 0;
 /** @type {Map<string, boolean>} Track expanded state across updates */
 const expandedState = new Map();
 
+/** @type {Array<{account: string, balance: {amount: number, currency: string}}>} Cache last successful account data */
+let cachedAccounts = [];
+
 // Account type colors matching charts.js
 const accountColors = {
     Assets: '#22d3ee', // cyan
@@ -365,12 +368,14 @@ function triggerRerender(container) {
  * @returns {Promise<Array<{account: string, balance: {amount: number, currency: string}}>>}
  */
 async function queryAccountBalances(source) {
-    if (!isWasmReady()) return [];
+    if (!isWasmReady()) return cachedAccounts;
 
     try {
         const result = await executeQuery(source, 'BALANCES');
-        if (!result || result.error || !result.rows || result.rows.length === 0) {
-            return [];
+        if (!result || !result.rows || result.rows.length === 0) {
+            // Query returned no rows - return cached data if available
+            // This handles cases where validation errors prevent querying
+            return cachedAccounts;
         }
 
         // BALANCES returns: account, balance (or similar columns)
@@ -408,10 +413,13 @@ async function queryAccountBalances(source) {
             }
         }
 
+        // Cache successful result
+        cachedAccounts = accounts;
         return accounts;
     } catch (err) {
         console.error('Account tree query error:', err);
-        return [];
+        // Return cached data on error
+        return cachedAccounts;
     }
 }
 
@@ -468,6 +476,7 @@ export function clearAccountTree() {
     }
     treeVersion = 0;
     currentGetSource = null;
+    cachedAccounts = [];
     // Don't clear expandedState to preserve user preferences across sessions
 }
 
