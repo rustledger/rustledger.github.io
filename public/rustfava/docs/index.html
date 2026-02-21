@@ -267,6 +267,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="." class="md-nav__link md-nav__link--active">
         
   
@@ -283,6 +301,75 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Start">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#desktop-app-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Desktop App (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command Line
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -443,6 +530,64 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Start">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#desktop-app-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Desktop App (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Command Line
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -462,21 +607,26 @@
 
 
 <h1 id="welcome-to-rustfava">Welcome to rustfava!<a class="headerlink" href="#welcome-to-rustfava" title="Permanent link">&para;</a></h1>
-<p>Rustfava is a web interface for double-entry bookkeeping, powered by
+<p>rustfava is a web interface for double-entry bookkeeping, powered by
 <a href="https://github.com/rustledger/rustledger">rustledger</a>, a Rust-based parser for
-the Beancount file format compiled to WebAssembly for fast in-browser
-processing.</p>
-<p>Rustfava is a fork of <a href="https://beancount.github.io/fava/">Fava</a> that replaces
+the Beancount file format compiled to WebAssembly for fast processing.</p>
+<p>rustfava is a fork of <a href="https://beancount.github.io/fava/">Fava</a> that replaces
 the Python Beancount parser with rustledger for improved performance. Your
 existing Beancount files are fully compatible.</p>
-<p><img alt="Rustfava Screenshot" src="https://i.imgbox.com/rfb9I7Zw.png" /></p>
+<p><img alt="rustfava dashboard" src="screenshot.png" /></p>
 <p>If you are new to rustfava or Beancount-format files, begin with the
 <a href="usage/">Getting Started</a> guide.</p>
-<p>This is enough to get you up and running:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>rustfava
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<h3 id="desktop-app-recommended">Desktop App (Recommended)<a class="headerlink" href="#desktop-app-recommended" title="Permanent link">&para;</a></h3>
+<p>Download the desktop app from <a href="https://github.com/rustledger/rustfava/releases">GitHub Releases</a> - no installation required, just double-click to run.</p>
+<h3 id="command-line">Command Line<a class="headerlink" href="#command-line" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>rustfava
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>rustfava<span class="w"> </span>ledger.beancount
 </code></pre></div>
-<p>and visit the web interface at <a href="http://localhost:5000">http://localhost:5000</a>.</p>
+<p>Then visit <a href="http://localhost:5000">http://localhost:5000</a>.</p>
+<h3 id="docker">Docker<a class="headerlink" href="#docker" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-p<span class="w"> </span><span class="m">5000</span>:5000<span class="w"> </span>-v<span class="w"> </span>/path/to/ledger:/data<span class="w"> </span>ghcr.io/rustledger/rustfava<span class="w"> </span>/data/main.beancount
+</code></pre></div>
 
 
 

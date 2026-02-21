@@ -10,13 +10,9 @@
       
       
       
-        <link rel="canonical" href="https://rustledger.github.io/rustfava/docs/deployment/">
+        <link rel="canonical" href="https://rustledger.github.io/rustfava/docs/upstream-sync/">
       
       
-        <link rel="prev" href="../development/">
-      
-      
-        <link rel="next" href="../api/">
       
       
         
@@ -27,7 +23,7 @@
     
     
       
-        <title>Deployment - Rustfava</title>
+        <title>Syncing with Upstream Fava - Rustfava</title>
       
     
     
@@ -80,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#deployment" class="md-skip">
+        <a href="#syncing-with-upstream-fava" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Deployment
+              Syncing with Upstream Fava
             
           </span>
         </div>
@@ -365,37 +361,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Deployment
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../deployment/" class="md-nav__link">
         
   
   
@@ -411,120 +380,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#desktop-app" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Desktop App
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#docker" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Docker
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#systemd-service" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Systemd Service
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reverse-proxy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reverse Proxy
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Reverse Proxy">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#apache" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Apache
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#nginx" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Nginx
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#caddy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Caddy
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#security-considerations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Security Considerations
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -583,10 +438,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#desktop-app" class="md-nav__link">
+  <a href="#background" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Desktop App
+        Background
       
     </span>
   </a>
@@ -594,10 +449,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#docker" class="md-nav__link">
+  <a href="#checking-for-upstream-changes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Docker
+        Checking for Upstream Changes
       
     </span>
   </a>
@@ -605,33 +460,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#systemd-service" class="md-nav__link">
+  <a href="#categorizing-commits" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Systemd Service
+        Categorizing Commits
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reverse-proxy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reverse Proxy
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Reverse Proxy">
+    <nav class="md-nav" aria-label="Categorizing Commits">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#apache" class="md-nav__link">
+  <a href="#safe-to-cherry-pick" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Apache
+        Safe to cherry-pick
       
     </span>
   </a>
@@ -639,10 +483,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#nginx" class="md-nav__link">
+  <a href="#requires-review" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Nginx
+        Requires review
       
     </span>
   </a>
@@ -650,10 +494,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#caddy" class="md-nav__link">
+  <a href="#cannot-cherry-pick" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Caddy
+        Cannot cherry-pick
       
     </span>
   </a>
@@ -666,10 +510,93 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#security-considerations" class="md-nav__link">
+  <a href="#cherry-pick-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Security Considerations
+        Cherry-Pick Workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-conflicts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Conflicts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Conflicts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#package-lockjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        package-lock.json
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-renames-fava-rustfava" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File renames (fava -&gt; rustfava)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deleted-core-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deleted core files
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#after-syncing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After Syncing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sync-history" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sync History
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upstream-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upstream Monitoring
       
     </span>
   </a>
@@ -696,67 +623,143 @@
   
 
 
-<h1 id="deployment">Deployment<a class="headerlink" href="#deployment" title="Permanent link">&para;</a></h1>
-<p>There are several ways to deploy rustfava depending on your needs.</p>
-<h2 id="desktop-app">Desktop App<a class="headerlink" href="#desktop-app" title="Permanent link">&para;</a></h2>
-<p>For personal use, the <a href="https://github.com/rustledger/rustfava/releases">desktop app</a> is the simplest option. It runs entirely locally with no server setup required.</p>
-<h2 id="docker">Docker<a class="headerlink" href="#docker" title="Permanent link">&para;</a></h2>
-<p>For server deployments, Docker is recommended:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-p<span class="w"> </span><span class="m">5000</span>:5000<span class="w"> </span>-v<span class="w"> </span>/path/to/ledger:/data<span class="w"> </span>ghcr.io/rustledger/rustfava<span class="w"> </span>/data/main.beancount
+<h1 id="syncing-with-upstream-fava">Syncing with Upstream Fava<a class="headerlink" href="#syncing-with-upstream-fava" title="Permanent link">&para;</a></h1>
+<p>rustfava is a fork of <a href="https://github.com/beancount/fava">Fava</a> that replaces the beancount parser with <a href="https://github.com/rustledger/rustledger">rustledger</a>. This document describes how to sync relevant changes from upstream.</p>
+<h2 id="background">Background<a class="headerlink" href="#background" title="Permanent link">&para;</a></h2>
+<p>The fork diverges significantly from upstream in the backend:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Fava</th>
+<th>rustfava</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Parser</td>
+<td>Python beancount</td>
+<td>rustledger (WASM)</td>
+</tr>
+<tr>
+<td>Core modules</td>
+<td><code>fava/core/</code>, <code>fava/beans/</code></td>
+<td><code>rustfava/rustledger/</code></td>
+</tr>
+<tr>
+<td>Package manager</td>
+<td>npm</td>
+<td>bun</td>
+</tr>
+</tbody>
+</table>
+<p>The frontend is largely unchanged and can usually accept upstream patches.</p>
+<h2 id="checking-for-upstream-changes">Checking for Upstream Changes<a class="headerlink" href="#checking-for-upstream-changes" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Fetch upstream</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>git<span class="w"> </span>fetch<span class="w"> </span>upstream
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Find the common ancestor (fork point)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>git<span class="w"> </span>merge-base<span class="w"> </span>main<span class="w"> </span>upstream/main
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># Count commits since fork</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>git<span class="w"> </span>rev-list<span class="w"> </span>--count<span class="w"> </span><span class="k">$(</span>git<span class="w"> </span>merge-base<span class="w"> </span>main<span class="w"> </span>upstream/main<span class="k">)</span>..upstream/main
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1"># List upstream commits since fork</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>git<span class="w"> </span>log<span class="w"> </span>--oneline<span class="w"> </span><span class="k">$(</span>git<span class="w"> </span>merge-base<span class="w"> </span>main<span class="w"> </span>upstream/main<span class="k">)</span>..upstream/main
 </code></pre></div>
-<p>For advanced Docker configurations (authentication, HTTPS, docker-compose), see the <a href="../contrib/docker/README.md">Docker deployment guide</a>.</p>
-<h2 id="systemd-service">Systemd Service<a class="headerlink" href="#systemd-service" title="Permanent link">&para;</a></h2>
-<p>To run rustfava as a system service on Linux:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># /etc/systemd/system/rustfava.service</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">[Unit]</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="na">Description</span><span class="o">=</span><span class="s">rustfava Web UI for Beancount</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="na">After</span><span class="o">=</span><span class="s">network.target</span>
+<h2 id="categorizing-commits">Categorizing Commits<a class="headerlink" href="#categorizing-commits" title="Permanent link">&para;</a></h2>
+<p>Review each upstream commit and categorize:</p>
+<h3 id="safe-to-cherry-pick">Safe to cherry-pick<a class="headerlink" href="#safe-to-cherry-pick" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Frontend changes</strong> (<code>frontend/src/</code>) - UI, routing, components</li>
+<li><strong>Documentation</strong> (<code>docs/</code>, <code>*.md</code>)</li>
+<li><strong>Templates</strong> (<code>src/fava/templates/</code>)</li>
+<li><strong>Static assets</strong> (<code>src/fava/static/</code>)</li>
+<li><strong>Extension API</strong> (if not touching core)</li>
+</ul>
+<h3 id="requires-review">Requires review<a class="headerlink" href="#requires-review" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Tests</strong> - may reference beancount-specific behavior</li>
+<li><strong>API endpoints</strong> - check if they depend on beancount types</li>
+</ul>
+<h3 id="cannot-cherry-pick">Cannot cherry-pick<a class="headerlink" href="#cannot-cherry-pick" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Core modules</strong> - <code>src/fava/core/</code>, <code>src/fava/beans/</code></li>
+<li><strong>Beancount imports</strong> - anything importing from <code>beancount.*</code></li>
+<li><strong>Inventory/position logic</strong> - replaced by rustledger</li>
+</ul>
+<h2 id="cherry-pick-workflow">Cherry-Pick Workflow<a class="headerlink" href="#cherry-pick-workflow" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 1. Create a sync branch</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>git<span class="w"> </span>checkout<span class="w"> </span>main
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>main
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>sync/upstream-YYYY-MM
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">[Service]</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="na">Type</span><span class="o">=</span><span class="s">simple</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/bin/rustfava --host 127.0.0.1 --port 5000 /path/to/main.beancount</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="na">User</span><span class="o">=</span><span class="s">your-user</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="na">Restart</span><span class="o">=</span><span class="s">on-failure</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="k">[Install]</span>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="na">WantedBy</span><span class="o">=</span><span class="s">multi-user.target</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># 2. Cherry-pick safe commits (oldest first)</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>git<span class="w"> </span>cherry-pick<span class="w"> </span>&lt;commit-hash&gt;
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># 3. If conflicts occur, resolve them:</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1">#    - For package-lock.json conflicts: git rm frontend/package-lock.json</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="c1">#    - For renamed files (fava -&gt; rustfava): update paths</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="c1">#    - For deleted files: skip the commit with git cherry-pick --skip</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="c1"># 4. Update lockfile if package.json changed</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>nix<span class="w"> </span>develop<span class="w"> </span>--command<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;cd frontend &amp;&amp; bun install&quot;</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>git<span class="w"> </span>add<span class="w"> </span>frontend/bun.lock
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;chore: update bun.lock for upstream sync&quot;</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="c1"># 5. Test the build</span>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>nix<span class="w"> </span>develop<span class="w"> </span>--command<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;cd frontend &amp;&amp; bun run build&quot;</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>nix<span class="w"> </span>develop<span class="w"> </span>--command<span class="w"> </span>bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;just test&quot;</span>
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>
+<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="c1"># 6. Push and create PR</span>
+<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>sync/upstream-YYYY-MM
+<a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a>gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;chore: sync upstream fava changes (Month YYYY)&quot;</span>
 </code></pre></div>
-<p>Then:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>rustfava
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>rustfava
+<h2 id="common-conflicts">Common Conflicts<a class="headerlink" href="#common-conflicts" title="Permanent link">&para;</a></h2>
+<h3 id="package-lockjson">package-lock.json<a class="headerlink" href="#package-lockjson" title="Permanent link">&para;</a></h3>
+<p>rustfava uses bun instead of npm. Remove the conflicting file:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>git<span class="w"> </span>rm<span class="w"> </span>frontend/package-lock.json
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>git<span class="w"> </span>cherry-pick<span class="w"> </span>--continue
 </code></pre></div>
-<h2 id="reverse-proxy">Reverse Proxy<a class="headerlink" href="#reverse-proxy" title="Permanent link">&para;</a></h2>
-<h3 id="apache">Apache<a class="headerlink" href="#apache" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">ProxyPass</span><span class="w"> </span><span class="s2">&quot;/rustfava&quot;</span><span class="w"> </span><span class="s2">&quot;http://localhost:5000/rustfava&quot;</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">ProxyPassReverse</span><span class="w"> </span><span class="s2">&quot;/rustfava&quot;</span><span class="w"> </span><span class="s2">&quot;http://localhost:5000/rustfava&quot;</span>
+<h3 id="file-renames-fava-rustfava">File renames (fava -&gt; rustfava)<a class="headerlink" href="#file-renames-fava-rustfava" title="Permanent link">&para;</a></h3>
+<p>Upstream references <code>src/fava/</code> but rustfava uses <code>src/rustfava/</code>. The cherry-pick usually handles this via directory mapping, but manual fixes may be needed.</p>
+<h3 id="deleted-core-files">Deleted core files<a class="headerlink" href="#deleted-core-files" title="Permanent link">&para;</a></h3>
+<p>If upstream modifies files that rustfava deleted (like <code>core/inventory.py</code>), skip the commit:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>git<span class="w"> </span>cherry-pick<span class="w"> </span>--skip
 </code></pre></div>
-<p>Run rustfava with the <code>--prefix</code> option:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>rustfava<span class="w"> </span>--prefix<span class="w"> </span>/rustfava<span class="w"> </span>/path/to/main.beancount
-</code></pre></div>
-<h3 id="nginx">Nginx<a class="headerlink" href="#nginx" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">location</span><span class="w"> </span><span class="s">/rustfava/</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://127.0.0.1:5000/rustfava/</span><span class="p">;</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Real-IP</span><span class="w"> </span><span class="nv">$remote_addr</span><span class="p">;</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Forwarded-For</span><span class="w"> </span><span class="nv">$proxy_add_x_forwarded_for</span><span class="p">;</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Forwarded-Proto</span><span class="w"> </span><span class="nv">$scheme</span><span class="p">;</span>
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="p">}</span>
-</code></pre></div>
-<h3 id="caddy">Caddy<a class="headerlink" href="#caddy" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>your-domain.com {
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    reverse_proxy localhost:5000
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>}
-</code></pre></div>
-<p>Caddy automatically handles HTTPS with Let's Encrypt.</p>
-<h2 id="security-considerations">Security Considerations<a class="headerlink" href="#security-considerations" title="Permanent link">&para;</a></h2>
-<p>When exposing rustfava to the internet:</p>
+<h2 id="after-syncing">After Syncing<a class="headerlink" href="#after-syncing" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Use HTTPS</strong> - Never expose plain HTTP to the public internet</li>
-<li><strong>Add authentication</strong> - Use a reverse proxy with OAuth2 or basic auth</li>
-<li><strong>Restrict access</strong> - Use firewall rules to limit access to trusted IPs</li>
-<li><strong>Keep updated</strong> - Regularly update rustfava for security patches</li>
+<li><strong>Run the test suite</strong>: <code>just test</code></li>
+<li><strong>Build the frontend</strong>: <code>just frontend</code></li>
+<li><strong>Manual testing</strong>: Start the app and verify functionality</li>
+<li><strong>Update this doc</strong>: Note the last sync date and any new patterns</li>
 </ol>
-<p>See <a href="../SECURITY.md">SECURITY.md</a> for more security best practices.</p>
+<h2 id="sync-history">Sync History<a class="headerlink" href="#sync-history" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>PR</th>
+<th>Commits</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-01-25</td>
+<td>#22</td>
+<td>2</td>
+<td>Extension types, router improvements</td>
+</tr>
+</tbody>
+</table>
+<h2 id="upstream-monitoring">Upstream Monitoring<a class="headerlink" href="#upstream-monitoring" title="Permanent link">&para;</a></h2>
+<p>Consider setting up notifications for upstream releases:</p>
+<ol>
+<li>Watch the <a href="https://github.com/beancount/fava">beancount/fava</a> repository</li>
+<li>Review the <a href="https://github.com/beancount/fava/blob/main/CHANGELOG.md">Fava changelog</a> periodically</li>
+<li>Sync quarterly or when significant features are added</li>
+</ol>
 
 
 
