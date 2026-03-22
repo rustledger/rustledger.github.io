@@ -51,7 +51,10 @@ export default defineConfig({
                     collapsed: false,
                     items: [
                         { text: 'Overview', link: '/guides/' },
+                        { text: 'Accounting Concepts', link: '/guides/accounting-concepts' },
+                        { text: 'Cookbook', link: '/guides/cookbook' },
                         { text: 'Common Queries', link: '/guides/common-queries' },
+                        { text: 'Budgeting', link: '/guides/budgeting' },
                         { text: 'Importing Data', link: '/guides/importing' },
                         { text: 'Shell Aliases', link: '/guides/shell-aliases' },
                         { text: 'Editor Integration', link: '/guides/editor-integration' },
@@ -73,6 +76,7 @@ export default defineConfig({
                     collapsed: true,
                     items: [
                         { text: 'Overview', link: '/reference/' },
+                        { text: 'Syntax', link: '/reference/syntax' },
                         { text: 'BQL', link: '/reference/bql' },
                         { text: 'Plugins', link: '/reference/plugins' },
                         { text: 'Error Codes', link: '/reference/errors' },
