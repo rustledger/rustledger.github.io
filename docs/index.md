@@ -6,10 +6,6 @@ hero:
     name: rustledger
     text: Modern Plain Text Accounting
     tagline: Beancount, rewritten in Rust. Accounting in plain text, under your control, forever.
-    actions:
-        - theme: brand
-          text: ⭐ Star on GitHub
-          link: https://github.com/rustledger/rustledger
 
 features:
     - icon: 🚀
@@ -31,6 +27,18 @@ features:
       title: WASM Ready
       details: Run in the browser with full functionality. Try it in the playground right now.
 ---
+
+<div class="github-star-container">
+  <GitHubStars />
+</div>
+
+<style>
+.github-star-container {
+  display: flex;
+  justify-content: center;
+  margin: -2rem 0 2rem 0;
+}
+</style>
 
 ## Installation
 
