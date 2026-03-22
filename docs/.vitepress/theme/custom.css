@@ -1,0 +1,173 @@
+/* rustledger theme - dark mode with orange accent */
+
+:root {
+    /* Orange accent color (matching #f97316) */
+    --vp-c-brand-1: #f97316;
+    --vp-c-brand-2: #fb923c;
+    --vp-c-brand-3: #fdba74;
+    --vp-c-brand-soft: rgba(249, 115, 22, 0.14);
+}
+
+/* Force dark mode always */
+.dark,
+:root {
+    --vp-c-bg: #000000;
+    --vp-c-bg-alt: #0a0a0a;
+    --vp-c-bg-elv: #111111;
+    --vp-c-bg-soft: #1a1a1a;
+
+    /* Text colors */
+    --vp-c-text-1: rgba(255, 255, 255, 0.95);
+    --vp-c-text-2: rgba(255, 255, 255, 0.6);
+    --vp-c-text-3: rgba(255, 255, 255, 0.4);
+
+    /* Border colors */
+    --vp-c-border: rgba(255, 255, 255, 0.1);
+    --vp-c-divider: rgba(255, 255, 255, 0.1);
+    --vp-c-gutter: rgba(255, 255, 255, 0.05);
+
+    /* Code blocks */
+    --vp-code-block-bg: #0a0a0a;
+    --vp-code-line-highlight-color: rgba(249, 115, 22, 0.1);
+
+    /* Sidebar */
+    --vp-sidebar-bg-color: #000000;
+
+    /* Nav */
+    --vp-nav-bg-color: rgba(0, 0, 0, 0.9);
+
+    /* Custom property for accent text */
+    --accent: #f97316;
+}
+
+/* Make html/body black */
+html,
+body {
+    background-color: #000 !important;
+}
+
+/* Nav styling */
+.VPNav {
+    background-color: rgba(0, 0, 0, 0.9) !important;
+    backdrop-filter: blur(8px);
+}
+
+/* Hero section styling */
+.VPHero {
+    padding-top: 80px !important;
+}
+
+.VPHero .name {
+    background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.VPHero .text {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.VPHero .tagline {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Feature cards */
+.VPFeature {
+    background-color: #0a0a0a !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.VPFeature:hover {
+    border-color: rgba(249, 115, 22, 0.3) !important;
+}
+
+.VPFeature .title {
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.VPFeature .details {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Buttons */
+.VPButton.brand {
+    background-color: #f97316 !important;
+    border-color: #f97316 !important;
+}
+
+.VPButton.brand:hover {
+    background-color: #ea580c !important;
+    border-color: #ea580c !important;
+}
+
+.VPButton.alt {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.VPButton.alt:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Sidebar */
+.VPSidebar {
+    background-color: #000 !important;
+}
+
+/* Content area */
+.VPContent {
+    background-color: #000 !important;
+}
+
+/* Footer */
+.VPFooter {
+    background-color: #000 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Links */
+.vp-doc a {
+    color: #f97316;
+}
+
+.vp-doc a:hover {
+    color: #fb923c;
+}
+
+/* Code inline */
+.vp-doc :not(pre) > code {
+    background-color: rgba(249, 115, 22, 0.1);
+    color: #fdba74;
+}
+
+/* Tables */
+.vp-doc table {
+    background-color: #0a0a0a;
+}
+
+.vp-doc tr {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.vp-doc th,
+.vp-doc td {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Blockquotes */
+.vp-doc blockquote {
+    border-left-color: #f97316;
+    background-color: rgba(249, 115, 22, 0.05);
+}
+
+/* Search */
+.VPLocalSearchBox {
+    --vp-local-search-bg: #0a0a0a;
+}
+
+/* Custom accent class for inline use */
+.accent {
+    color: #f97316;
+}
