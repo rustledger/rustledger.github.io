@@ -43,24 +43,67 @@ features:
 ::: code-group
 
 ```sh [Cargo]
+# Build from source
 cargo install rustledger
+
+# Or use cargo-binstall for prebuilt binaries
+cargo binstall rustledger
 ```
 
 ```sh [Homebrew]
-brew install rustledger/tap/rustledger
+# macOS and Linux
+brew install rustledger
 ```
 
 ```sh [Nix]
-# Try it
+# Try without installing
 nix run github:rustledger/rustledger
 
-# Install
+# Install to profile
 nix profile install github:rustledger/rustledger
+
+# Or use nixpkgs
+nix-env -iA nixpkgs.rustledger
+```
+
+```sh [AUR]
+# Arch Linux (using yay)
+yay -S rustledger
+
+# Or with paru
+paru -S rustledger
+```
+
+```sh [COPR]
+# Fedora / RHEL / CentOS
+sudo dnf copr enable atim/rustledger
+sudo dnf install rustledger
+```
+
+```sh [Scoop]
+# Windows
+scoop bucket add rustledger https://github.com/rustledger/scoop-bucket
+scoop install rustledger
+```
+
+```sh [Docker]
+# Run with Docker
+docker run --rm -v $(pwd):/data ghcr.io/rustledger/rustledger check /data/ledger.beancount
+```
+
+```sh [npm]
+# WASM package for Node.js / browser
+npm install @rustledger/wasm
 ```
 
 ```sh [Binary]
-# Download from GitHub releases
-# https://github.com/rustledger/rustledger/releases
+# Download prebuilt binaries from GitHub releases
+# https://github.com/rustledger/rustledger/releases/latest
+#
+# Available for:
+# - Linux (x86_64, aarch64)
+# - macOS (x86_64, aarch64)
+# - Windows (x86_64)
 ```
 
 :::
