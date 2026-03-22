@@ -29,7 +29,7 @@ jobs:
               run: bun add @rustledger/wasm@latest
 
             - name: Install dependencies
-              run: bun install ${{ github.event_name == 'repository_dispatch' && '' || '--frozen-lockfile' }}
+              run: bun install ${{ github.event_name == 'push' && '--frozen-lockfile' || '' }}
 
             - name: Copy WASM from npm package to pkg/
               run: |
