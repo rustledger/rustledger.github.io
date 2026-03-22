@@ -8,13 +8,7 @@ hero:
     tagline: Beancount, rewritten in Rust. Accounting in plain text, under your control, forever.
     actions:
         - theme: brand
-          text: Get Started
-          link: /getting-started/
-        - theme: alt
-          text: Try the Playground
-          link: https://rustledger.github.io/
-        - theme: alt
-          text: GitHub
+          text: ⭐ Star on GitHub
           link: https://github.com/rustledger/rustledger
 
 features:
