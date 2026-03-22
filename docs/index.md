@@ -36,7 +36,8 @@ features:
 .github-star-container {
   display: flex;
   justify-content: center;
-  margin: -2rem 0 2rem 0;
+  margin-top: 1rem;
+  margin-bottom: 3rem;
 }
 </style>
 
