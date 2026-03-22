@@ -6,9 +6,7 @@ export default defineConfig({
 
     base: '/docs/',
 
-    head: [
-        ['link', { rel: 'icon', type: 'image/svg+xml', href: '/docs/favicon.svg' }],
-    ],
+    head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/docs/favicon.svg' }]],
 
     themeConfig: {
         logo: '/favicon.svg',
