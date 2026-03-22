@@ -15,7 +15,27 @@ rustledger.github.io is the website and WASM playground for rustledger. It uses:
 - **CI uses bun**, not npm. The `bun.lock` file controls dependency versions.
 - `package-lock.json` is for local npm usage but CI ignores it.
 - Workflow: `.github/workflows/deploy.yml`
-- Deploy triggers: push to main, `wasm-release` dispatch, manual
+- Deploy triggers: push to main, `wasm-release` dispatch, `docs-update` dispatch, manual
+
+## Documentation
+
+The `/docs/` path is served by VitePress. **Docs content comes from the main rustledger repo.**
+
+- **Source of truth**: `rustledger/rustledger/docs/`
+- **VitePress config**: `docs/.vitepress/config.js` (maintained here)
+- **Auto-rebuild**: When `docs/**` changes in rustledger repo, it triggers a `docs-update` dispatch
+
+### How it works
+1. Push to `rustledger/docs/**` triggers `.github/workflows/docs-update.yml`
+2. That workflow dispatches `docs-update` event to this repo
+3. This repo's deploy workflow fetches latest docs and rebuilds
+
+### Local docs development
+```bash
+npm run docs:dev     # VitePress dev server
+npm run docs:build   # Build docs
+npm run docs:preview # Preview built docs
+```
 
 ## Lessons Learned
 

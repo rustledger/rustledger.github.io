@@ -4,7 +4,7 @@ on:
     push:
         branches: [main]
     repository_dispatch:
-        types: [wasm-release]
+        types: [wasm-release, docs-update]
     workflow_dispatch:
 
 permissions:
@@ -52,8 +52,41 @@ jobs:
             - name: Test
               run: bun run test
 
-            - name: Build
+            - name: Build main site
               run: bun run build
+
+            - name: Fetch docs from rustledger repo
+              run: |
+                  # Remove placeholder docs and fetch from source repo
+                  rm -rf docs/getting-started docs/commands docs/guides docs/migration docs/reference docs/development
+
+                  # Clone just the docs folder from rustledger repo
+                  git clone --depth 1 --filter=blob:none --sparse https://github.com/rustledger/rustledger.git rustledger-temp
+                  cd rustledger-temp
+                  git sparse-checkout set docs
+                  cd ..
+
+                  # Copy docs content (excluding .vitepress which we maintain here)
+                  cp -r rustledger-temp/docs/* docs/
+
+                  # Use home.md as the content source for index.md hero section
+                  # (keep our index.md for VitePress layout, append content from home.md)
+
+                  rm -rf rustledger-temp
+
+                  echo "Docs fetched successfully"
+                  ls -la docs/
+
+            - name: Build docs
+              run: bun run docs:build
+
+            - name: Merge builds
+              run: |
+                  # Copy VitePress output to dist/docs
+                  cp -r docs/.vitepress/dist dist/docs
+                  echo "Final dist structure:"
+                  ls -la dist/
+                  ls -la dist/docs/ | head -20
 
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v3

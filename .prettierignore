@@ -4,3 +4,5 @@ pkg/
 *.md
 LICENSE
 public/rustfava/docs/
+docs/.vitepress/cache/
+docs/.vitepress/dist/
