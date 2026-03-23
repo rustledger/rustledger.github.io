@@ -1,19 +1,28 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 
-const VALIDATION_URL = 'https://raw.githubusercontent.com/rustledger/rustledger/benchmarks/.github/badges/validation-history.json';
-const BALANCE_URL = 'https://raw.githubusercontent.com/rustledger/rustledger/benchmarks/.github/badges/balance-history.json';
+const VALIDATION_URL =
+    'https://raw.githubusercontent.com/rustledger/rustledger/benchmarks/.github/badges/validation-history.json';
+const BALANCE_URL =
+    'https://raw.githubusercontent.com/rustledger/rustledger/benchmarks/.github/badges/balance-history.json';
 
-const validation = ref({ rustledger: '~43ms', beancount: '~789ms', ledger: '~108ms', hledger: '~498ms' });
-const balance = ref({ rustledger: '~34ms', beancount: '~1046ms', ledger: '~63ms', hledger: '~538ms' });
+const validation = ref({
+    rustledger: '~43ms',
+    beancount: '~789ms',
+    ledger: '~108ms',
+    hledger: '~498ms',
+});
+const balance = ref({
+    rustledger: '~34ms',
+    beancount: '~1046ms',
+    ledger: '~63ms',
+    hledger: '~538ms',
+});
 const loading = ref(true);
 
 async function fetchBenchmarks() {
     try {
-        const [valRes, balRes] = await Promise.all([
-            fetch(VALIDATION_URL),
-            fetch(BALANCE_URL)
-        ]);
+        const [valRes, balRes] = await Promise.all([fetch(VALIDATION_URL), fetch(BALANCE_URL)]);
 
         if (valRes.ok && balRes.ok) {
             const valData = await valRes.json();
@@ -25,7 +34,7 @@ async function fetchBenchmarks() {
                     rustledger: `~${Math.round(latest.rustledger_ms)}ms`,
                     beancount: `~${Math.round(latest.beancount_ms)}ms`,
                     ledger: `~${Math.round(latest.ledger_ms)}ms`,
-                    hledger: `~${Math.round(latest.hledger_ms)}ms`
+                    hledger: `~${Math.round(latest.hledger_ms)}ms`,
                 };
             }
 
@@ -35,7 +44,7 @@ async function fetchBenchmarks() {
                     rustledger: `~${Math.round(latest.rustledger_ms)}ms`,
                     beancount: `~${Math.round(latest.beancount_ms)}ms`,
                     ledger: `~${Math.round(latest.ledger_ms)}ms`,
-                    hledger: `~${Math.round(latest.hledger_ms)}ms`
+                    hledger: `~${Math.round(latest.hledger_ms)}ms`,
                 };
             }
         }
@@ -57,7 +66,9 @@ onMounted(() => {
             <thead>
                 <tr>
                     <th></th>
-                    <th><span class="rustledger-name"><span class="rust">rust</span>ledger</span></th>
+                    <th>
+                        <span class="rustledger-name"><span class="rust">rust</span>ledger</span>
+                    </th>
                     <th>Beancount</th>
                     <th>Ledger</th>
                     <th>hledger</th>

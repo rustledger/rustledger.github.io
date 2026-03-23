@@ -2,8 +2,8 @@
 defineProps({
     features: {
         type: Array,
-        required: true
-    }
+        required: true,
+    },
 });
 </script>
 
@@ -30,7 +30,9 @@ defineProps({
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 0.75rem;
     padding: 1.5rem;
-    transition: border-color 0.2s, background 0.2s;
+    transition:
+        border-color 0.2s,
+        background 0.2s;
 }
 
 .feature-card:hover {

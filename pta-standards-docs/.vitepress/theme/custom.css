@@ -1,94 +1,122 @@
 :root {
-  --vp-c-bg: #0a0a0a;
-  --vp-c-bg-soft: #111111;
-  --vp-c-bg-mute: #1a1a1a;
-  --vp-c-bg-alt: #0a0a0a;
-  --vp-c-text-1: rgba(255, 255, 255, 0.87);
-  --vp-c-text-2: rgba(255, 255, 255, 0.6);
-  --vp-c-text-3: rgba(255, 255, 255, 0.38);
-  --vp-c-brand-1: #f97316;
-  --vp-c-brand-2: #ea580c;
-  --vp-c-brand-3: #c2410c;
-  --vp-nav-bg-color: #0a0a0a;
-  --vp-sidebar-bg-color: #0a0a0a;
+    --vp-c-bg: #0a0a0a;
+    --vp-c-bg-soft: #111111;
+    --vp-c-bg-mute: #1a1a1a;
+    --vp-c-bg-alt: #0a0a0a;
+    --vp-c-text-1: rgba(255, 255, 255, 0.87);
+    --vp-c-text-2: rgba(255, 255, 255, 0.6);
+    --vp-c-text-3: rgba(255, 255, 255, 0.38);
+    --vp-c-brand-1: #f97316;
+    --vp-c-brand-2: #ea580c;
+    --vp-c-brand-3: #c2410c;
+    --vp-nav-bg-color: #0a0a0a;
+    --vp-sidebar-bg-color: #0a0a0a;
 }
 
-html { color-scheme: dark; }
-body { background: #0a0a0a; }
+html {
+    color-scheme: dark;
+}
+body {
+    background: #0a0a0a;
+}
 
 .secondary-nav {
-  background: #050505;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.5rem 1.5rem;
-  font-size: 0.875rem;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
+    background: #050505;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 1.5rem;
+    font-size: 0.875rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
 }
 
 .secondary-nav-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .secondary-nav-link {
-  color: rgba(255, 255, 255, 0.5);
-  text-decoration: none;
-  transition: color 0.2s;
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    transition: color 0.2s;
 }
 
-.secondary-nav-link:hover { color: #f97316; }
+.secondary-nav-link:hover {
+    color: #f97316;
+}
 
-.secondary-nav-separator { color: rgba(255, 255, 255, 0.3); }
+.secondary-nav-separator {
+    color: rgba(255, 255, 255, 0.3);
+}
 
 .secondary-nav-current {
-  color: #f97316;
-  font-weight: 500;
+    color: #f97316;
+    font-weight: 500;
 }
 
-.VPNav { top: 33px !important; }
+.VPNav {
+    top: 33px !important;
+}
 
 .VPSidebar {
-  top: calc(var(--vp-nav-height) + 33px) !important;
-  height: calc(100vh - var(--vp-nav-height) - 33px) !important;
+    top: calc(var(--vp-nav-height) + 33px) !important;
+    height: calc(100vh - var(--vp-nav-height) - 33px) !important;
 }
 
-.VPContent { padding-top: 33px !important; }
-.VPDoc { margin-top: 33px !important; }
+.VPContent {
+    padding-top: 33px !important;
+}
+.VPDoc {
+    margin-top: 33px !important;
+}
 
 .VPNavBarTitle .title {
-  display: flex;
-  align-items: center;
-  font-weight: 600;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
 }
 
-.vp-doc a { color: #f97316; }
-.vp-doc a:hover { color: #ea580c; }
+.vp-doc a {
+    color: #f97316;
+}
+.vp-doc a:hover {
+    color: #ea580c;
+}
 
-.VPSidebar .VPSidebarItem.is-active > .item .link > .text { color: #f97316; }
+.VPSidebar .VPSidebarItem.is-active > .item .link > .text {
+    color: #f97316;
+}
 
 .vp-doc div[class*='language-'] {
-  background: #111111;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #111111;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.vp-doc table { border-collapse: collapse; width: 100%; }
-
-.vp-doc th, .vp-doc td {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.75rem;
+.vp-doc table {
+    border-collapse: collapse;
+    width: 100%;
 }
 
-.vp-doc th { background: rgba(255, 255, 255, 0.05); }
+.vp-doc th,
+.vp-doc td {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.75rem;
+}
+
+.vp-doc th {
+    background: rgba(255, 255, 255, 0.05);
+}
 
 .vp-doc .tip {
-  border-color: #f97316;
-  background: rgba(249, 115, 22, 0.1);
+    border-color: #f97316;
+    background: rgba(249, 115, 22, 0.1);
 }
 
-.VPNavBarMenuLink:hover .text { color: #f97316 !important; }
+.VPNavBarMenuLink:hover .text {
+    color: #f97316 !important;
+}

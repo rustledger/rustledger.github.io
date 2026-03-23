@@ -7,6 +7,10 @@ dist/
 # VitePress
 docs/.vitepress/cache/
 docs/.vitepress/dist/
+rustfava-docs/.vitepress/cache/
+rustfava-docs/.vitepress/dist/
+pta-standards-docs/.vitepress/cache/
+pta-standards-docs/.vitepress/dist/
 
 # Docs fetched from main rustledger repo during build
 docs/getting-started/

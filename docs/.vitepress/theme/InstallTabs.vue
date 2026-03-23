@@ -183,7 +183,10 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'cargo'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"><span class="keyword">cargo</span> <span class="flag">install</span> <span class="package">rustledger</span></span>
+                    <span class="cmd"
+                        ><span class="keyword">cargo</span> <span class="flag">install</span>
+                        <span class="package">rustledger</span></span
+                    >
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('cargo install rustledger')"
@@ -206,7 +209,10 @@ async function copyCommand(command) {
                 </div>
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"><span class="keyword">cargo</span> <span class="flag">binstall</span> <span class="package">rustledger</span></span>
+                    <span class="cmd"
+                        ><span class="keyword">cargo</span> <span class="flag">binstall</span>
+                        <span class="package">rustledger</span></span
+                    >
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('cargo binstall rustledger')"
@@ -236,7 +242,10 @@ async function copyCommand(command) {
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                     </svg>
-                    Requires <a href="https://rustup.rs" target="_blank" rel="noopener noreferrer">Rust toolchain</a>.
+                    Requires
+                    <a href="https://rustup.rs" target="_blank" rel="noopener noreferrer"
+                        >Rust toolchain</a
+                    >.
                 </p>
             </div>
 
@@ -244,7 +253,10 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'homebrew'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"><span class="keyword">brew</span> <span class="flag">install</span> <span class="package">rustledger</span></span>
+                    <span class="cmd"
+                        ><span class="keyword">brew</span> <span class="flag">install</span>
+                        <span class="package">rustledger</span></span
+                    >
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('brew install rustledger')"
@@ -282,7 +294,10 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'nix'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"><span class="keyword">nix</span> <span class="flag">run</span> <span class="package">github:rustledger/rustledger</span></span>
+                    <span class="cmd"
+                        ><span class="keyword">nix</span> <span class="flag">run</span>
+                        <span class="package">github:rustledger/rustledger</span></span
+                    >
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('nix run github:rustledger/rustledger')"
@@ -305,7 +320,10 @@ async function copyCommand(command) {
                 </div>
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"><span class="keyword">nix</span> <span class="flag">profile install</span> <span class="package">github:rustledger/rustledger</span></span>
+                    <span class="cmd"
+                        ><span class="keyword">nix</span> <span class="flag">profile install</span>
+                        <span class="package">github:rustledger/rustledger</span></span
+                    >
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('nix profile install github:rustledger/rustledger')"
@@ -335,7 +353,13 @@ async function copyCommand(command) {
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                     </svg>
-                    Requires <a href="https://nixos.org/download.html" target="_blank" rel="noopener noreferrer">Nix with flakes</a>.
+                    Requires
+                    <a
+                        href="https://nixos.org/download.html"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >Nix with flakes</a
+                    >.
                 </p>
             </div>
 
@@ -343,7 +367,10 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'copr'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"><span class="keyword">sudo dnf</span> <span class="flag">copr enable</span> <span class="package">atim/rustledger</span></span>
+                    <span class="cmd"
+                        ><span class="keyword">sudo dnf</span> <span class="flag">copr enable</span>
+                        <span class="package">atim/rustledger</span></span
+                    >
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('sudo dnf copr enable atim/rustledger')"
@@ -366,7 +393,10 @@ async function copyCommand(command) {
                 </div>
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"><span class="keyword">sudo dnf</span> <span class="flag">install</span> <span class="package">rustledger</span></span>
+                    <span class="cmd"
+                        ><span class="keyword">sudo dnf</span> <span class="flag">install</span>
+                        <span class="package">rustledger</span></span
+                    >
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('sudo dnf install rustledger')"
@@ -404,7 +434,10 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'aur'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"><span class="keyword">yay</span> <span class="flag">-S</span> <span class="package">rustledger</span></span>
+                    <span class="cmd"
+                        ><span class="keyword">yay</span> <span class="flag">-S</span>
+                        <span class="package">rustledger</span></span
+                    >
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('yay -S rustledger')"
@@ -427,7 +460,10 @@ async function copyCommand(command) {
                 </div>
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"><span class="keyword">paru</span> <span class="flag">-S</span> <span class="package">rustledger</span></span>
+                    <span class="cmd"
+                        ><span class="keyword">paru</span> <span class="flag">-S</span>
+                        <span class="package">rustledger</span></span
+                    >
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('paru -S rustledger')"
@@ -465,7 +501,12 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'scoop'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">&gt;</span>
-                    <span class="cmd"><span class="keyword">scoop</span> <span class="flag">bucket add</span> <span class="package">rustledger https://github.com/rustledger/scoop-bucket</span></span>
+                    <span class="cmd"
+                        ><span class="keyword">scoop</span> <span class="flag">bucket add</span>
+                        <span class="package"
+                            >rustledger https://github.com/rustledger/scoop-bucket</span
+                        ></span
+                    >
                     <button
                         class="install-copy-btn"
                         @click="
@@ -492,7 +533,10 @@ async function copyCommand(command) {
                 </div>
                 <div class="install-command">
                     <span class="prompt">&gt;</span>
-                    <span class="cmd"><span class="keyword">scoop</span> <span class="flag">install</span> <span class="package">rustledger</span></span>
+                    <span class="cmd"
+                        ><span class="keyword">scoop</span> <span class="flag">install</span>
+                        <span class="package">rustledger</span></span
+                    >
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('scoop install rustledger')"
@@ -522,7 +566,8 @@ async function copyCommand(command) {
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                     </svg>
-                    For Windows with <a href="https://scoop.sh" target="_blank" rel="noopener noreferrer">Scoop</a>.
+                    For Windows with
+                    <a href="https://scoop.sh" target="_blank" rel="noopener noreferrer">Scoop</a>.
                 </p>
             </div>
 
@@ -530,7 +575,13 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'docker'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"><span class="keyword">docker</span> <span class="flag">run --rm -v $(pwd):/data</span> <span class="package">ghcr.io/rustledger/rustledger check /data/ledger.beancount</span></span>
+                    <span class="cmd"
+                        ><span class="keyword">docker</span>
+                        <span class="flag">run --rm -v $(pwd):/data</span>
+                        <span class="package"
+                            >ghcr.io/rustledger/rustledger check /data/ledger.beancount</span
+                        ></span
+                    >
                     <button
                         class="install-copy-btn"
                         @click="
@@ -572,7 +623,10 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'npm'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"><span class="keyword">npm</span> <span class="flag">install</span> <span class="package">@rustledger/wasm</span></span>
+                    <span class="cmd"
+                        ><span class="keyword">npm</span> <span class="flag">install</span>
+                        <span class="package">@rustledger/wasm</span></span
+                    >
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('npm install @rustledger/wasm')"
