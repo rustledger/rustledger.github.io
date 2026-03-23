@@ -2,6 +2,8 @@
 
 A modern, blazing-fast implementation of [Beancount](https://beancount.github.io/) in Rust.
 
+<GitHubStars />
+
 ## Features
 
 - **25x faster** than Python Beancount
@@ -11,28 +13,26 @@ A modern, blazing-fast implementation of [Beancount](https://beancount.github.io
 - **BQL query engine** for powerful data analysis
 - **Language Server** for editor integration
 
+## Installation
+
+<InstallTabs />
+
 ## Quick Start
 
-Install with Cargo:
-
-```sh
-cargo install rustledger
-```
-
-Or Homebrew:
-
-```sh
-brew install rustledger/tap/rustledger
-```
-
-Then check your ledger:
+After installing, check your ledger:
 
 ```sh
 rledger check ledger.beancount
 ```
 
+Run a query:
+
+```sh
+rledger query ledger.beancount "SELECT account, sum(position) GROUP BY account"
+```
+
 ## Next Steps
 
-- [Installation](/getting-started/installation) - Detailed installation instructions
 - [Quick Start](/getting-started/quick-start) - Get up and running in 5 minutes
 - [Why rustledger?](/about/why-rustledger) - Learn what makes rustledger different
+- [Commands](/commands/) - Full command reference
