@@ -1,38 +1,69 @@
-# rustledger
+---
+layout: home
+title: rustledger - Modern Plain Text Accounting
+---
 
-A modern, blazing-fast implementation of [Beancount](https://beancount.github.io/) in Rust.
+<div class="landing-hero">
+  <p class="hero-subtitle">Beancount, rewritten in Rust</p>
+  <h1 class="hero-title">Modern <span class="text-accent">Plain Text</span> Accounting</h1>
+  <p class="hero-tagline">Accounting in plain text, under your control, forever.</p>
 
-<GitHubStars />
+  <div class="hero-actions">
+    <GitHubStars />
+  </div>
 
-## Features
+  <div class="install-wrapper">
+    <InstallTabs />
+  </div>
+</div>
 
-- **25x faster** than Python Beancount
-- **Full compatibility** with Beancount syntax
-- **20+ built-in plugins** for validation and transformation
-- **7 booking methods** including FIFO, LIFO, and average cost
-- **BQL query engine** for powerful data analysis
-- **Language Server** for editor integration
+<style>
+.landing-hero {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
 
-## Installation
+.hero-subtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 1.5rem;
+}
 
-<InstallTabs />
+.hero-title {
+  font-size: clamp(2.5rem, 8vw, 3.75rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.5rem 0;
+  color: white;
+}
 
-## Quick Start
+.text-accent {
+  color: #f97316;
+}
 
-After installing, check your ledger:
+.hero-tagline {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 2rem 0;
+  max-width: 600px;
+}
 
-```sh
-rledger check ledger.beancount
-```
+.hero-actions {
+  margin-bottom: 2.5rem;
+}
 
-Run a query:
-
-```sh
-rledger query ledger.beancount "SELECT account, sum(position) GROUP BY account"
-```
-
-## Next Steps
-
-- [Quick Start](/getting-started/quick-start) - Get up and running in 5 minutes
-- [Why rustledger?](/about/why-rustledger) - Learn what makes rustledger different
-- [Commands](/commands/) - Full command reference
+.install-wrapper {
+  width: 100%;
+  max-width: 600px;
+}
+</style>
