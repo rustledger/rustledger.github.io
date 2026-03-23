@@ -80,17 +80,6 @@ jobs:
             - name: Build rustledger docs
               run: bun run docs:build
 
-            - name: Fetch rustfava docs from repo
-              run: |
-                  git clone --depth 1 --filter=blob:none --sparse https://github.com/rustledger/rustfava.git rustfava-temp
-                  cd rustfava-temp
-                  git sparse-checkout set docs
-                  cd ..
-                  cp -r rustfava-temp/docs/* rustfava-docs/
-                  rm -rf rustfava-temp
-                  echo "rustfava docs fetched"
-                  ls -la rustfava-docs/
-
             - name: Build rustfava docs
               run: bun run rustfava:build
 
