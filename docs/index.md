@@ -1,5 +1,4 @@
 ---
-layout: home
 title: rustledger - Modern Plain Text Accounting
 ---
 
@@ -19,15 +18,12 @@ title: rustledger - Modern Plain Text Accounting
 
 <style>
 .landing-hero {
-  min-height: calc(100vh - 64px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   text-align: center;
-  padding: 2rem 1.5rem;
-  max-width: 800px;
-  margin: 0 auto;
+  padding: 2rem 0;
+  max-width: 100%;
 }
 
 .hero-subtitle {
