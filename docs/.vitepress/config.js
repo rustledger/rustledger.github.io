@@ -4,10 +4,10 @@ export default defineConfig({
     title: 'rustledger',
     description: 'Documentation for rustledger - a blazing-fast Rust implementation of Beancount',
 
-    base: '/',
+    base: '/docs/',
     appearance: false,
 
-    head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }]],
+    head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/docs/favicon.svg' }]],
 
     themeConfig: {
         logo: { src: '/favicon.svg', alt: 'rustledger' },
