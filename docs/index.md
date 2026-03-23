@@ -21,7 +21,7 @@ hero:
     <div class="feature-card">
       <div class="feature-icon">🚀</div>
       <h3>10-30x Faster</h3>
-      <p>Pure Rust implementation with zero runtime overhead. Validates 10K transactions in 35ms vs 750ms for Python beancount.</p>
+      <p>Pure Rust implementation with zero runtime overhead. Blazing fast validation of your ledger files.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">🔄</div>
