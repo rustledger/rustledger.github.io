@@ -7,8 +7,8 @@ export default defineConfig({
     appearance: false,
     ignoreDeadLinks: true,
 
-    // Source content from pta-standards repo
-    srcDir: '../../pta-standards',
+    // Source content from pta-standards repo (relative to pta-standards-docs/)
+    srcDir: '../pta-standards',
 
     head: [['link', { rel: 'icon', href: '/pta-standards/favicon.svg' }]],
 
