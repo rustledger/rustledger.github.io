@@ -7,7 +7,8 @@ export default defineConfig({
     appearance: false,
     ignoreDeadLinks: true,
 
-    // Use local content (pta-standards repo has Vue syntax that breaks VitePress)
+    // Source content from pta-standards repo (cloned in CI)
+    srcDir: '../pta-standards',
 
     head: [['link', { rel: 'icon', href: '/pta-standards/favicon.svg' }]],
 
@@ -18,15 +19,9 @@ export default defineConfig({
         },
         siteTitle: 'PTA Standards',
         nav: [
-            { text: 'Core', link: 'https://github.com/rustledger/pta-standards/tree/main/core' },
-            {
-                text: 'Formats',
-                link: 'https://github.com/rustledger/pta-standards/tree/main/formats',
-            },
-            {
-                text: 'Tooling',
-                link: 'https://github.com/rustledger/pta-standards/tree/main/tooling',
-            },
+            { text: 'Core', link: '/core/' },
+            { text: 'Formats', link: '/formats/' },
+            { text: 'Tooling', link: '/tooling/' },
             { text: 'GitHub', link: 'https://github.com/rustledger/pta-standards' },
         ],
 
@@ -34,44 +29,38 @@ export default defineConfig({
             '/': [
                 {
                     text: 'Overview',
-                    items: [{ text: 'Home', link: '/' }],
+                    items: [
+                        { text: 'Home', link: '/' },
+                        { text: 'Roadmap', link: '/ROADMAP' },
+                        { text: 'Contributing', link: '/CONTRIBUTING' },
+                    ],
                 },
                 {
-                    text: 'Specifications',
+                    text: 'Core',
+                    collapsed: false,
                     items: [
-                        {
-                            text: 'Core Model',
-                            link: 'https://github.com/rustledger/pta-standards/tree/main/core',
-                        },
-                        {
-                            text: 'Beancount v3',
-                            link: 'https://github.com/rustledger/pta-standards/tree/main/formats/beancount/v3',
-                        },
-                        {
-                            text: 'Ledger',
-                            link: 'https://github.com/rustledger/pta-standards/tree/main/formats/ledger',
-                        },
-                        {
-                            text: 'hledger',
-                            link: 'https://github.com/rustledger/pta-standards/tree/main/formats/hledger',
-                        },
+                        { text: 'Overview', link: '/core/' },
+                        { text: 'Glossary', link: '/core/glossary' },
+                    ],
+                },
+                {
+                    text: 'Beancount v3',
+                    collapsed: false,
+                    items: [
+                        { text: 'Overview', link: '/formats/beancount/v3/' },
+                        { text: 'Syntax', link: '/formats/beancount/v3/spec/syntax' },
+                        { text: 'Lexical', link: '/formats/beancount/v3/spec/lexical' },
+                        { text: 'Posting', link: '/formats/beancount/v3/spec/posting' },
+                        { text: 'Costs', link: '/formats/beancount/v3/spec/costs' },
                     ],
                 },
                 {
                     text: 'Resources',
+                    collapsed: true,
                     items: [
-                        {
-                            text: 'Tooling',
-                            link: 'https://github.com/rustledger/pta-standards/tree/main/tooling',
-                        },
-                        {
-                            text: 'Tests',
-                            link: 'https://github.com/rustledger/pta-standards/tree/main/tests',
-                        },
-                        {
-                            text: 'Security',
-                            link: 'https://github.com/rustledger/pta-standards/tree/main/security',
-                        },
+                        { text: 'Tooling', link: '/tooling/' },
+                        { text: 'Security', link: '/security/' },
+                        { text: 'Tests', link: '/tests/' },
                     ],
                 },
             ],

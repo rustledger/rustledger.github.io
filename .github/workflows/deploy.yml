@@ -83,6 +83,12 @@ jobs:
             - name: Build rustfava docs
               run: bun run rustfava:build
 
+            - name: Fetch pta-standards content
+              run: |
+                  git clone --depth 1 https://github.com/rustledger/pta-standards.git pta-standards
+                  echo "pta-standards content fetched"
+                  ls -la pta-standards/
+
             - name: Build pta-standards docs
               run: bun run pta:build
 
