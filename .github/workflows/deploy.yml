@@ -94,8 +94,9 @@ jobs:
 
             - name: Merge builds
               run: |
-                  # Copy rustledger docs to dist/docs (base: '/docs/')
-                  cp -r docs/.vitepress/dist dist/docs
+                  # Copy rustledger docs to dist root (base: '/')
+                  # This overwrites the landing page - docs become the main site
+                  cp -r docs/.vitepress/dist/* dist/
 
                   # Copy rustfava docs to dist/rustfava (base: '/rustfava/')
                   cp -r rustfava-docs/.vitepress/dist dist/rustfava
@@ -105,7 +106,6 @@ jobs:
 
                   echo "Final dist structure:"
                   ls -la dist/
-                  ls -la dist/docs/ | head -10
                   ls -la dist/rustfava/ | head -10
                   ls -la dist/pta-standards/ | head -10
 
