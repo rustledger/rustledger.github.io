@@ -1,16 +1,20 @@
-<script setup></script>
+<script setup>
+const navigate = (url) => {
+    window.location.href = url;
+};
+</script>
 
 <template>
     <div class="secondary-nav">
         <div class="secondary-nav-content">
             <div class="secondary-nav-links">
-                <a href="https://rustledger.github.io/" class="secondary-link">
+                <a href="https://rustledger.github.io/" class="secondary-link" @click.prevent="navigate('https://rustledger.github.io/')">
                     <span class="accent">rust</span>ledger
                 </a>
-                <a href="https://rustledger.github.io/rustfava/" class="secondary-link">
+                <a href="https://rustledger.github.io/rustfava/" class="secondary-link" @click.prevent="navigate('https://rustledger.github.io/rustfava/')">
                     <span class="accent">rust</span>fava
                 </a>
-                <a href="https://rustledger.github.io/pta-standards/" class="secondary-link">
+                <a href="https://rustledger.github.io/pta-standards/" class="secondary-link" @click.prevent="navigate('https://rustledger.github.io/pta-standards/')">
                     <span class="accent">PTA</span> Standards
                 </a>
             </div>
