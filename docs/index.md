@@ -1,88 +1,44 @@
 ---
-layout: home
-title: rustledger - Modern Plain Text Accounting
+title: rustledger
 ---
 
-<div class="landing-hero">
-  <p class="hero-subtitle">Beancount, rewritten in Rust</p>
-  <h1 class="hero-title">Modern <span class="text-accent">Plain Text</span> Accounting</h1>
-  <p class="hero-tagline">Accounting in plain text, under your control, forever.</p>
+# rustledger
 
-  <div class="hero-actions">
-    <GitHubStars />
-  </div>
+A modern, blazing-fast implementation of [Beancount](https://beancount.github.io/) in Rust.
 
-  <div class="install-wrapper">
-    <InstallTabs />
-  </div>
-</div>
+## Features
 
+- **25x faster** than Python Beancount
+- **Full compatibility** with Beancount syntax
+- **20+ built-in plugins** for validation and transformation
+- **7 booking methods** including FIFO, LIFO, and average cost
+- **BQL query engine** for powerful data analysis
+- **Language Server** for editor integration
 
-<style>
-/* Hero Section - matches original site */
-.landing-hero {
-  min-height: calc(100vh - 64px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 2rem 1.5rem;
-  max-width: 800px;
-  margin: 0 auto;
-}
+## Quick Start
 
-.hero-subtitle {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  margin-bottom: 1.5rem;
-}
+Install via your preferred method:
 
-.hero-title {
-  font-size: clamp(2.5rem, 8vw, 3.75rem);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  margin: 0 0 1.5rem 0;
-  color: white;
-}
+::: code-group
+```sh [Cargo]
+cargo install rustledger
+```
+```sh [Homebrew]
+brew install rustledger/tap/rustledger
+```
+```sh [Nix]
+nix profile install nixpkgs#rustledger
+```
+:::
 
-.text-accent {
-  color: #f97316;
-}
+Then check your ledger:
 
-.hero-tagline {
-  font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.6);
-  margin: 0 0 2rem 0;
-  max-width: 600px;
-}
+```sh
+rledger check ledger.beancount
+```
 
-.hero-actions {
-  margin-bottom: 2.5rem;
-}
+## Next Steps
 
-.install-wrapper {
-  width: 100%;
-  max-width: 600px;
-}
-
-/* Hide default VitePress page styling on home */
-.VPDoc.has-aside .content-container,
-.VPDoc .content-container {
-  max-width: 100% !important;
-}
-
-.VPDoc.has-aside .content,
-.VPDoc .content {
-  padding: 0 !important;
-  max-width: 100% !important;
-}
-
-/* Hide the sidebar on home page */
-.VPDoc .aside {
-  display: none !important;
-}
-</style>
+- [Installation](/getting-started/installation) - Detailed installation instructions
+- [Quick Start](/getting-started/quick-start) - Get up and running in 5 minutes
+- [Why rustledger?](/about/why-rustledger) - Learn what makes rustledger different
