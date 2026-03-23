@@ -5,7 +5,7 @@ title: rustledger - Modern Plain Text Accounting
 hero:
     name: rustledger
     text: Modern Plain Text Accounting
-    tagline: Beancount, rewritten in Rust. Accounting in plain text, under your control, forever.
+    tagline: Accounting under your control, forever.
 ---
 
 <div class="github-star-container">
