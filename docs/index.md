@@ -57,6 +57,24 @@ hero:
   font-style: italic;
 }
 
+.VPHero {
+  text-align: center !important;
+}
+
+.VPHero .main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.VPHero .name,
+.VPHero .text,
+.VPHero .tagline {
+  text-align: center;
+  max-width: 100%;
+}
+
 .github-star-container {
   display: flex;
   justify-content: center;
