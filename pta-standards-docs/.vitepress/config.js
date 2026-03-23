@@ -18,10 +18,10 @@ export default defineConfig({
         },
         siteTitle: 'PTA Standards',
         nav: [
-            { text: 'Core', link: '/core/' },
-            { text: 'Formats', link: '/formats/' },
-            { text: 'Tooling', link: '/tooling/' },
-            { text: 'Roadmap', link: '/ROADMAP' },
+            { text: 'Core', link: 'https://github.com/rustledger/pta-standards/tree/main/core' },
+            { text: 'Formats', link: 'https://github.com/rustledger/pta-standards/tree/main/formats' },
+            { text: 'Tooling', link: 'https://github.com/rustledger/pta-standards/tree/main/tooling' },
+            { text: 'GitHub', link: 'https://github.com/rustledger/pta-standards' },
         ],
 
         sidebar: {
@@ -29,6 +29,23 @@ export default defineConfig({
                 {
                     text: 'Overview',
                     items: [{ text: 'Home', link: '/' }],
+                },
+                {
+                    text: 'Specifications',
+                    items: [
+                        { text: 'Core Model', link: 'https://github.com/rustledger/pta-standards/tree/main/core' },
+                        { text: 'Beancount v3', link: 'https://github.com/rustledger/pta-standards/tree/main/formats/beancount/v3' },
+                        { text: 'Ledger', link: 'https://github.com/rustledger/pta-standards/tree/main/formats/ledger' },
+                        { text: 'hledger', link: 'https://github.com/rustledger/pta-standards/tree/main/formats/hledger' },
+                    ],
+                },
+                {
+                    text: 'Resources',
+                    items: [
+                        { text: 'Tooling', link: 'https://github.com/rustledger/pta-standards/tree/main/tooling' },
+                        { text: 'Tests', link: 'https://github.com/rustledger/pta-standards/tree/main/tests' },
+                        { text: 'Security', link: 'https://github.com/rustledger/pta-standards/tree/main/security' },
+                    ],
                 },
             ],
         },
