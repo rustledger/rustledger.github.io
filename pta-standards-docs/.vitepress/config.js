@@ -12,6 +12,11 @@ export default defineConfig({
     head: [['link', { rel: 'icon', href: '/pta-standards/favicon.svg' }]],
 
     themeConfig: {
+        logo: {
+            light: '/logo.svg',
+            dark: '/logo.svg',
+        },
+        siteTitle: 'PTA Standards',
         nav: [
             { text: 'Core', link: '/core/' },
             { text: 'Formats', link: '/formats/' },
