@@ -15,10 +15,14 @@ export default defineConfig({
 
     // Map README.md to index pages
     rewrites: {
-        'README.md': 'index.md',
-        ':dir/README.md': ':dir/index.md',
-        ':dir/:subdir/README.md': ':dir/:subdir/index.md',
-        ':dir/:subdir/:subsubdir/README.md': ':dir/:subdir/:subsubdir/index.md',
+        'core/README.md': 'core/index.md',
+        'formats/README.md': 'formats/index.md',
+        'formats/beancount/v3/README.md': 'formats/beancount/v3/index.md',
+        'formats/ledger/README.md': 'formats/ledger/index.md',
+        'formats/hledger/README.md': 'formats/hledger/index.md',
+        'tooling/README.md': 'tooling/index.md',
+        'security/README.md': 'security/index.md',
+        'tests/README.md': 'tests/index.md',
     },
 
     head: [['link', { rel: 'icon', href: '/pta-standards/favicon.svg' }]],
