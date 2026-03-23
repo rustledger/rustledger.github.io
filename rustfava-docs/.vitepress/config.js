@@ -6,6 +6,7 @@ export default defineConfig({
 
     base: '/rustfava/',
     appearance: false,
+    ignoreDeadLinks: true,
 
     head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/rustfava/favicon.svg' }]],
 

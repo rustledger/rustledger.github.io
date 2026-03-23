@@ -5,6 +5,7 @@ export default defineConfig({
     description: 'Formal specifications for plain text accounting formats',
     base: '/pta-standards/',
     appearance: false,
+    ignoreDeadLinks: true,
 
     // Source content from pta-standards repo
     srcDir: '../../pta-standards',
