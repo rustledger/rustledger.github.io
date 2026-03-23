@@ -1,7 +1,3 @@
----
-title: rustledger
----
-
 # rustledger
 
 A modern, blazing-fast implementation of [Beancount](https://beancount.github.io/) in Rust.
