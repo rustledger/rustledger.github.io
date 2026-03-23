@@ -3,8 +3,8 @@ layout: home
 title: rustledger - Modern Plain Text Accounting
 
 hero:
-    name: rustledger
-    text: Modern Plain Text Accounting
+    name: Modern
+    text: <span class="plain-text">Plain Text</span> Accounting
     tagline: Accounting under your control, forever.
 ---
 
@@ -52,6 +52,11 @@ hero:
 </div>
 
 <style>
+.plain-text {
+  color: #f97316;
+  font-style: italic;
+}
+
 .github-star-container {
   display: flex;
   justify-content: center;
