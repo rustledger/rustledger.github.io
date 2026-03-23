@@ -10,6 +10,9 @@ export default defineConfig({
     // Source content from pta-standards repo (cloned in CI)
     srcDir: '../pta-standards',
 
+    // Exclude problematic directories with missing assets
+    srcExclude: ['**/reference/sources/**', '**/node_modules/**'],
+
     head: [['link', { rel: 'icon', href: '/pta-standards/favicon.svg' }]],
 
     themeConfig: {
