@@ -13,6 +13,14 @@ export default defineConfig({
     // Exclude problematic directories with missing assets
     srcExclude: ['**/reference/sources/**', '**/node_modules/**'],
 
+    // Map README.md to index pages
+    rewrites: {
+        'README.md': 'index.md',
+        ':dir/README.md': ':dir/index.md',
+        ':dir/:subdir/README.md': ':dir/:subdir/index.md',
+        ':dir/:subdir/:subsubdir/README.md': ':dir/:subdir/:subsubdir/index.md',
+    },
+
     head: [['link', { rel: 'icon', href: '/pta-standards/favicon.svg' }]],
 
     themeConfig: {
