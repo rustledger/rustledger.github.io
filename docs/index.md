@@ -17,19 +17,17 @@ A modern, blazing-fast implementation of [Beancount](https://beancount.github.io
 
 ## Quick Start
 
-Install via your preferred method:
+Install with Cargo:
 
-::: code-group
-```sh [Cargo]
+```sh
 cargo install rustledger
 ```
-```sh [Homebrew]
+
+Or Homebrew:
+
+```sh
 brew install rustledger/tap/rustledger
 ```
-```sh [Nix]
-nix profile install nixpkgs#rustledger
-```
-:::
 
 Then check your ledger:
 
