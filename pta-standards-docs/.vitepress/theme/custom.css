@@ -1,122 +1,169 @@
+/* PTA Standards theme - dark mode with orange accent */
+
 :root {
-    --vp-c-bg: #0a0a0a;
-    --vp-c-bg-soft: #111111;
-    --vp-c-bg-mute: #1a1a1a;
-    --vp-c-bg-alt: #0a0a0a;
-    --vp-c-text-1: rgba(255, 255, 255, 0.87);
-    --vp-c-text-2: rgba(255, 255, 255, 0.6);
-    --vp-c-text-3: rgba(255, 255, 255, 0.38);
+    /* Orange accent color (matching #f97316) */
     --vp-c-brand-1: #f97316;
-    --vp-c-brand-2: #ea580c;
-    --vp-c-brand-3: #c2410c;
-    --vp-nav-bg-color: #0a0a0a;
-    --vp-sidebar-bg-color: #0a0a0a;
+    --vp-c-brand-2: #fb923c;
+    --vp-c-brand-3: #fdba74;
+    --vp-c-brand-soft: rgba(249, 115, 22, 0.14);
+
+    /* Fonts */
+    --vp-font-family-base:
+        system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --vp-font-family-mono:
+        ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, monospace;
 }
 
-html {
-    color-scheme: dark;
+/* Force dark mode always */
+.dark,
+:root {
+    --vp-c-bg: #000000;
+    --vp-c-bg-alt: #0a0a0a;
+    --vp-c-bg-elv: #111111;
+    --vp-c-bg-soft: #1a1a1a;
+
+    /* Text colors */
+    --vp-c-text-1: rgba(255, 255, 255, 0.95);
+    --vp-c-text-2: rgba(255, 255, 255, 0.6);
+    --vp-c-text-3: rgba(255, 255, 255, 0.4);
+
+    /* Border colors */
+    --vp-c-border: rgba(255, 255, 255, 0.1);
+    --vp-c-divider: rgba(255, 255, 255, 0.1);
+    --vp-c-gutter: rgba(255, 255, 255, 0.05);
+
+    /* Code blocks */
+    --vp-code-block-bg: #0a0a0a;
+    --vp-code-line-highlight-color: rgba(249, 115, 22, 0.1);
+
+    /* Sidebar */
+    --vp-sidebar-bg-color: #000000;
+
+    /* Nav */
+    --vp-nav-bg-color: rgba(0, 0, 0, 0.9);
+
+    /* Custom property for accent text */
+    --accent: #f97316;
+
+    /* Layout widths */
+    --vp-layout-max-width: 1400px;
 }
+
+/* Make html/body black */
+html,
 body {
-    background: #0a0a0a;
+    background-color: #000 !important;
 }
 
-.secondary-nav {
-    background: #050505;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 0.5rem 1.5rem;
-    font-size: 0.875rem;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-}
-
-.secondary-nav-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.secondary-nav-link {
-    color: rgba(255, 255, 255, 0.5);
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-.secondary-nav-link:hover {
-    color: #f97316;
-}
-
-.secondary-nav-separator {
-    color: rgba(255, 255, 255, 0.3);
-}
-
-.secondary-nav-current {
-    color: #f97316;
-    font-weight: 500;
-}
-
+/* Nav styling - push down to make room for secondary nav */
 .VPNav {
+    background-color: rgba(0, 0, 0, 0.9) !important;
+    backdrop-filter: blur(8px);
     top: 33px !important;
 }
 
+/* Adjust content for secondary nav */
 .VPSidebar {
     top: calc(var(--vp-nav-height) + 33px) !important;
-    height: calc(100vh - var(--vp-nav-height) - 33px) !important;
 }
 
 .VPContent {
     padding-top: 33px !important;
 }
+
+/* Ensure doc content has proper top margin for secondary nav */
 .VPDoc {
     margin-top: 33px !important;
 }
 
-.VPNavBarTitle .title {
-    display: flex;
-    align-items: center;
-    font-weight: 600;
+/* Hide the extra menu (...) button */
+.VPNavBarExtra {
+    display: none !important;
 }
 
+/* Sidebar */
+.VPSidebar {
+    background-color: #000 !important;
+}
+
+/* Content area */
+.VPContent {
+    background-color: #000 !important;
+}
+
+/* Footer */
+.VPFooter {
+    background-color: #000 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Links */
 .vp-doc a {
     color: #f97316;
 }
+
 .vp-doc a:hover {
-    color: #ea580c;
+    color: #fb923c;
 }
 
-.VPSidebar .VPSidebarItem.is-active > .item .link > .text {
-    color: #f97316;
+/* Code inline */
+.vp-doc :not(pre) > code {
+    background-color: rgba(249, 115, 22, 0.1);
+    color: #fdba74;
 }
 
+/* Code blocks */
 .vp-doc div[class*='language-'] {
     background: #111111;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Tables */
 .vp-doc table {
-    border-collapse: collapse;
-    width: 100%;
+    background-color: #0a0a0a;
+}
+
+.vp-doc tr {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .vp-doc th,
 .vp-doc td {
     border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 0.75rem;
 }
 
 .vp-doc th {
     background: rgba(255, 255, 255, 0.05);
 }
 
+/* Blockquotes */
+.vp-doc blockquote {
+    border-left-color: #f97316;
+    background-color: rgba(249, 115, 22, 0.05);
+}
+
+/* Tips */
 .vp-doc .tip {
     border-color: #f97316;
     background: rgba(249, 115, 22, 0.1);
 }
 
+/* Search */
+.VPLocalSearchBox {
+    --vp-local-search-bg: #0a0a0a;
+}
+
+/* Active sidebar item */
+.VPSidebar .VPSidebarItem.is-active > .item .link > .text {
+    color: #f97316;
+}
+
+/* Nav menu hover */
 .VPNavBarMenuLink:hover .text {
     color: #f97316 !important;
+}
+
+/* Custom accent class for inline use */
+.accent {
+    color: #f97316;
 }
