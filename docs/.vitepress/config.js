@@ -4,26 +4,32 @@ export default defineConfig({
     title: 'rustledger',
     description: 'Documentation for rustledger - a blazing-fast Rust implementation of Beancount',
 
-    base: '/docs/',
+    base: '/',
+    appearance: false,
 
-    head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/docs/favicon.svg' }]],
-
-    // Make VitePress less strict - don't fail build on broken links
-    // (links are checked but only warn, not error)
-    ignoreDeadLinks: true,
+    head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }]],
 
     themeConfig: {
-        logo: '/favicon.svg',
+        logo: { src: '/favicon.svg', alt: 'rustledger' },
 
         nav: [
             { text: 'Home', link: '/' },
             { text: 'Getting Started', link: '/getting-started/' },
             { text: 'Commands', link: '/commands/' },
-            { text: 'Playground', link: 'https://rustledger.github.io/' },
+            { text: 'Playground', link: '/playground.html', target: '_blank' },
         ],
 
         sidebar: {
             '/': [
+                {
+                    text: 'About',
+                    collapsed: false,
+                    items: [
+                        { text: 'Why rustledger?', link: '/about/why-rustledger' },
+                        { text: 'Comparison', link: '/about/comparison' },
+                        { text: 'Playground', link: '/playground.html', target: '_blank' },
+                    ],
+                },
                 {
                     text: 'Getting Started',
                     collapsed: false,
@@ -32,20 +38,6 @@ export default defineConfig({
                         { text: 'Installation', link: '/getting-started/installation' },
                         { text: 'Quick Start', link: '/getting-started/quick-start' },
                         { text: 'Configuration', link: '/getting-started/configuration' },
-                    ],
-                },
-                {
-                    text: 'Commands',
-                    collapsed: false,
-                    items: [
-                        { text: 'Overview', link: '/commands/' },
-                        { text: 'check', link: '/commands/check' },
-                        { text: 'query', link: '/commands/query' },
-                        { text: 'report', link: '/commands/report' },
-                        { text: 'format', link: '/commands/format' },
-                        { text: 'extract', link: '/commands/extract' },
-                        { text: 'price', link: '/commands/price' },
-                        { text: 'doctor', link: '/commands/doctor' },
                     ],
                 },
                 {
@@ -71,6 +63,20 @@ export default defineConfig({
                         { text: 'From Beancount', link: '/migration/from-beancount' },
                         { text: 'From Ledger', link: '/migration/from-ledger' },
                         { text: 'From hledger', link: '/migration/from-hledger' },
+                    ],
+                },
+                {
+                    text: 'Commands',
+                    collapsed: true,
+                    items: [
+                        { text: 'Overview', link: '/commands/' },
+                        { text: 'check', link: '/commands/check' },
+                        { text: 'query', link: '/commands/query' },
+                        { text: 'report', link: '/commands/report' },
+                        { text: 'format', link: '/commands/format' },
+                        { text: 'extract', link: '/commands/extract' },
+                        { text: 'price', link: '/commands/price' },
+                        { text: 'doctor', link: '/commands/doctor' },
                     ],
                 },
                 {

@@ -95,7 +95,7 @@ async function copyCommand(command) {
                     fill="currentColor"
                 >
                     <path
-                        d="M7.938 0a.214.214 0 0 0-.206.156c-.316 1.104.179 2.15.838 2.935.153.181.313.347.476.501a2.039 2.039 0 0 0-.665.02c-1.184.233-2.193.985-2.74 2.532a3.893 3.893 0 0 0-.2 1.466 1.565 1.565 0 0 0-1.156 1.504 1.59 1.59 0 0 0 1.227 1.541l.026 12.046c0 .195.1.377.264.482a.214.214 0 0 0 .008.005c.537.31 2.047.812 5.21.812 3.238 0 4.7-.678 5.181-1.04a.214.214 0 0 0 .008-.007.571.571 0 0 0 .206-.439c.002-.344.002-1.136.002-1.604a.143.143 0 0 1 .147-.144c.397.006.869.006 1.318.005a1.826 1.826 0 0 0 1.832-1.825v-5.804a1.826 1.826 0 0 0-1.825-1.826H16.56a.14.14 0 0 1-.143-.144V10.6h.007v-.001a1.573 1.573 0 0 0 1.356-1.556c0-.816-.627-1.489-1.424-1.563-.025-1.438-.437-2.126-.736-2.58a.214.214 0 0 0-.005-.007c-.364-.51-1.193-1.282-2.275-1.316-.503-.016-.842.124-1.125.254-.217.1-.42.177-.67.22.002-1.286.945-1.981.945-1.981a.214.214 0 0 0 .05-.298s-.087-.122-.21-.26c-.121-.136-.269-.294-.47-.378a.214.214 0 0 0-.079-.017.214.214 0 0 0-.145.055 4.308 4.308 0 0 0-.875 1.101 3.42 3.42 0 0 0-.133.273 3.497 3.497 0 0 0-.381-.846C9.794.978 9.063.436 8.017.016A.214.214 0 0 0 7.939 0z"
+                        d="M7.938 0a.214.214 0 0 0-.206.156c-.316 1.104.179 2.15.838 2.935.153.181.313.347.476.501a2.039 2.039 0 0 0-.665.02c-1.184.233-2.193.985-2.74 2.532a3.893 3.893 0 0 0-.2 1.466 1.565 1.565 0 0 0-1.156 1.504 1.59 1.59 0 0 0 1.227 1.541l.026 12.046c0 .195.1.377.264.482a.214.214 0 0 0 .008.005c.537.31 2.047.812 5.21.812 3.238 0 4.7-.678 5.181-1.04a.214.214 0 0 0 .008-.007.571.571 0 0 0 .206-.439c.002-.344.002-1.136.002-1.604a.143.143 0 0 1 .147-.144c.397.006.869.006 1.318.005a1.826 1.826 0 0 0 1.832-1.825v-5.804a1.826 1.826 0 0 0-1.825-1.826H16.56a.14.14 0 0 1-.143-.144V10.6h.007v-.001a1.573 1.573 0 0 0 1.356-1.556c0-.816-.627-1.489-1.424-1.563-.025-1.438-.437-2.126-.736-2.58a.214.214 0 0 0-.005-.007c-.364-.51-1.193-1.282-2.275-1.316-.503-.016-.842.124-1.125.254-.217.1-.42.177-.67.22.002-1.286.945-1.981.945-1.981a.214.214 0 0 0 .05-.298s-.087-.122-.21-.26c-.121-.136-.269-.294-.47-.378a.214.214 0 0 0-.079-.017.214.214 0 0 0-.145.055 4.308 4.308 0 0 0-.875 1.101 3.42 3.42 0 0 0-.133.273 3.497 3.497 0 0 0-.381-.846C9.794.978 9.063.436 8.017.016A.214.214 0 0 0 7.939 0zm.156.524c.85.378 1.43.83 1.79 1.403.274.438.426.962.484 1.584a3.07 3.07 0 0 0-.012.462 6.897 6.897 0 0 1-.168-.052 5.487 5.487 0 0 1-1.29-1.106c-.551-.657-.935-1.46-.804-2.291zM11.8 1.618c.07.054.141.101.212.18.034.039.032.04.058.073-.332.308-1.07 1.144-.952 2.453a.214.214 0 0 0 .222.195c.469-.017.782-.172 1.056-.299.273-.126.508-.228.931-.214.875.027 1.639.715 1.939 1.134.295.449.65 1 .663 2.36a1.66 1.66 0 0 0-.41.142 1.938 1.938 0 0 0-1.77-1.16 1.94 1.94 0 0 0-1.87 1.448 1.783 1.783 0 0 0-1.356-.64c-.484 0-.91.205-1.233.517a1.873 1.873 0 0 0-1.85-1.625c-.649 0-1.218.335-1.552.84a3.1 3.1 0 0 1 .157-.735c.51-1.437 1.355-2.045 2.42-2.254.367-.073.664-.011.99.095.325.106.671.262 1.094.342a.214.214 0 0 0 .252-.245c-.112-.67.073-1.266.336-1.744a3.71 3.71 0 0 1 .663-.863zM7.44 6.611a1.442 1.442 0 0 1 1.363 1.925.214.214 0 0 0 .168.283h.005a.214.214 0 0 0 .238-.146 1.373 1.373 0 0 1 2.613-.01.214.214 0 0 0 .417-.09 1.509 1.509 0 0 1 1.504-1.664c.678 0 1.249.445 1.442 1.056a.214.214 0 0 0 .259.143l.15-.04a.214.214 0 0 0 .051-.02 1.139 1.139 0 0 1 1.702.995 1.14 1.14 0 0 1-.985 1.131a.214.214 0 0 0-.001 0 2.215 2.215 0 0 0-.485.126 10.65 10.65 0 0 1-1.176.365.214.214 0 0 0-.162.186 1.276 1.276 0 0 1-.146.478 2.07 2.07 0 0 0-.239 1.111l.001.151a.438.438 0 0 1-.16.36.665.665 0 0 1-.43.14.586.586 0 0 1-.588-.59.803.803 0 0 0-.38-.681.214.214 0 0 0-.002-.002c-.24-.145-.43-.37-.532-.636a.214.214 0 0 0-.207-.138 19.469 19.469 0 0 1-5.37-.6l-.003-.002a9.007 9.007 0 0 0-.838-.194h.003a1.16 1.16 0 0 1-.937-1.134c0-.619.488-1.118 1.101-1.14a.214.214 0 0 0 .204-.176 1.443 1.443 0 0 1 1.42-1.187zm8.549 4.106v.455c0 .314.259.573.572.573h1.329a1.397 1.397 0 0 1 1.397 1.397v5.804a1.396 1.396 0 0 1-1.402 1.396a.214.214 0 0 0-.002 0c-.448.002-.918 0-1.31-.005a.573.573 0 0 0-.584.573c0 .468 0 1.262-.002 1.603a.214.214 0 0 0 0 .001c0 .042-.019.08-.05.107c-.346.26-1.75.95-4.915.95-3.107 0-4.587-.52-4.99-.752a.143.143 0 0 1-.065-.118l-.025-11.955c.145.033.288.07.431.11a.214.214 0 0 0 .003 0c.115.031.246.064.383.097v10.37c0 .129.069.247.18.31.453.217 1.767.732 4.071.732 2.32 0 3.595-.626 4.022-.884a.357.357 0 0 0 .164-.3l.001-10.21c.267-.075.531-.158.792-.254zm-7.99.894a.493.493 0 0 1 .494.493v8.578a.493.493 0 0 1-.493.493a.493.493 0 0 1-.494-.493v-8.578A.493.493 0 0 1 8 11.611zm8.652 1.14a.663.663 0 0 0-.662.662v5.208a.663.663 0 0 0 .662.662h1.14a.663.663 0 0 0 .662-.662v-5.209a.663.663 0 0 0-.662-.662zm0 .428h1.14a.233.233 0 0 1 .233.233v5.21a.233.233 0 0 1-.233.232h-1.14a.233.233 0 0 1-.233-.233v-5.209a.233.233 0 0 1 .233-.233z"
                     />
                 </svg>
                 <!-- Nix icon -->
@@ -183,10 +183,7 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'cargo'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"
-                        ><span class="keyword">cargo</span> <span class="flag">install</span>
-                        <span class="package">rustledger</span></span
-                    >
+                    <span class="cmd"><span class="keyword">cargo</span> <span class="flag">install</span> <span class="package">rustledger</span></span>
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('cargo install rustledger')"
@@ -209,10 +206,7 @@ async function copyCommand(command) {
                 </div>
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"
-                        ><span class="keyword">cargo</span> <span class="flag">binstall</span>
-                        <span class="package">rustledger</span></span
-                    >
+                    <span class="cmd"><span class="keyword">cargo</span> <span class="flag">binstall</span> <span class="package">rustledger</span></span>
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('cargo binstall rustledger')"
@@ -242,10 +236,7 @@ async function copyCommand(command) {
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                     </svg>
-                    Requires
-                    <a href="https://rustup.rs" target="_blank" rel="noopener noreferrer"
-                        >Rust toolchain</a
-                    >.
+                    Requires <a href="https://rustup.rs" target="_blank" rel="noopener noreferrer">Rust toolchain</a>.
                 </p>
             </div>
 
@@ -253,10 +244,7 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'homebrew'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"
-                        ><span class="keyword">brew</span> <span class="flag">install</span>
-                        <span class="package">rustledger</span></span
-                    >
+                    <span class="cmd"><span class="keyword">brew</span> <span class="flag">install</span> <span class="package">rustledger</span></span>
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('brew install rustledger')"
@@ -294,10 +282,7 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'nix'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"
-                        ><span class="keyword">nix</span> <span class="flag">run</span>
-                        <span class="package">github:rustledger/rustledger</span></span
-                    >
+                    <span class="cmd"><span class="keyword">nix</span> <span class="flag">run</span> <span class="package">github:rustledger/rustledger</span></span>
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('nix run github:rustledger/rustledger')"
@@ -320,10 +305,7 @@ async function copyCommand(command) {
                 </div>
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"
-                        ><span class="keyword">nix</span> <span class="flag">profile install</span>
-                        <span class="package">github:rustledger/rustledger</span></span
-                    >
+                    <span class="cmd"><span class="keyword">nix</span> <span class="flag">profile install</span> <span class="package">github:rustledger/rustledger</span></span>
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('nix profile install github:rustledger/rustledger')"
@@ -353,13 +335,7 @@ async function copyCommand(command) {
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                     </svg>
-                    Requires
-                    <a
-                        href="https://nixos.org/download.html"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        >Nix with flakes</a
-                    >.
+                    Requires <a href="https://nixos.org/download.html" target="_blank" rel="noopener noreferrer">Nix with flakes</a>.
                 </p>
             </div>
 
@@ -367,10 +343,7 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'copr'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"
-                        ><span class="keyword">sudo dnf</span> <span class="flag">copr enable</span>
-                        <span class="package">atim/rustledger</span></span
-                    >
+                    <span class="cmd"><span class="keyword">sudo dnf</span> <span class="flag">copr enable</span> <span class="package">atim/rustledger</span></span>
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('sudo dnf copr enable atim/rustledger')"
@@ -393,10 +366,7 @@ async function copyCommand(command) {
                 </div>
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"
-                        ><span class="keyword">sudo dnf</span> <span class="flag">install</span>
-                        <span class="package">rustledger</span></span
-                    >
+                    <span class="cmd"><span class="keyword">sudo dnf</span> <span class="flag">install</span> <span class="package">rustledger</span></span>
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('sudo dnf install rustledger')"
@@ -434,10 +404,7 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'aur'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"
-                        ><span class="keyword">yay</span> <span class="flag">-S</span>
-                        <span class="package">rustledger</span></span
-                    >
+                    <span class="cmd"><span class="keyword">yay</span> <span class="flag">-S</span> <span class="package">rustledger</span></span>
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('yay -S rustledger')"
@@ -460,10 +427,7 @@ async function copyCommand(command) {
                 </div>
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"
-                        ><span class="keyword">paru</span> <span class="flag">-S</span>
-                        <span class="package">rustledger</span></span
-                    >
+                    <span class="cmd"><span class="keyword">paru</span> <span class="flag">-S</span> <span class="package">rustledger</span></span>
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('paru -S rustledger')"
@@ -501,12 +465,7 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'scoop'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">&gt;</span>
-                    <span class="cmd"
-                        ><span class="keyword">scoop</span> <span class="flag">bucket add</span>
-                        <span class="package"
-                            >rustledger https://github.com/rustledger/scoop-bucket</span
-                        ></span
-                    >
+                    <span class="cmd"><span class="keyword">scoop</span> <span class="flag">bucket add</span> <span class="package">rustledger https://github.com/rustledger/scoop-bucket</span></span>
                     <button
                         class="install-copy-btn"
                         @click="
@@ -533,10 +492,7 @@ async function copyCommand(command) {
                 </div>
                 <div class="install-command">
                     <span class="prompt">&gt;</span>
-                    <span class="cmd"
-                        ><span class="keyword">scoop</span> <span class="flag">install</span>
-                        <span class="package">rustledger</span></span
-                    >
+                    <span class="cmd"><span class="keyword">scoop</span> <span class="flag">install</span> <span class="package">rustledger</span></span>
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('scoop install rustledger')"
@@ -566,8 +522,7 @@ async function copyCommand(command) {
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                     </svg>
-                    For Windows with
-                    <a href="https://scoop.sh" target="_blank" rel="noopener noreferrer">Scoop</a>.
+                    For Windows with <a href="https://scoop.sh" target="_blank" rel="noopener noreferrer">Scoop</a>.
                 </p>
             </div>
 
@@ -575,13 +530,7 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'docker'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"
-                        ><span class="keyword">docker</span>
-                        <span class="flag">run --rm -v $(pwd):/data</span>
-                        <span class="package"
-                            >ghcr.io/rustledger/rustledger check /data/ledger.beancount</span
-                        ></span
-                    >
+                    <span class="cmd"><span class="keyword">docker</span> <span class="flag">run --rm -v $(pwd):/data</span> <span class="package">ghcr.io/rustledger/rustledger check /data/ledger.beancount</span></span>
                     <button
                         class="install-copy-btn"
                         @click="
@@ -623,10 +572,7 @@ async function copyCommand(command) {
             <div v-show="activeTab === 'npm'" class="install-panel active">
                 <div class="install-command">
                     <span class="prompt">$</span>
-                    <span class="cmd"
-                        ><span class="keyword">npm</span> <span class="flag">install</span>
-                        <span class="package">@rustledger/wasm</span></span
-                    >
+                    <span class="cmd"><span class="keyword">npm</span> <span class="flag">install</span> <span class="package">@rustledger/wasm</span></span>
                     <button
                         class="install-copy-btn"
                         @click="copyCommand('npm install @rustledger/wasm')"
@@ -804,17 +750,18 @@ async function copyCommand(command) {
 
 .recommended-badge {
     position: absolute;
-    top: -6px;
-    right: -6px;
+    top: -5px;
+    right: -5px;
     background: #f97316;
     color: white;
-    font-size: 0.5rem;
-    padding: 2px 5px;
-    border-radius: 4px;
+    font-size: 8px;
+    padding: 0 3px;
+    border-radius: 2px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4);
+    letter-spacing: 0.2px;
+    line-height: 14px;
+    box-shadow: 0 2px 6px rgba(249, 115, 22, 0.4);
 }
 
 .install-content {
@@ -840,13 +787,13 @@ async function copyCommand(command) {
 
 .install-command {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 1.25rem;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 0.5rem;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, monospace;
     font-size: 0.85rem;
     margin-bottom: 0.5rem;
 }
@@ -859,20 +806,20 @@ async function copyCommand(command) {
 .cmd {
     flex: 1;
     color: rgba(255, 255, 255, 0.9);
-    overflow-x: auto;
-    white-space: nowrap;
+    word-break: break-all;
 }
 
+/* Syntax highlighting - matching original */
 .keyword {
-    color: #22d3ee;
+    color: #c792ea;
 }
 
 .flag {
-    color: #fbbf24;
+    color: #89ddff;
 }
 
 .package {
-    color: #4ade80;
+    color: #f97316;
 }
 
 .install-copy-btn {
@@ -896,13 +843,10 @@ async function copyCommand(command) {
 }
 
 .install-note {
-    margin-top: 0.75rem;
+    margin-top: 0.375rem;
     font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+    text-align: center;
 }
 
 .install-note a {
@@ -919,6 +863,9 @@ async function copyCommand(command) {
     width: 14px;
     height: 14px;
     opacity: 0.6;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0.25rem;
 }
 
 /* Binary download specific styles */

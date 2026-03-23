@@ -39,6 +39,7 @@ export default defineConfig({
             input: {
                 main: resolve(__dirname, 'index.html'),
                 rustfava: resolve(__dirname, 'rustfava.html'),
+                playground: resolve(__dirname, 'playground.html'),
             },
             output: {
                 entryFileNames: 'assets/[name].js',

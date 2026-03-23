@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="en" style="background-color: #000">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; font-src 'self'"
+        />
+        <title>Playground | rustledger</title>
+        <meta
+            name="description"
+            content="Try rustledger in your browser. Interactive Beancount editor powered by WebAssembly."
+        />
+
+        <!-- Favicon -->
+        <link
+            rel="icon"
+            type="image/svg+xml"
+            href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0a0a'/%3E%3Ctext x='50' y='68' font-size='50' font-family='system-ui' font-weight='bold' text-anchor='middle'%3E%3Ctspan fill='%23f97316'%3Er%3C/tspan%3E%3Ctspan fill='white'%3El%3C/tspan%3E%3C/text%3E%3C/svg%3E"
+        />
+    </head>
+    <body class="bg-black text-white antialiased">
+        <!-- Nav -->
+        <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-sm border-b border-white/10 z-50">
+            <div
+                class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center"
+            >
+                <a
+                    href="/"
+                    class="flex items-center gap-2 text-base sm:text-lg font-semibold tracking-tight shrink-0"
+                >
+                    <img
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0a0a'/%3E%3Ctext x='50' y='68' font-size='50' font-family='system-ui' font-weight='bold' text-anchor='middle'%3E%3Ctspan fill='%23f97316'%3Er%3C/tspan%3E%3Ctspan fill='white'%3El%3C/tspan%3E%3C/text%3E%3C/svg%3E"
+                        alt="rl"
+                        class="w-6 h-6 rounded"
+                    />
+                    <span><span class="text-accent">rust</span>ledger</span>
+                </a>
+                <div class="flex items-center gap-4 sm:gap-8 text-xs sm:text-sm">
+                    <a href="/" class="font-bold text-white hover:text-white/60 transition"
+                        ><span class="text-accent">rust</span>ledger</a
+                    >
+                    <a href="/rustfava" class="font-bold text-white hover:text-white/60 transition"
+                        ><span class="text-accent">rust</span>fava</a
+                    >
+                    <a
+                        href="https://rustledger.github.io/pta-standards/"
+                        class="font-bold text-white hover:text-white/60 transition"
+                        ><span class="text-accent">PTA</span> Standards</a
+                    >
+                </div>
+            </div>
+            <div>
+                <div
+                    class="max-w-7xl mx-auto px-4 sm:px-6 py-1 flex justify-end items-center gap-4 sm:gap-6 text-xs text-white/40"
+                >
+                    <a href="/docs/" class="hover:text-white/70 transition flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"
+                            />
+                        </svg>
+                        Docs</a
+                    >
+                    <a
+                        href="https://github.com/rustledger/rustledger"
+                        class="hover:text-white/70 transition flex items-center gap-1"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+                            />
+                        </svg>
+                        GitHub</a
+                    >
+                </div>
+            </div>
+        </nav>
+
+        <!-- Playground (full viewport) -->
+        <main class="pt-24 pb-4 px-3 sm:px-6 min-h-screen">
+            <div class="max-w-7xl mx-auto h-[calc(100vh-7rem)]">
+                <div
+                    class="playground-wrapper bg-white/5 border border-white/10 rounded-lg overflow-hidden h-full flex flex-col"
+                >
+                    <!-- Example Tabs -->
+                    <div class="example-tabs" role="tablist" aria-label="Example ledger files">
+                        <button
+                            class="example-tab active"
+                            data-example="budget"
+                            role="tab"
+                            aria-selected="true"
+                            aria-controls="editor-panel"
+                        >
+                            Budget
+                        </button>
+                        <button
+                            class="example-tab"
+                            data-example="stocks"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="editor-panel"
+                        >
+                            Stocks
+                        </button>
+                        <button
+                            class="example-tab"
+                            data-example="forex"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="editor-panel"
+                        >
+                            Forex
+                        </button>
+                        <button
+                            class="example-tab"
+                            data-example="errors"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="editor-panel"
+                        >
+                            Errors
+                        </button>
+                        <button
+                            class="example-tab"
+                            data-example="large-example"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="editor-panel"
+                        >
+                            Large Example
+                        </button>
+                        <div class="flex-1"></div>
+                        <button
+                            id="templates-btn"
+                            class="px-3 py-1.5 text-xs text-white/60 hover:text-white hover:bg-white/10 rounded transition flex items-center gap-1"
+                            title="Insert transaction template"
+                            aria-haspopup="menu"
+                            aria-expanded="false"
+                        >
+                            <svg
+                                class="w-3.5 h-3.5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                />
+                            </svg>
+                            Insert
+                            <svg
+                                class="w-3 h-3 ml-0.5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M19 9l-7 7-7-7"
+                                />
+                            </svg>
+                        </button>
+                        <button
+                            id="format-btn"
+                            class="px-3 py-1.5 text-xs text-white/60 hover:text-white hover:bg-white/10 rounded transition"
+                            title="Format code"
+                        >
+                            Format
+                        </button>
+                        <button
+                            id="download-btn"
+                            class="px-2 py-1.5 text-white/40 hover:text-white transition"
+                            title="Download .beancount file"
+                            aria-label="Download beancount file"
+                        >
+                            <svg
+                                class="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                />
+                            </svg>
+                        </button>
+                        <label
+                            class="px-2 py-1.5 text-white/40 hover:text-white transition cursor-pointer"
+                            title="Upload .beancount file"
+                            aria-label="Upload beancount file"
+                        >
+                            <svg
+                                class="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                                />
+                            </svg>
+                            <input
+                                type="file"
+                                accept=".beancount,.bean,.txt"
+                                onchange="uploadLedger(event)"
+                                class="sr-only"
+                                aria-label="Upload beancount file"
+                            />
+                        </label>
+                        <button
+                            id="share-btn"
+                            class="px-2 py-1.5 mr-2 text-white/40 hover:text-white transition"
+                            title="Share"
+                            aria-label="Share URL"
+                        >
+                            <svg
+                                class="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Editor Container (Accounts Sidebar + Editor) -->
+                    <div id="editor-container" class="editor-container flex-1" style="min-height: 300px">
+                        <!-- Accounts Sidebar (collapsible, left side) -->
+                        <div id="accounts-sidebar" class="accounts-sidebar">
+                            <button
+                                id="accounts-sidebar-toggle"
+                                class="accounts-sidebar-toggle"
+                                aria-expanded="true"
+                                aria-controls="accounts-sidebar-body"
+                                title="Toggle accounts panel"
+                            >
+                                <svg
+                                    class="accounts-toggle-icon"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"
+                                    />
+                                </svg>
+                                <span>Accounts</span>
+                            </button>
+                            <div id="accounts-sidebar-body" class="accounts-sidebar-body">
+                                <div class="accounts-sidebar-toolbar">
+                                    <button
+                                        id="sidebar-expand-all-btn"
+                                        class="text-xs text-white/50 hover:text-white px-2 py-1 rounded hover:bg-white/10 transition"
+                                        title="Expand all"
+                                    >
+                                        Expand
+                                    </button>
+                                    <button
+                                        id="sidebar-collapse-all-btn"
+                                        class="text-xs text-white/50 hover:text-white px-2 py-1 rounded hover:bg-white/10 transition"
+                                        title="Collapse all"
+                                    >
+                                        Collapse
+                                    </button>
+                                </div>
+                                <div id="accounts-sidebar-content" class="accounts-sidebar-content">
+                                    <!-- Account tree will be rendered here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sidebar Resizer -->
+                        <div id="sidebar-resizer" class="sidebar-resizer"></div>
+
+                        <!-- Editor (CodeMirror will mount here) -->
+                        <div
+                            id="editor-panel"
+                            class="overflow-hidden bg-black/30 relative"
+                            role="tabpanel"
+                            aria-label="Beancount ledger editor"
+                        >
+                            <!-- Loading skeleton (hidden once editor loads) -->
+                            <div id="editor-skeleton" class="absolute inset-0 p-3 space-y-2">
+                                <div class="skeleton h-4 w-3/4"></div>
+                                <div class="skeleton h-4 w-1/2"></div>
+                                <div class="skeleton h-4 w-5/6"></div>
+                                <div class="skeleton h-4 w-2/3"></div>
+                                <div class="skeleton h-4 w-4/5"></div>
+                                <div class="skeleton h-4 w-1/2"></div>
+                                <div class="skeleton h-4 w-3/5"></div>
+                                <div class="skeleton h-4 w-2/3"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resizer -->
+                    <div class="resizer" id="resizer"></div>
+
+                    <!-- Output Header -->
+                    <div class="output-tabs-container" role="tablist" aria-label="Output panels">
+                        <button
+                            class="output-tab active"
+                            data-tab="query"
+                            role="tab"
+                            aria-selected="true"
+                            aria-controls="query-output"
+                        >
+                            Query
+                        </button>
+                        <button
+                            class="output-tab"
+                            data-tab="charts"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="charts-panel"
+                        >
+                            <svg
+                                class="w-3.5 h-3.5 inline-block mr-1"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4v16"
+                                />
+                            </svg>
+                            Charts
+                        </button>
+                        <button
+                            class="output-tab"
+                            data-tab="sankey"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="sankey-panel"
+                        >
+                            <svg
+                                class="w-3.5 h-3.5 inline-block mr-1"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                                />
+                            </svg>
+                            Flows
+                        </button>
+                        <button
+                            class="output-tab"
+                            data-tab="calendar"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="calendar-panel"
+                        >
+                            <svg
+                                class="w-3.5 h-3.5 inline-block mr-1"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                />
+                            </svg>
+                            Activity
+                        </button>
+                        <div class="flex-1"></div>
+                        <button
+                            class="output-tab text-yellow-400"
+                            style="border-left: 1px solid rgba(255, 255, 255, 0.15)"
+                            data-tab="plugin"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="plugin-options"
+                        >
+                            <span aria-hidden="true">⚡</span> Plugins
+                        </button>
+                        <button
+                            id="status-tab"
+                            class="output-tab text-green-400"
+                            style="border-left: 1px solid rgba(255, 255, 255, 0.15)"
+                            data-tab="output"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="output"
+                            aria-live="polite"
+                        >
+                            <span aria-hidden="true">✓</span> Valid
+                        </button>
+                        <button
+                            id="copy-output-btn"
+                            class="p-2 text-white/30 hover:text-white transition"
+                            title="Copy"
+                            aria-label="Copy output"
+                        >
+                            <svg
+                                class="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Query input (shown when Query tab active) -->
+                    <div id="query-input" class="px-3 py-2 border-b border-white/10 bg-white/5">
+                        <label for="query-text" class="sr-only">BQL Query</label>
+                        <input
+                            type="text"
+                            id="query-text"
+                            class="mono w-full bg-transparent text-sm text-white/90 placeholder-white/40 outline-none"
+                            placeholder="Enter BQL query..."
+                            onkeydown="if (event.key === 'Enter') runQueryFromInput();"
+                            oninput="updateQueryButtons()"
+                            aria-label="BQL Query"
+                            aria-keyshortcuts="Enter"
+                        />
+                    </div>
+
+                    <!-- Query preset buttons (rendered dynamically from presets.js) -->
+                    <div
+                        id="query-options"
+                        class="px-3 py-2 border-b border-white/10 bg-white/5 flex gap-2 flex-wrap"
+                        role="group"
+                        aria-label="Query presets"
+                    ></div>
+
+                    <!-- Plugin options (rendered dynamically from presets.js) -->
+                    <div
+                        id="plugin-options"
+                        class="hidden px-3 py-2 border-b border-white/10 bg-white/5 flex gap-2 flex-wrap"
+                        role="group"
+                        aria-label="Plugin toggles"
+                    ></div>
+
+                    <!-- Output Content -->
+                    <div
+                        id="output-panel"
+                        class="overflow-auto bg-black/20 flex-1"
+                        style="min-height: 200px"
+                        role="region"
+                        aria-label="Output panel"
+                    >
+                        <pre
+                            id="output"
+                            class="mono text-sm text-white/70 p-3 leading-relaxed"
+                            role="log"
+                            aria-live="polite"
+                            aria-label="Validation output"
+                        ><span class="text-white/30">Ready</span></pre>
+                        <div
+                            id="query-output"
+                            class="text-sm p-3 hidden overflow-x-auto"
+                            role="region"
+                            aria-label="Query results"
+                            aria-live="polite"
+                        ></div>
+                        <div
+                            id="charts-panel"
+                            class="hidden h-full"
+                            role="region"
+                            aria-label="Financial charts"
+                        >
+                            <div
+                                class="chart-toolbar px-3 py-2 border-b border-white/10 flex items-center gap-2"
+                            >
+                                <span class="text-xs text-white/50">View:</span>
+                                <button class="chart-view-btn active" data-view="summary">
+                                    Summary
+                                </button>
+                                <button class="chart-view-btn" data-view="expenses">
+                                    Expenses
+                                </button>
+                                <button class="chart-view-btn" data-view="accounts">
+                                    Accounts
+                                </button>
+                                <button class="chart-view-btn" data-view="trends">Trends</button>
+                            </div>
+                            <div id="chart-container" class="h-full"></div>
+                        </div>
+                        <div
+                            id="sankey-panel"
+                            class="hidden h-full"
+                            role="region"
+                            aria-label="Money flow diagram"
+                        >
+                            <div
+                                class="sankey-toolbar px-3 py-2 border-b border-white/10 flex items-center gap-2"
+                            >
+                                <span class="text-xs text-white/50">Depth:</span>
+                                <button class="sankey-depth-btn" data-depth="1">Categories</button>
+                                <button class="sankey-depth-btn" data-depth="2">Accounts</button>
+                                <button class="sankey-depth-btn active" data-depth="3">
+                                    Sub-accounts
+                                </button>
+                                <button class="sankey-depth-btn" data-depth="0">Leafs</button>
+                            </div>
+                            <div id="sankey-container" class="sankey-area"></div>
+                        </div>
+                        <div
+                            id="calendar-panel"
+                            class="hidden h-full overflow-auto"
+                            role="region"
+                            aria-label="Transaction activity calendar"
+                        >
+                            <div id="calendar-container" class="p-3"></div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div
+                        class="flex items-center gap-2 px-3 py-2 border-t border-white/10 bg-white/5"
+                    >
+                        <div class="flex-1"></div>
+                        <span id="footer-status" class="text-xs text-white/50">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Keyboard Shortcuts Modal -->
+        <div
+            id="shortcuts-modal"
+            class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="shortcuts-title"
+        >
+            <div
+                class="bg-zinc-900 border border-white/20 rounded-lg p-6 max-w-md w-full mx-4 shadow-2xl"
+            >
+                <div class="flex justify-between items-center mb-4">
+                    <h2 id="shortcuts-title" class="text-lg font-semibold">Keyboard Shortcuts</h2>
+                    <button
+                        id="close-shortcuts-btn"
+                        class="text-white/40 hover:text-white transition"
+                        aria-label="Close"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                    </button>
+                </div>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Show this help</span>
+                        <kbd class="kbd">?</kbd>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Format code</span>
+                        <div><kbd class="kbd">Cmd/Ctrl</kbd> + <kbd class="kbd">S</kbd></div>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Run query</span>
+                        <div><kbd class="kbd">Cmd/Ctrl</kbd> + <kbd class="kbd">Enter</kbd></div>
+                    </div>
+                    <hr class="border-white/10 my-3" />
+                    <p class="text-white/50 text-xs font-medium mb-2">Editor</p>
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Go to definition</span>
+                        <div><kbd class="kbd">Cmd/Ctrl</kbd> + <kbd class="kbd">Click</kbd></div>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Find all references</span>
+                        <div><kbd class="kbd">Shift</kbd> + <kbd class="kbd">F12</kbd></div>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-white/70">Clear highlights</span>
+                        <kbd class="kbd">Esc</kbd>
+                    </div>
+                    <hr class="border-white/10 my-3" />
+                    <p class="text-white/40 text-xs">
+                        Press <kbd class="kbd text-xs">Tab</kbd> to navigate,
+                        <kbd class="kbd text-xs">Enter</kbd> to activate
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="/src/main.js"></script>
+    </body>
+</html>

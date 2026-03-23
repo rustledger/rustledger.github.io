@@ -8,6 +8,15 @@ dist/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
 
+# Docs fetched from main rustledger repo during build
+docs/getting-started/
+docs/commands/
+docs/guides/
+docs/migration/
+docs/reference/
+docs/development/
+docs/home.md
+
 # WASM (fetched from releases at build time)
 pkg/
 
