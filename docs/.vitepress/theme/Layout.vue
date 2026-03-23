@@ -6,6 +6,6 @@ const { Layout } = DefaultTheme;
 </script>
 
 <template>
-  <SecondaryNav />
-  <Layout />
+    <SecondaryNav />
+    <Layout />
 </template>
