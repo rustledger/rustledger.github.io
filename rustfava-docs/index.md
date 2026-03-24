@@ -12,9 +12,8 @@ title: rustfava - Desktop App for Plain Text Accounting
     <GitHubStars />
   </div>
 
-  <div class="install-buttons">
-    <a href="/getting-started/installation" class="install-btn primary">Download</a>
-    <a href="/getting-started/" class="install-btn secondary">Get Started</a>
+  <div class="install-wrapper">
+    <InstallTabs />
   </div>
 </div>
 
@@ -118,39 +117,9 @@ title: rustfava - Desktop App for Plain Text Accounting
   margin-bottom: 2rem;
 }
 
-.install-buttons {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.install-btn {
-  display: inline-block;
-  padding: 0.75rem 2rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.2s;
-}
-
-.install-btn.primary {
-  background: #f97316;
-  color: white;
-}
-
-.install-btn.primary:hover {
-  background: #ea580c;
-}
-
-.install-btn.secondary {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-}
-
-.install-btn.secondary:hover {
-  background: rgba(255, 255, 255, 0.15);
+.install-wrapper {
+  width: 100%;
+  max-width: 600px;
 }
 
 /* Screenshot Hero */

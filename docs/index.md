@@ -8,7 +8,11 @@ title: rustledger - Modern Plain Text Accounting
   <p class="hero-tagline">Accounting in plain text, under your control, forever.</p>
 
   <div class="hero-actions">
-    <HeroButtons />
+    <GitHubStars />
+  </div>
+
+  <div class="install-wrapper">
+    <InstallTabs />
   </div>
 </div>
 
@@ -51,6 +55,11 @@ title: rustledger - Modern Plain Text Accounting
 }
 
 .hero-actions {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.install-wrapper {
+  width: 100%;
+  max-width: 600px;
 }
 </style>

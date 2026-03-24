@@ -24,4 +24,9 @@ const { Layout } = DefaultTheme;
 .accent {
     color: #f97316;
 }
+
+/* Hide the default title text but keep logo */
+:deep(.VPNavBarTitle .title) {
+    display: none;
+}
 </style>
