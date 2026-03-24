@@ -59,6 +59,5 @@ export default defineConfig({
             pattern: 'https://github.com/rustledger/rustfava/edit/main/docs/:path',
             text: 'Edit this page on GitHub',
         },
-
     },
 });

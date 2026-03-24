@@ -91,6 +91,5 @@ export default defineConfig({
             pattern: 'https://github.com/rustledger/pta-standards/edit/main/:path',
             text: 'Edit this page on GitHub',
         },
-
     },
 });

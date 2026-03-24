@@ -4,7 +4,9 @@ const isDev = import.meta.env.DEV;
 const urls = {
     rustledger: isDev ? 'http://localhost:5173/' : 'https://rustledger.github.io/',
     rustfava: isDev ? 'http://localhost:5174/rustfava/' : 'https://rustledger.github.io/rustfava/',
-    ptaStandards: isDev ? 'http://localhost:5175/pta-standards/' : 'https://rustledger.github.io/pta-standards/',
+    ptaStandards: isDev
+        ? 'http://localhost:5175/pta-standards/'
+        : 'https://rustledger.github.io/pta-standards/',
 };
 
 const navigate = (url) => {

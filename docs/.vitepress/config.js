@@ -115,6 +115,5 @@ export default defineConfig({
             pattern: 'https://github.com/rustledger/rustledger/edit/main/docs/:path',
             text: 'Edit this page on GitHub',
         },
-
     },
 });
