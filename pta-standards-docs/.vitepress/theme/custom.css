@@ -173,6 +173,11 @@ body {
    ======================================== */
 
 @media (max-width: 768px) {
+    /* Hide site title text on mobile, keep only logo */
+    .VPNavBarTitle .title {
+        display: none !important;
+    }
+
     /* Remove extra top spacing on mobile */
     .VPDoc {
         margin-top: 0 !important;
