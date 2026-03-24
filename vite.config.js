@@ -38,7 +38,6 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: resolve(__dirname, 'index.html'),
-                rustfava: resolve(__dirname, 'rustfava.html'),
                 playground: resolve(__dirname, 'playground.html'),
             },
             output: {
