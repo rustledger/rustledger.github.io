@@ -25,8 +25,11 @@ const { Layout } = DefaultTheme;
     color: #f97316;
 }
 
-/* Hide the default title text but keep logo */
-:deep(.VPNavBarTitle .title) {
+/* Hide the default title text but keep logo visible */
+:deep(.VPNavBarTitle .title span:not(.VPImage)) {
     display: none;
+}
+:deep(.VPNavBarTitle .title .VPImage) {
+    display: block !important;
 }
 </style>
