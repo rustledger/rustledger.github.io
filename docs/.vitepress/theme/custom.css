@@ -267,6 +267,30 @@ body {
         padding-top: 0 !important;
         margin-top: 0 !important;
     }
+
+    /* Mobile nav menu - ensure it's visible and properly styled */
+    .VPNavBarMenu {
+        background-color: #000 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .VPNavBarMenu .VPNavBarMenuLink {
+        color: white !important;
+    }
+
+    /* Mobile nav screen (hamburger menu dropdown) */
+    .VPNavScreen {
+        background-color: #000 !important;
+        top: calc(var(--vp-nav-height) + 28px) !important;
+    }
+
+    .VPNavScreenMenu {
+        background-color: #000 !important;
+    }
+
+    .VPNavScreenMenuLink {
+        color: white !important;
+    }
 }
 
 /* 404 page - hide sidebar and nav elements */
