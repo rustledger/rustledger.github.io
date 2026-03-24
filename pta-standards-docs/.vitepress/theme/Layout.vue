@@ -1,6 +1,7 @@
 <script setup>
 import DefaultTheme from 'vitepress/theme';
 import SecondaryNav from './SecondaryNav.vue';
+import SiteFooter from './SiteFooter.vue';
 
 const { Layout } = DefaultTheme;
 </script>
@@ -10,6 +11,9 @@ const { Layout } = DefaultTheme;
     <Layout>
         <template #nav-bar-title-after>
             <span class="custom-title"><span class="accent">PTA</span> Standards</span>
+        </template>
+        <template #layout-bottom>
+            <SiteFooter />
         </template>
     </Layout>
 </template>
