@@ -12,6 +12,7 @@ export default defineConfig({
 
     themeConfig: {
         logo: { src: '/favicon.svg', alt: 'rustfava' },
+        siteTitle: false,
 
         nav: [
             { text: 'Home', link: '/' },

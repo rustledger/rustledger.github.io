@@ -32,7 +32,7 @@ export default defineConfig({
             light: '/logo.svg',
             dark: '/logo.svg',
         },
-        siteTitle: 'PTA Standards',
+        siteTitle: false,
         nav: [
             { text: 'Core', link: '/core/' },
             { text: 'Formats', link: '/formats/' },

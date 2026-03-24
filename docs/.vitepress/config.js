@@ -11,6 +11,7 @@ export default defineConfig({
 
     themeConfig: {
         logo: { src: '/favicon.svg', alt: 'rustledger' },
+        siteTitle: false,
 
         nav: [
             { text: 'Home', link: '/' },
