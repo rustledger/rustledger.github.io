@@ -16,8 +16,7 @@ export default defineConfig({
 
         nav: [
             { text: 'Home', link: '/' },
-            { text: 'Getting Started', link: '/getting-started/' },
-            { text: 'rustfava', link: 'https://rustledger.github.io/rustfava', target: '_blank' },
+            { text: 'Documentation', link: '/about/why-rustfava' },
         ],
 
         sidebar: {
