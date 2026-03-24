@@ -96,7 +96,7 @@ body {
     background-color: rgba(0, 0, 0, 0.9) !important;
     backdrop-filter: blur(8px);
     top: 33px !important;
-    padding-bottom: 1rem !important;
+    padding-bottom: 1.5rem !important;
 }
 
 /* Adjust content for secondary nav */
@@ -115,7 +115,7 @@ body {
 
 /* Local nav (contains hamburger menu on mobile) */
 .VPLocalNav {
-    top: calc(var(--vp-nav-height) + 37px + 1rem) !important;
+    top: calc(var(--vp-nav-height) + 37px + 1.5rem) !important;
     position: fixed !important;
 }
 
