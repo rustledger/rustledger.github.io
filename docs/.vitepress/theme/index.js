@@ -4,6 +4,7 @@ import GitHubStars from './GitHubStars.vue';
 import InstallTabs from './InstallTabs.vue';
 import BenchmarkTable from './BenchmarkTable.vue';
 import FeatureGrid from './FeatureGrid.vue';
+import HeroButtons from './HeroButtons.vue';
 import './custom.css';
 
 export default {
@@ -14,5 +15,6 @@ export default {
         app.component('InstallTabs', InstallTabs);
         app.component('BenchmarkTable', BenchmarkTable);
         app.component('FeatureGrid', FeatureGrid);
+        app.component('HeroButtons', HeroButtons);
     },
 };
