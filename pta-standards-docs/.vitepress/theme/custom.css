@@ -80,6 +80,7 @@ body {
 .VPLocalNav {
     top: calc(var(--vp-nav-height) + 37px) !important;
     position: fixed !important;
+    padding-top: 0.5rem !important;
 }
 
 /* Hide the extra menu (...) button */

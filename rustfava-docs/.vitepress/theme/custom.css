@@ -116,6 +116,7 @@ body {
 .VPLocalNav {
     top: calc(var(--vp-nav-height) + 37px) !important;
     position: fixed !important;
+    padding-top: 0.5rem !important;
 }
 
 /* Home page layout - needs extra padding for both navbars */
