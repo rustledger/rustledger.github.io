@@ -76,6 +76,13 @@ body {
     margin-top: 33px !important;
 }
 
+/* Home page layout - needs extra padding for both navbars */
+.VPHome,
+.Layout > main,
+.is-home .VPContent {
+    padding-top: calc(var(--vp-nav-height) + 33px) !important;
+}
+
 /* Hide the extra menu (...) button */
 .VPNavBarExtra {
     display: none !important;

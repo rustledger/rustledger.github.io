@@ -15,8 +15,7 @@ export default defineConfig({
 
         nav: [
             { text: 'Home', link: '/' },
-            { text: 'Getting Started', link: '/getting-started/' },
-            { text: 'Commands', link: '/commands/' },
+            { text: 'Documentation', link: '/about/why-rustledger' },
             { text: 'Playground', link: '/playground.html', target: '_blank' },
         ],
 
