@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Contact
+sidebar: false
 ---
 
 <div class="contact-page">
