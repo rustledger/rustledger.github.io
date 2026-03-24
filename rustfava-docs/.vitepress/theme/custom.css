@@ -250,17 +250,6 @@ body {
     --vp-local-search-bg: #0a0a0a;
 }
 
-/* Move search to the right side of navbar */
-.VPNavBar .content-body {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.VPNavBarSearch {
-    order: 10;
-    padding-left: 1rem;
-}
-
 /* Custom accent class for inline use */
 .accent {
     color: #f97316;

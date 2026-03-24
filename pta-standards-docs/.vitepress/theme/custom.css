@@ -153,17 +153,6 @@ body {
     --vp-local-search-bg: #0a0a0a;
 }
 
-/* Move search to the right side of navbar */
-.VPNavBar .content-body {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.VPNavBarSearch {
-    order: 10;
-    padding-left: 1rem;
-}
-
 /* Active sidebar item */
 .VPSidebar .VPSidebarItem.is-active > .item .link > .text {
     color: #f97316;
