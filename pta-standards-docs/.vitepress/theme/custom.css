@@ -1,7 +1,11 @@
 /* PTA Standards theme - dark mode with orange accent */
 
+/* ========================================
+   CSS CUSTOM PROPERTIES
+   ======================================== */
+
 :root {
-    /* Orange accent color (matching #f97316) */
+    /* Orange accent color */
     --vp-c-brand-1: #f97316;
     --vp-c-brand-2: #fb923c;
     --vp-c-brand-3: #fdba74;
@@ -12,6 +16,15 @@
         system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --vp-font-family-mono:
         ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, monospace;
+
+    /*
+     * Secondary nav height - VitePress reads this variable
+     * and automatically adjusts VPNav, VPSidebar, VPLocalNav positioning
+     */
+    --vp-layout-top-height: 33px;
+
+    /* Layout widths */
+    --vp-layout-max-width: 1400px;
 }
 
 /* Force dark mode always */
@@ -44,9 +57,6 @@
 
     /* Custom property for accent text */
     --accent: #f97316;
-
-    /* Layout widths */
-    --vp-layout-max-width: 1400px;
 }
 
 /* Make html/body black */
@@ -55,30 +65,24 @@ body {
     background-color: #000 !important;
 }
 
-/* Nav styling - push down to make room for secondary nav */
+/* ========================================
+   NAV STYLING
+
+   VitePress automatically handles positioning using
+   --vp-layout-top-height. We only need to style colors.
+   ======================================== */
+
 .VPNav {
     background-color: rgba(0, 0, 0, 0.9) !important;
     backdrop-filter: blur(8px);
-    top: 33px !important;
 }
 
-/* Adjust content for secondary nav */
 .VPSidebar {
-    top: calc(var(--vp-nav-height) + 33px) !important;
+    background-color: #000 !important;
 }
 
 .VPContent {
-    padding-top: 33px !important;
-}
-
-/* Ensure doc content has proper top margin for secondary nav */
-.VPDoc {
-    margin-top: 33px !important;
-}
-
-/* Local nav (contains hamburger menu on mobile) */
-.VPLocalNav {
-    margin-top: 33px !important;
+    background-color: #000 !important;
 }
 
 /* Hide the extra menu (...) button */
@@ -86,15 +90,9 @@ body {
     display: none !important;
 }
 
-/* Sidebar */
-.VPSidebar {
-    background-color: #000 !important;
-}
-
-/* Content area */
-.VPContent {
-    background-color: #000 !important;
-}
+/* ========================================
+   COMPONENT STYLES
+   ======================================== */
 
 /* Footer */
 .VPFooter {
@@ -168,77 +166,23 @@ body {
     color: #f97316 !important;
 }
 
-/* Custom accent class for inline use */
+/* Custom accent class */
 .accent {
     color: #f97316;
 }
 
 /* ========================================
-   MOBILE RESPONSIVE FIXES
+   NARROW VIEWPORT
    ======================================== */
 
 @media (max-width: 768px) {
-    /* Hide site title text on mobile, keep only logo */
-    .VPNavBarTitle .title {
-        display: none !important;
+    :root {
+        --vp-layout-top-height: 28px;
     }
 
-    /* Remove extra top spacing on mobile */
-    .VPDoc {
-        margin-top: 0 !important;
-    }
-
-    /* Fix content padding on mobile */
-    .VPContent {
-        padding-top: 0 !important;
-    }
-
-    /* Make secondary nav smaller on mobile */
-    .secondary-nav {
-        padding: 0.25rem 0.5rem !important;
-    }
-
-    .secondary-nav-links {
-        gap: 1rem !important;
-        font-size: 0.75rem !important;
-    }
-
-    /* Adjust nav position for smaller secondary nav */
-    .VPNav {
-        top: 28px !important;
-    }
-
-    .VPSidebar {
-        top: calc(var(--vp-nav-height) + 28px) !important;
-    }
-
-    /* Mobile nav menu - ensure it's visible and properly styled */
-    .VPNavBarMenu {
-        background-color: #000 !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .VPNavBarMenu .VPNavBarMenuLink {
-        color: white !important;
-    }
-
-    /* Mobile nav screen (hamburger menu dropdown) */
+    /* Mobile nav screen styling */
     .VPNavScreen {
         background-color: #000 !important;
-        top: calc(var(--vp-nav-height) + 28px) !important;
-        position: fixed !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        height: calc(100vh - var(--vp-nav-height) - 28px) !important;
-        height: calc(100dvh - var(--vp-nav-height) - 28px) !important;
-        z-index: 99 !important;
-        padding: 1.5rem !important;
-        overflow-y: auto !important;
-    }
-
-    .VPNavScreen.open {
-        display: block !important;
     }
 
     .VPNavScreenMenu {
@@ -247,8 +191,5 @@ body {
 
     .VPNavScreenMenuLink {
         color: white !important;
-        display: block !important;
-        padding: 0.75rem 0 !important;
-        font-size: 1.1rem !important;
     }
 }

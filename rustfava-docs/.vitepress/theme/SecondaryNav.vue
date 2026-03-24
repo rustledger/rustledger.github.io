@@ -45,14 +45,16 @@ const navigate = (url) => {
 </template>
 
 <style scoped>
+/* Fixed position to stay at top when scrolling */
 .secondary-nav {
-    background-color: #000;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 100;
+    z-index: 40; /* Above VPNav (z-index: 30) */
+    background-color: #000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    height: var(--vp-layout-top-height);
 }
 
 .secondary-nav-content {
@@ -61,6 +63,8 @@ const navigate = (url) => {
     padding: 0.5rem 1.5rem;
     display: flex;
     justify-content: flex-end;
+    height: 100%;
+    align-items: center;
 }
 
 .secondary-nav-links {
@@ -87,5 +91,16 @@ const navigate = (url) => {
 
 .accent {
     color: #f97316;
+}
+
+@media (max-width: 768px) {
+    .secondary-nav-content {
+        padding: 0.25rem 0.5rem;
+    }
+
+    .secondary-nav-links {
+        gap: 1rem;
+        font-size: 0.75rem;
+    }
 }
 </style>

@@ -7,8 +7,10 @@ const { Layout } = DefaultTheme;
 </script>
 
 <template>
-    <SecondaryNav />
     <Layout>
+        <template #layout-top>
+            <SecondaryNav />
+        </template>
         <template #nav-bar-title-after>
             <span class="custom-title"><span class="accent">rust</span>fava</span>
         </template>
