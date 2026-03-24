@@ -318,6 +318,19 @@ body {
     .VPNavScreen {
         background-color: #000 !important;
         top: calc(var(--vp-nav-height) + 28px) !important;
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        height: calc(100vh - var(--vp-nav-height) - 28px) !important;
+        height: calc(100dvh - var(--vp-nav-height) - 28px) !important;
+        z-index: 99 !important;
+        padding: 1.5rem !important;
+        overflow-y: auto !important;
+    }
+
+    .VPNavScreen.open {
+        display: block !important;
     }
 
     .VPNavScreenMenu {
@@ -326,6 +339,9 @@ body {
 
     .VPNavScreenMenuLink {
         color: white !important;
+        display: block !important;
+        padding: 0.75rem 0 !important;
+        font-size: 1.1rem !important;
     }
 }
 
