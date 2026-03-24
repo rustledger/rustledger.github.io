@@ -80,9 +80,8 @@ title: rustfava - Desktop App for Plain Text Accounting
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 4rem 1.5rem 2rem;
-  max-width: 800px;
-  margin: 0 auto;
+  padding: 2rem 0;
+  max-width: 100%;
 }
 
 .hero-subtitle {
