@@ -58,7 +58,7 @@ const navigate = (url) => {
 .secondary-nav-content {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0.5rem 1.5rem 0.75rem;
+    padding: 0.5rem 1.5rem;
     display: flex;
     justify-content: flex-end;
 }

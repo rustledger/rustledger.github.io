@@ -114,10 +114,9 @@ body {
 
 /* Local nav (contains hamburger menu on mobile) */
 .VPLocalNav {
-    top: calc(var(--vp-nav-height) + 37px) !important;
+    top: calc(var(--vp-nav-height) + 33px) !important;
     position: fixed !important;
     border-top: none !important;
-    padding-top: 0.75rem !important;
 }
 
 /* Home page layout - needs extra padding for both navbars */
