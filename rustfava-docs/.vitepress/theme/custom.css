@@ -248,6 +248,53 @@ body {
     color: #f97316;
 }
 
+/* ========================================
+   MOBILE RESPONSIVE FIXES
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Remove extra top spacing on mobile */
+    .VPDoc {
+        margin-top: 0 !important;
+    }
+
+    /* Fix content padding on mobile */
+    .VPContent {
+        padding-top: 0 !important;
+    }
+
+    /* Make secondary nav smaller on mobile */
+    .secondary-nav {
+        padding: 0.25rem 0.5rem !important;
+    }
+
+    .secondary-nav-links {
+        gap: 1rem !important;
+        font-size: 0.75rem !important;
+    }
+
+    /* Adjust nav position for smaller secondary nav */
+    .VPNav {
+        top: 28px !important;
+    }
+
+    .VPSidebar {
+        top: calc(var(--vp-nav-height) + 28px) !important;
+    }
+
+    /* Hide sidebar on home page mobile */
+    .is-home .VPSidebar,
+    .is-home .VPLocalNav {
+        display: none !important;
+    }
+
+    /* Remove sidebar space on home */
+    .is-home .VPContent {
+        padding-left: 0 !important;
+        margin-left: 0 !important;
+    }
+}
+
 /* 404 page - hide sidebar and nav elements */
 .NotFound .VPSidebar,
 .NotFound .VPDoc .aside {
