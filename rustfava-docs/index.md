@@ -114,12 +114,13 @@ title: rustfava - Desktop App for Plain Text Accounting
 }
 
 .hero-actions {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .install-wrapper {
   width: 100%;
   max-width: 600px;
+  margin-bottom: 2rem;
 }
 
 /* Screenshot Hero */
