@@ -114,7 +114,7 @@ body {
 
 /* Local nav (contains hamburger menu on mobile) */
 .VPLocalNav {
-    top: calc(var(--vp-nav-height) + 33px + 8px) !important;
+    top: calc(var(--vp-nav-height) + 37px) !important;
     position: fixed !important;
 }
 
