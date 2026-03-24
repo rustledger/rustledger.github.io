@@ -92,9 +92,5 @@ export default defineConfig({
             text: 'Edit this page on GitHub',
         },
 
-        footer: {
-            message: 'Documentation licensed under CC-BY-4.0. Code licensed under MIT.',
-            copyright: 'Copyright © 2024-present PTA Standards contributors',
-        },
     },
 });

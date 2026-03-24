@@ -1,4 +1,12 @@
 <script setup>
+const isDev = import.meta.env.DEV;
+
+const urls = {
+    rustledger: isDev ? 'http://localhost:5173/' : 'https://rustledger.github.io/',
+    rustfava: isDev ? 'http://localhost:5174/rustfava/' : 'https://rustledger.github.io/rustfava/',
+    ptaStandards: isDev ? 'http://localhost:5175/pta-standards/' : 'https://rustledger.github.io/pta-standards/',
+};
+
 const navigate = (url) => {
     window.location.href = url;
 };
@@ -9,23 +17,23 @@ const navigate = (url) => {
         <div class="secondary-nav-content">
             <div class="secondary-nav-links">
                 <a
-                    href="https://rustledger.github.io/"
+                    :href="urls.rustledger"
                     class="secondary-link"
-                    @click.prevent="navigate('https://rustledger.github.io/')"
+                    @click.prevent="navigate(urls.rustledger)"
                 >
                     <span class="accent">rust</span>ledger
                 </a>
                 <a
-                    href="https://rustledger.github.io/rustfava/"
+                    :href="urls.rustfava"
                     class="secondary-link"
-                    @click.prevent="navigate('https://rustledger.github.io/rustfava/')"
+                    @click.prevent="navigate(urls.rustfava)"
                 >
                     <span class="accent">rust</span>fava
                 </a>
                 <a
-                    href="https://rustledger.github.io/pta-standards/"
-                    class="secondary-link"
-                    @click.prevent="navigate('https://rustledger.github.io/pta-standards/')"
+                    :href="urls.ptaStandards"
+                    class="secondary-link active"
+                    @click.prevent="navigate(urls.ptaStandards)"
                 >
                     <span class="accent">PTA</span> Standards
                 </a>
@@ -68,6 +76,11 @@ const navigate = (url) => {
 
 .secondary-link:hover {
     opacity: 0.7;
+}
+
+.secondary-link.active {
+    border-bottom: 2px solid #f97316;
+    padding-bottom: 2px;
 }
 
 .accent {
