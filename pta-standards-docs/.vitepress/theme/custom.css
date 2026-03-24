@@ -60,7 +60,6 @@ body {
     background-color: rgba(0, 0, 0, 0.9) !important;
     backdrop-filter: blur(8px);
     top: 33px !important;
-    padding-bottom: 1.5rem !important;
 }
 
 /* Adjust content for secondary nav */
@@ -79,8 +78,10 @@ body {
 
 /* Local nav (contains hamburger menu on mobile) */
 .VPLocalNav {
-    top: calc(var(--vp-nav-height) + 37px + 1.5rem) !important;
+    top: calc(var(--vp-nav-height) + 37px) !important;
     position: fixed !important;
+    border-top: none !important;
+    padding-top: 0.75rem !important;
 }
 
 /* Hide the extra menu (...) button */
