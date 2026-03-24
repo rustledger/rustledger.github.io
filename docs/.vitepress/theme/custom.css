@@ -191,7 +191,7 @@ body {
 
 /* Tables */
 .vp-doc table {
-    background-color: #0a0a0a;
+    background-color: transparent;
 }
 
 .vp-doc tr {
