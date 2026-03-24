@@ -23,6 +23,13 @@
     width: 100%;
 }
 
+/* Account for VitePress sidebar (272px) at larger screens */
+@media (min-width: 960px) {
+    .site-footer {
+        padding-left: calc(var(--vp-sidebar-width, 272px) + 1.5rem);
+    }
+}
+
 .footer-content {
     max-width: 1000px;
     margin: 0 auto;
