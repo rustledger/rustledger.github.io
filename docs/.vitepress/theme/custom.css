@@ -246,16 +246,36 @@ body {
         top: calc(var(--vp-nav-height) + 28px) !important;
     }
 
-    /* Hide sidebar on home page mobile */
+    /* Hide sidebar and local nav on home page mobile */
     .is-home .VPSidebar,
+    .is-home .VPLocalNav,
+    .is-home .VPDoc.has-aside .content-container {
+        display: none !important;
+    }
+
+    /* Hide the floating menu button on home */
     .is-home .VPLocalNav {
         display: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
     }
 
     /* Remove sidebar space on home */
     .is-home .VPContent {
         padding-left: 0 !important;
         margin-left: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* Remove the local nav gap on home page */
+    .is-home .VPContent.has-sidebar {
+        padding-top: 0 !important;
+    }
+
+    /* Ensure main content starts immediately after nav */
+    .is-home main {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
     }
 }
 
