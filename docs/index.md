@@ -23,25 +23,26 @@ title: rustledger - Modern Plain Text Accounting
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 2rem 0;
+  padding: 4rem 1.5rem 2rem;
   max-width: 100%;
 }
 
 .hero-subtitle {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  margin-bottom: 1.5rem;
+  letter-spacing: 0.2em;
+  margin-bottom: 1rem;
+  font-weight: 500;
 }
 
 .hero-title {
-  font-size: clamp(3rem, 10vw, 5rem);
+  font-size: clamp(3rem, 12vw, 5rem);
   font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  margin: 0 0 1.5rem 0;
-  color: white;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 0 0 1.25rem 0;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .text-accent {
@@ -49,10 +50,11 @@ title: rustledger - Modern Plain Text Accounting
 }
 
 .hero-tagline {
-  font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.6);
-  margin: 0 0 2rem 0;
-  max-width: 600px;
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 2.5rem 0;
+  max-width: 500px;
+  line-height: 1.5;
 }
 
 .hero-actions {
