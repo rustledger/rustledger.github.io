@@ -180,9 +180,13 @@ body {
         --vp-layout-top-height: 28px;
     }
 
-    /* Mobile nav screen styling */
+    /* Mobile nav screen - fix positioning with secondary nav */
     .VPNavScreen {
+        top: calc(var(--vp-nav-height) + var(--vp-layout-top-height)) !important;
+        height: calc(100vh - var(--vp-nav-height) - var(--vp-layout-top-height)) !important;
+        height: calc(100dvh - var(--vp-nav-height) - var(--vp-layout-top-height)) !important;
         background-color: #000 !important;
+        z-index: 35 !important;
     }
 
     .VPNavScreenMenu {
