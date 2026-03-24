@@ -78,9 +78,7 @@ body {
 
 /* Local nav (contains hamburger menu on mobile) */
 .VPLocalNav {
-    top: calc(var(--vp-nav-height) + 33px) !important;
-    position: fixed !important;
-    border-top: none !important;
+    margin-top: 33px !important;
 }
 
 /* Hide the extra menu (...) button */
