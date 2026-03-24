@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: home
 title: rustfava - Desktop App for Plain Text Accounting
 ---
 

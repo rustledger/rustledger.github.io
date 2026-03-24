@@ -1,4 +1,5 @@
 ---
+layout: home
 title: rustledger - Modern Plain Text Accounting
 ---
 
