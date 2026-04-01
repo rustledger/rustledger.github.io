@@ -7,6 +7,10 @@ export default defineConfig({
     base: '/',
     appearance: false,
 
+    markdown: {
+        theme: 'catppuccin-mocha',
+    },
+
     head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }]],
 
     themeConfig: {

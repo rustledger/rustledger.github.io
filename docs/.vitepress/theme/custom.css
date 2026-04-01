@@ -45,8 +45,8 @@
     --vp-c-divider: rgba(255, 255, 255, 0.1);
     --vp-c-gutter: rgba(255, 255, 255, 0.05);
 
-    /* Code blocks */
-    --vp-code-block-bg: #0a0a0a;
+    /* Code blocks - using catppuccin-mocha crust for cohesion */
+    --vp-code-block-bg: #11111b;
     --vp-code-line-highlight-color: rgba(249, 115, 22, 0.1);
 
     /* Sidebar */
