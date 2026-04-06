@@ -859,6 +859,9 @@ async function copyCommand(command) {
 
 .cmd {
     flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.4ch;
     color: rgba(255, 255, 255, 0.9);
     word-break: break-all;
 }
