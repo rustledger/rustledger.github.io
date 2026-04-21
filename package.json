@@ -29,7 +29,7 @@
     },
     "devDependencies": {
         "@axe-core/playwright": "^4.11.0",
-        "vitepress": "^1.6.3",
+        "vitepress": "^1.6.4",
         "@eslint/js": "^9.18.0",
         "@playwright/test": "^1.57.0",
         "@tailwindcss/vite": "^4.1.18",
@@ -45,7 +45,7 @@
         "prettier": "^3.4.2",
         "tailwindcss": "^4.1.18",
         "typescript": "^5.7.3",
-        "vite": "^7.3.1",
+        "vite": "^7.3.2",
         "vitest": "^4.0.18"
     },
     "lint-staged": {
@@ -59,6 +59,12 @@
         "*.{html,json,md}": [
             "prettier --write"
         ]
+    },
+    "overrides": {
+        "vitepress": {
+            "vite": "^6.4.2",
+            "esbuild": "^0.25.0"
+        }
     },
     "dependencies": {
         "@codemirror/autocomplete": "^6.18.4",
