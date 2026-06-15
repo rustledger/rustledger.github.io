@@ -102,6 +102,17 @@ export default defineConfig({
                     ],
                 },
                 {
+                    text: 'Roadmap',
+                    collapsed: true,
+                    items: [
+                        { text: 'Overview', link: '/roadmap/' },
+                        { text: 'Performance', link: '/roadmap/performance' },
+                        { text: 'Importing & Ingestion', link: '/roadmap/importing' },
+                        { text: 'Testing & Quality', link: '/roadmap/testing-and-quality' },
+                        { text: 'Formal Verification', link: '/roadmap/formal-verification' },
+                    ],
+                },
+                {
                     text: 'Development',
                     collapsed: true,
                     items: [
