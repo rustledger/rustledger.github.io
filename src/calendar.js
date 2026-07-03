@@ -1,5 +1,5 @@
 // Transaction Calendar Heatmap with Transaction List
-import { executeQuery, isWasmReady } from './wasm.js';
+import { executeQuery, whenWasmReady } from './wasm.js';
 
 // Account hierarchy colors (matching editor.js)
 const accountColors = [
@@ -212,9 +212,9 @@ function buildTransactionLineMap(source) {
  * @returns {Promise<{dateCounts: Map<string, number>, transactions: Transaction[], byDate: Map<string, Transaction[]>}>}
  */
 async function queryTransactionData(source) {
-    if (!isWasmReady()) {
-        return { dateCounts: new Map(), transactions: [], byDate: new Map() };
-    }
+    // Wait for the worker instead of silently returning empty (same
+    // click-before-ready race as the flows view).
+    await whenWasmReady();
 
     try {
         // Build line number lookup from source

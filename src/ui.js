@@ -117,6 +117,12 @@ export function initResizer(resizerId, topPanelId, bottomPanelId) {
         startY = e.clientY;
         startTopHeight = topPanel.offsetHeight;
         startBottomHeight = bottomPanel.offsetHeight;
+        // The panels are flex items (flex-1), which overrides style.height —
+        // the resizer was silently dead after the flexbox layout refactor
+        // (#20: caught by the revived e2e). Pin flex-basis so the explicit
+        // heights below take effect.
+        topPanel.style.flex = 'none';
+        bottomPanel.style.flex = 'none';
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mouseup', onMouseUp);
         document.body.style.cursor = 'row-resize';
