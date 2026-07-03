@@ -29,7 +29,6 @@
     },
     "devDependencies": {
         "@axe-core/playwright": "^4.11.0",
-        "vitepress": "^1.6.4",
         "@eslint/js": "^9.18.0",
         "@playwright/test": "^1.57.0",
         "@tailwindcss/vite": "^4.1.18",
@@ -46,6 +45,7 @@
         "tailwindcss": "^4.1.18",
         "typescript": "^5.7.3",
         "vite": "^7.3.2",
+        "vitepress": "^1.6.4",
         "vitest": "^4.1.0"
     },
     "lint-staged": {
@@ -74,7 +74,7 @@
         "@codemirror/view": "^6.39.8",
         "@lezer/highlight": "^1.2.3",
         "@replit/codemirror-minimap": "^0.5.2",
-        "@rustledger/wasm": "*",
+        "@rustledger/wasm": "0.20.1",
         "codemirror": "^6.0.2",
         "d3": "^7.9.0",
         "d3-sankey": "^0.12.3",
