@@ -330,8 +330,6 @@ test.describe('Sankey flows', () => {
         // svg's visibility and the LINK COUNT instead.
         await expect(page.locator('#sankey-panel .sankey-svg')).toBeVisible({ timeout: 60000 });
         const links = page.locator('#sankey-panel .sankey-links path');
-        await expect
-            .poll(() => links.count(), { timeout: 15000 })
-            .toBeGreaterThan(3);
+        await expect.poll(() => links.count(), { timeout: 15000 }).toBeGreaterThan(3);
     });
 });
