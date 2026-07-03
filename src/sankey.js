@@ -67,7 +67,7 @@ function getCategory(account) {
  * @param {unknown} value
  * @returns {number}
  */
-function parseAmount(value) {
+export function parseAmount(value) {
     if (typeof value === 'number') {
         return value;
     }
@@ -75,6 +75,16 @@ function parseAmount(value) {
         const obj = /** @type {Record<string, unknown>} */ (value);
         if (obj.number !== undefined) {
             return Number(obj.number) || 0;
+        }
+        // Position: { units: { number, currency }, cost? } — the shape the
+        // JOURNAL `position` column carries (numbers are exact-decimal
+        // STRINGS on the wire, hence Number()). Without this branch every
+        // posting parsed to 0 and the flows/Sankey view rendered empty.
+        if (obj.units && typeof obj.units === 'object') {
+            const units = /** @type {Record<string, unknown>} */ (obj.units);
+            if (units.number !== undefined) {
+                return Number(units.number) || 0;
+            }
         }
         if (obj.positions && Array.isArray(obj.positions)) {
             let total = 0;
