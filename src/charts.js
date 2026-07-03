@@ -1,6 +1,6 @@
 // Charts for accounting data visualization
 import * as d3 from 'd3';
-import { executeQuery, isWasmReady } from './wasm.js';
+import { executeQuery, whenWasmReady } from './wasm.js';
 
 /** @type {boolean} */
 let initialized = false;
@@ -74,7 +74,10 @@ function parseAmount(value) {
  * @returns {Promise<{expenses: Array<{name: string, value: number}>, income: number, expenseTotal: number, accounts: Array<{name: string, value: number, type: string}>}>}
  */
 async function queryChartData(source) {
-    if (!isWasmReady()) return { expenses: [], income: 0, expenseTotal: 0, accounts: [] };
+    // Wait for the worker instead of silently returning empty: a user (or
+    // test) opening this view before wasm-ready otherwise got a permanently
+    // blank panel — the render is click-driven with no retry.
+    await whenWasmReady();
 
     try {
         const result = await executeQuery(source, 'BALANCES');
@@ -138,7 +141,8 @@ async function queryChartData(source) {
  * @returns {Promise<Array<{date: string, income: number, expenses: number}>>}
  */
 async function queryTrendData(source) {
-    if (!isWasmReady()) return [];
+    // Same click-before-ready race as the flows view.
+    await whenWasmReady();
 
     try {
         // Query all postings

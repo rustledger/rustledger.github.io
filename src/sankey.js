@@ -1,7 +1,7 @@
 // Sankey diagram for money flow visualization
 import * as d3 from 'd3';
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey';
-import { executeQuery, isWasmReady } from './wasm.js';
+import { executeQuery, whenWasmReady } from './wasm.js';
 
 /**
  * @typedef {Object} SankeyNode
@@ -114,7 +114,10 @@ export function parseAmount(value) {
  * @returns {Promise<{nodes: SankeyNode[], links: SankeyLink[]}>}
  */
 async function queryFlows(source, depth = 2) {
-    if (!isWasmReady()) return { nodes: [], links: [] };
+    // Wait for the worker instead of silently returning empty: a user (or
+    // test) opening this view before wasm-ready otherwise got a permanently
+    // blank panel — the render is click-driven with no retry.
+    await whenWasmReady();
 
     try {
         // Query all postings to get account flows

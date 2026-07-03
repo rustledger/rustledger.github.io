@@ -1,5 +1,5 @@
 // Account Tree visualization - hierarchical account view with balances
-import { executeQuery, isWasmReady } from './wasm.js';
+import { executeQuery, whenWasmReady } from './wasm.js';
 import { escapeHtml } from './utils.js';
 
 /**
@@ -368,7 +368,9 @@ function triggerRerender(container) {
  * @returns {Promise<Array<{account: string, balance: {amount: number, currency: string}}>>}
  */
 async function queryAccountBalances(source) {
-    if (!isWasmReady()) return cachedAccounts;
+    // Wait for the worker instead of returning the (possibly empty) cache
+    // (same click-before-ready race as the flows view).
+    await whenWasmReady();
 
     try {
         const result = await executeQuery(source, 'BALANCES');

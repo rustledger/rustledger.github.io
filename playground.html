@@ -65,52 +65,57 @@
                     class="playground-wrapper bg-white/5 border border-white/10 rounded-lg overflow-hidden h-full flex flex-col"
                 >
                     <!-- Example Tabs -->
-                    <div class="example-tabs" role="tablist" aria-label="Example ledger files">
-                        <button
-                            class="example-tab active"
-                            data-example="budget"
-                            role="tab"
-                            aria-selected="true"
-                            aria-controls="editor-panel"
-                        >
-                            Budget
-                        </button>
-                        <button
-                            class="example-tab"
-                            data-example="stocks"
-                            role="tab"
-                            aria-selected="false"
-                            aria-controls="editor-panel"
-                        >
-                            Stocks
-                        </button>
-                        <button
-                            class="example-tab"
-                            data-example="forex"
-                            role="tab"
-                            aria-selected="false"
-                            aria-controls="editor-panel"
-                        >
-                            Forex
-                        </button>
-                        <button
-                            class="example-tab"
-                            data-example="errors"
-                            role="tab"
-                            aria-selected="false"
-                            aria-controls="editor-panel"
-                        >
-                            Errors
-                        </button>
-                        <button
-                            class="example-tab"
-                            data-example="large-example"
-                            role="tab"
-                            aria-selected="false"
-                            aria-controls="editor-panel"
-                        >
-                            Large Example
-                        </button>
+                    <div class="example-tabs">
+                        <!-- role=tablist narrowed to the tab group: the bar also
+                             holds toolbar buttons, which ARIA forbids as tablist
+                             children (axe aria-required-children, #20/#21) -->
+                        <div role="tablist" aria-label="Example ledger files" class="contents">
+                            <button
+                                class="example-tab active"
+                                data-example="budget"
+                                role="tab"
+                                aria-selected="true"
+                                aria-controls="editor-panel"
+                            >
+                                Budget
+                            </button>
+                            <button
+                                class="example-tab"
+                                data-example="stocks"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="editor-panel"
+                            >
+                                Stocks
+                            </button>
+                            <button
+                                class="example-tab"
+                                data-example="forex"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="editor-panel"
+                            >
+                                Forex
+                            </button>
+                            <button
+                                class="example-tab"
+                                data-example="errors"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="editor-panel"
+                            >
+                                Errors
+                            </button>
+                            <button
+                                class="example-tab"
+                                data-example="large-example"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="editor-panel"
+                            >
+                                Large Example
+                            </button>
+                        </div>
                         <div class="flex-1"></div>
                         <button
                             id="templates-btn"
@@ -274,7 +279,12 @@
                                         Collapse
                                     </button>
                                 </div>
-                                <div id="accounts-sidebar-content" class="accounts-sidebar-content">
+                                <div
+                                    id="accounts-sidebar-content"
+                                    role="tree"
+                                    aria-label="Account hierarchy"
+                                    class="accounts-sidebar-content"
+                                >
                                     <!-- Account tree will be rendered here -->
                                 </div>
                             </div>
@@ -308,108 +318,110 @@
                     <div class="resizer" id="resizer"></div>
 
                     <!-- Output Header -->
-                    <div class="output-tabs-container" role="tablist" aria-label="Output panels">
-                        <button
-                            class="output-tab active"
-                            data-tab="query"
-                            role="tab"
-                            aria-selected="true"
-                            aria-controls="query-output"
-                        >
-                            Query
-                        </button>
-                        <button
-                            class="output-tab"
-                            data-tab="charts"
-                            role="tab"
-                            aria-selected="false"
-                            aria-controls="charts-panel"
-                        >
-                            <svg
-                                class="w-3.5 h-3.5 inline-block mr-1"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
+                    <div class="output-tabs-container">
+                        <div role="tablist" aria-label="Output panels" class="contents">
+                            <button
+                                class="output-tab active"
+                                data-tab="query"
+                                role="tab"
+                                aria-selected="true"
+                                aria-controls="query-output"
                             >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4v16"
-                                />
-                            </svg>
-                            Charts
-                        </button>
-                        <button
-                            class="output-tab"
-                            data-tab="sankey"
-                            role="tab"
-                            aria-selected="false"
-                            aria-controls="sankey-panel"
-                        >
-                            <svg
-                                class="w-3.5 h-3.5 inline-block mr-1"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
+                                Query
+                            </button>
+                            <button
+                                class="output-tab"
+                                data-tab="charts"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="charts-panel"
                             >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                                />
-                            </svg>
-                            Flows
-                        </button>
-                        <button
-                            class="output-tab"
-                            data-tab="calendar"
-                            role="tab"
-                            aria-selected="false"
-                            aria-controls="calendar-panel"
-                        >
-                            <svg
-                                class="w-3.5 h-3.5 inline-block mr-1"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
+                                <svg
+                                    class="w-3.5 h-3.5 inline-block mr-1"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4v16"
+                                    />
+                                </svg>
+                                Charts
+                            </button>
+                            <button
+                                class="output-tab"
+                                data-tab="sankey"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="sankey-panel"
                             >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                />
-                            </svg>
-                            Activity
-                        </button>
-                        <div class="flex-1"></div>
-                        <button
-                            class="output-tab text-yellow-400"
-                            style="border-left: 1px solid rgba(255, 255, 255, 0.15)"
-                            data-tab="plugin"
-                            role="tab"
-                            aria-selected="false"
-                            aria-controls="plugin-options"
-                        >
-                            <span aria-hidden="true">⚡</span> Plugins
-                        </button>
-                        <button
-                            id="status-tab"
-                            class="output-tab text-green-400"
-                            style="border-left: 1px solid rgba(255, 255, 255, 0.15)"
-                            data-tab="output"
-                            role="tab"
-                            aria-selected="false"
-                            aria-controls="output"
-                            aria-live="polite"
-                        >
-                            <span aria-hidden="true">✓</span> Valid
-                        </button>
+                                <svg
+                                    class="w-3.5 h-3.5 inline-block mr-1"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                                    />
+                                </svg>
+                                Flows
+                            </button>
+                            <button
+                                class="output-tab"
+                                data-tab="calendar"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="calendar-panel"
+                            >
+                                <svg
+                                    class="w-3.5 h-3.5 inline-block mr-1"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                    />
+                                </svg>
+                                Activity
+                            </button>
+                            <div class="flex-1"></div>
+                            <button
+                                class="output-tab text-yellow-400"
+                                style="border-left: 1px solid rgba(255, 255, 255, 0.15)"
+                                data-tab="plugin"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="plugin-options"
+                            >
+                                <span aria-hidden="true">⚡</span> Plugins
+                            </button>
+                            <button
+                                id="status-tab"
+                                class="output-tab text-green-400"
+                                style="border-left: 1px solid rgba(255, 255, 255, 0.15)"
+                                data-tab="output"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="output"
+                                aria-live="polite"
+                            >
+                                <span aria-hidden="true">✓</span> Valid
+                            </button>
+                        </div>
                         <button
                             id="copy-output-btn"
                             class="p-2 text-white/30 hover:text-white transition"
@@ -467,6 +479,8 @@
                     <!-- Output Content -->
                     <div
                         id="output-panel"
+                        tabindex="0"
+                        aria-label="Output panel (scrollable)"
                         class="overflow-auto bg-black/20 flex-1"
                         style="min-height: 200px"
                         role="region"

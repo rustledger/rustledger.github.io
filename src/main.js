@@ -273,12 +273,23 @@ window.loadExample = async function (name) {
         editor.setContent(content);
     }
 
-    // Validate and show query results
+    // Validate and show results. The user may have navigated to another
+    // output tab while the example loaded — forcing showTab('query') here
+    // used to stomp that navigation (e.g. Budget -> Flows immediately:
+    // the flows view was yanked back to Query and rendered blank). Honor
+    // the current tab: re-render it against the freshly-loaded content,
+    // and only default to Query if the user hasn't navigated.
     if (isWasmReady()) {
         await liveValidate();
         initAccountsSidebar();
-        showTab('query');
-        await window.runQueryPreset('BALANCES');
+        const active = /** @type {HTMLElement | null} */ (
+            document.querySelector('.output-tab.active')
+        );
+        const currentTab = active?.dataset.tab || 'query';
+        showTab(currentTab);
+        if (currentTab === 'query') {
+            await window.runQueryPreset('BALANCES');
+        }
     }
 };
 
@@ -856,6 +867,12 @@ async function init() {
     if (!container) return;
 
     editor = createEditor(container, examples.budget, onEditorChange);
+    // Bind UI listeners IMMEDIATELY: the remainder of init() awaits wasm
+    // init + first validation + first query (multiple seconds) while the
+    // page LOOKS interactive — clicks in that window used to land on
+    // listener-less DOM and silently vanish (#20). Handlers needing the
+    // worker are individually wasm-guarded (whenWasmReady).
+    initButtonListeners();
 
     // Hide loading skeleton
     const skeleton = document.getElementById('editor-skeleton');
@@ -890,9 +907,20 @@ async function init() {
         // Initialize accounts sidebar
         initAccountsSidebar();
 
-        // Show query tab and run default query
-        showTab('query');
-        await window.runQueryPreset('BALANCES');
+        // Show query tab and run the default query — UNLESS the user
+        // already navigated to another output tab while wasm was loading
+        // (same honor-navigation rule as loadExample; forcing query here
+        // stomped e.g. an open Flows/Plugins tab, #20).
+        const active = /** @type {HTMLElement | null} */ (
+            document.querySelector('.output-tab.active')
+        );
+        const currentTab = active?.dataset.tab || 'output';
+        if (currentTab === 'output' || currentTab === 'query') {
+            showTab('query');
+            await window.runQueryPreset('BALANCES');
+        } else {
+            showTab(currentTab);
+        }
 
         // Preload lazy examples in the background
         preloadLazyExamples();
@@ -924,12 +952,11 @@ async function init() {
         onRunQuery: () => window.runQueryFromInput(),
     });
 
-    // Set initial active states
-    document.querySelector('.example-tab[data-example="budget"]')?.classList.add('active');
-    document.querySelector('.output-tab[data-tab="output"]')?.classList.add('active');
+    // NOTE: initial .active tab states are set statically in the markup;
+    // re-adding them here (after the long awaits above) used to stomp
+    // whatever tab the user opened during wasm init (#20).
 
-    // Set up event listeners for buttons (replacing inline onclick handlers)
-    initButtonListeners();
+    // (Button listeners are bound right after editor creation above.)
 }
 
 /**

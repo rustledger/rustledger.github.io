@@ -55,6 +55,14 @@ jobs:
             - name: Build main site
               run: bun run build
 
+            - name: Install Playwright browsers
+              run: bunx playwright install chromium --with-deps
+
+            - name: E2E (playground, chromium)
+              # Keeps the e2e suite from rotting unexercised again (#20):
+              # runs against the production build via the preview server.
+              run: bunx playwright test e2e/playground.spec.js --project=chromium
+
             - name: Fetch docs from rustledger repo
               run: |
                   # Remove placeholder docs and fetch from source repo

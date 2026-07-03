@@ -64,11 +64,14 @@ function handleWorkerMessage(event) {
         wasmReady = true;
         wasmVersion = version || 'unknown';
         wasmError = null;
+        readyWaiters.splice(0).forEach((resolve) => resolve());
         return;
     }
 
     if (type === 'error' && id === undefined) {
-        // Initialization error
+        // Initialization error — flush ready-waiters so nothing hangs;
+        // their queries will observe the failure as null results.
+        readyWaiters.splice(0).forEach((resolve) => resolve());
         wasmReady = false;
         wasmError = error;
         return;
@@ -203,6 +206,21 @@ function formatWasmError(error) {
  */
 export function isWasmReady() {
     return wasmReady;
+}
+
+/** @type {Array<() => void>} */
+const readyWaiters = [];
+
+/**
+ * Resolve when the WASM worker is ready (immediately if it already is).
+ * Also resolves on initialization FAILURE so callers can't hang — they
+ * observe the failure through executeQuery() returning null, the same
+ * path as every other error.
+ * @returns {Promise<void>}
+ */
+export function whenWasmReady() {
+    if (wasmReady || wasmError) return Promise.resolve();
+    return new Promise((resolve) => readyWaiters.push(resolve));
 }
 
 /**
