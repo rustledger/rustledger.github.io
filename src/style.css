@@ -970,7 +970,9 @@ body {
     position: absolute;
     top: -6px;
     right: -6px;
-    background: var(--accent);
+    /* orange-700 instead of the accent orange-500: white 8px text on
+       #f97316 measured 2.8:1 (axe, #21); #c2410c gives 4.9:1. */
+    background: #c2410c;
     color: white;
     font-size: 0.5rem;
     padding: 2px 5px;
