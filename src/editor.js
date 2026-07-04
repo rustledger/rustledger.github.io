@@ -121,7 +121,9 @@ const darkTheme = EditorView.theme(
         '.cm-gutters': {
             backgroundColor: 'transparent',
             borderRight: '1px solid rgba(255, 255, 255, 0.1)',
-            color: 'rgba(255, 255, 255, 0.25)',
+            // 0.45 ≈ #757575 on the editor's near-black: 4.6:1, the WCAG AA
+            // minimum for the 14px line numbers (0.25 measured 2.19:1, #21).
+            color: 'rgba(255, 255, 255, 0.45)',
         },
         '.cm-lineNumbers .cm-gutterElement': {
             padding: '0 6px 0 4px',
@@ -151,7 +153,10 @@ const darkTheme = EditorView.theme(
 
 // Syntax highlighting colors
 const highlightStyle = HighlightStyle.define([
-    { tag: tags.comment, color: 'rgba(255, 255, 255, 0.35)', fontStyle: 'italic' },
+    // 0.55 ≈ #8c8c8c: 4.5:1 on the editor's near-black — WCAG AA for the
+    // 14px comment text (0.35 measured 3.19:1; axe, #21). Comments stay
+    // visually muted via the italics.
+    { tag: tags.comment, color: 'rgba(255, 255, 255, 0.55)', fontStyle: 'italic' },
     { tag: tags.string, color: '#fca5a5' },
     { tag: tags.number, color: '#fcd34d' },
     { tag: tags.atom, color: '#fdba74' }, // Currency
@@ -560,6 +565,9 @@ export function createEditor(container, initialContent, onChange) {
     const state = EditorState.create({
         doc: initialContent,
         extensions: [
+            // Accessible name for the editor's role=textbox content element
+            // (axe aria-input-field-name, #21).
+            EditorView.contentAttributes.of({ 'aria-label': 'Beancount ledger editor' }),
             lineNumbers(),
             highlightActiveLine(),
             highlightActiveLineGutter(),
@@ -594,6 +602,12 @@ export function createEditor(container, initialContent, onChange) {
         state,
         parent: container,
     });
+    // Keyboard access to the scrollable editor region (axe
+    // scrollable-region-focusable, #21): the contenteditable content is
+    // focusable, but the scroller element itself also needs to be
+    // reachable for keyboard-only scrolling.
+    view.scrollDOM.tabIndex = 0;
+    view.scrollDOM.setAttribute('aria-label', 'Ledger editor scroll area');
 
     return {
         view,

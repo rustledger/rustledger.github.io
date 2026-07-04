@@ -193,10 +193,7 @@ test.describe('Playground', () => {
 });
 
 test.describe('Accessibility', () => {
-    // fixme(#21): the homepage currently has REAL a11y violations (8 rules,
-    // ~88 nodes: critical aria-required-children/parent, 29 color-contrast
-    // nodes, ...). Tracked in issue #21; this un-fixmes loudly when fixed.
-    test.fixme('has no automatically detectable a11y issues on load', async ({ page }) => {
+    test('has no automatically detectable a11y issues on load', async ({ page }) => {
         await page.goto('/');
 
         // Wait for page to be fully loaded
