@@ -12,8 +12,8 @@ rustledger.github.io is the website and WASM playground for rustledger. It uses:
 
 ## Build & Deploy
 
-- **CI uses bun**, not npm. The `bun.lock` file controls dependency versions.
-- `package-lock.json` is for local npm usage but CI ignores it.
+- **bun is the only package manager.** `bun.lock` is the single source of truth for
+  dependency versions, locally and in CI. Install with `bun install`.
 - Workflow: `.github/workflows/deploy.yml`
 - Deploy triggers: push to main, `wasm-release` dispatch, `docs-update` dispatch, manual
 
@@ -39,10 +39,29 @@ npm run docs:preview # Preview built docs
 
 ## Lessons Learned
 
-### bun.lock vs package-lock.json
-When updating dependencies, remember that CI uses `bun.lock`. If you update with npm locally, the `bun.lock` won't change and CI will use old versions. Either:
-1. Use `bun update <package>` to update
-2. Delete `bun.lock` to force regeneration in CI
+### There is one lockfile, and it is `bun.lock`
+`package-lock.json` used to be committed alongside it "for local npm usage".
+Keeping two lockfiles cost more than it was worth:
+
+- they drifted. `bun.lock` pinned `js-yaml` 4.1.1 while `package-lock.json`
+  said 4.3.0
+- Dependabot picked `package-lock.json`, so its PRs bumped a file CI never
+  installs from. Merging one would have closed a security alert while the
+  deployed site kept shipping the vulnerable version
+- updating with npm locally left `bun.lock` untouched, so CI silently used
+  the old versions
+
+Update dependencies with `bun update <package>` or `bun install`, and commit
+`bun.lock`.
+
+### Dependency overrides must be FLAT
+Bun does not support npm's nested `overrides` form, nor path scoped
+`resolutions` like `"vitepress/vite"`. It warns and ignores them, so the pins
+do nothing and the lockfile drifts on every install. Write them flat:
+
+```json
+"overrides": { "vite": "^7.3.5", "esbuild": "^0.28.1" }
+```
 
 ### WASM Version
 The `@rustledger/wasm` package version in `bun.lock` determines what the website uses. The status bar shows the version from `wasm.version()`. If it's stale, check `bun.lock`.
