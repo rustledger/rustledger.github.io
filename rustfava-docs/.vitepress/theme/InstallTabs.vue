@@ -6,7 +6,6 @@ const recommendedTab = ref('binary');
 
 const tabs = [
     { id: 'binary', name: 'Download', icon: 'binary' },
-    { id: 'homebrew', name: 'Homebrew', icon: 'homebrew' },
     { id: 'aur', name: 'AUR', icon: 'aur' },
     { id: 'nix', name: 'Nix', icon: 'nix' },
 ];
@@ -22,7 +21,7 @@ function detectOS() {
         userAgent.includes('macintosh') ||
         userAgent.includes('mac os')
     ) {
-        return { os: 'macos', recommendedTab: 'homebrew' };
+        return { os: 'macos', recommendedTab: 'binary' };
     }
     if (platform.includes('win') || userAgent.includes('windows')) {
         return { os: 'windows', recommendedTab: 'binary' };
@@ -77,17 +76,6 @@ async function copyCommand(command) {
                     stroke-width="2"
                 >
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                </svg>
-                <!-- Homebrew icon -->
-                <svg
-                    v-else-if="tab.icon === 'homebrew'"
-                    class="tab-icon"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                >
-                    <path
-                        d="M7.938 0a.214.214 0 0 0-.206.156c-.316 1.104.179 2.15.838 2.935.153.181.313.347.476.501a2.039 2.039 0 0 0-.665.02c-1.184.233-2.193.985-2.74 2.532a3.893 3.893 0 0 0-.2 1.466 1.565 1.565 0 0 0-1.156 1.504 1.59 1.59 0 0 0 1.227 1.541l.026 12.046c0 .195.1.377.264.482a.214.214 0 0 0 .008.005c.537.31 2.047.812 5.21.812 3.238 0 4.7-.678 5.181-1.04a.214.214 0 0 0 .008-.007.571.571 0 0 0 .206-.439c.002-.344.002-1.136.002-1.604a.143.143 0 0 1 .147-.144c.397.006.869.006 1.318.005a1.826 1.826 0 0 0 1.832-1.825v-5.804a1.826 1.826 0 0 0-1.825-1.826H16.56a.14.14 0 0 1-.143-.144V10.6h.007v-.001a1.573 1.573 0 0 0 1.356-1.556c0-.816-.627-1.489-1.424-1.563-.025-1.438-.437-2.126-.736-2.58a.214.214 0 0 0-.005-.007c-.364-.51-1.193-1.282-2.275-1.316-.503-.016-.842.124-1.125.254-.217.1-.42.177-.67.22.002-1.286.945-1.981.945-1.981a.214.214 0 0 0 .05-.298s-.087-.122-.21-.26c-.121-.136-.269-.294-.47-.378a.214.214 0 0 0-.079-.017.214.214 0 0 0-.145.055 4.308 4.308 0 0 0-.875 1.101 3.42 3.42 0 0 0-.133.273 3.497 3.497 0 0 0-.381-.846C9.794.978 9.063.436 8.017.016A.214.214 0 0 0 7.939 0z"
-                    />
                 </svg>
                 <!-- AUR icon -->
                 <svg
@@ -177,47 +165,6 @@ async function copyCommand(command) {
                         rel="noopener noreferrer"
                         >GitHub Releases</a
                     >.
-                </p>
-            </div>
-
-            <!-- Homebrew Panel -->
-            <div v-show="activeTab === 'homebrew'" class="install-panel active">
-                <div class="install-command">
-                    <span class="prompt">$</span>
-                    <span class="cmd"
-                        ><span class="keyword">brew</span> <span class="flag">install --cask</span>
-                        <span class="package">rustfava</span></span
-                    >
-                    <button
-                        class="install-copy-btn"
-                        @click="copyCommand('brew install --cask rustfava')"
-                        title="Copy"
-                    >
-                        <svg
-                            class="copy-icon"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                            />
-                        </svg>
-                    </button>
-                </div>
-                <p class="install-note">
-                    <svg class="note-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                    </svg>
-                    Recommended for macOS users.
                 </p>
             </div>
 
